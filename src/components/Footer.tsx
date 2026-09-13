@@ -1,4 +1,4 @@
-﻿import React from 'react';
+import React from 'react';
 import { ArrowUp } from 'lucide-react';
 import { sound } from '../utils/audio';
 
@@ -74,13 +74,13 @@ export const Footer: React.FC = () => {
               <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-xl bg-black/60 border border-white/10 p-2 flex items-center justify-center hover:border-brand-green/50 transition-colors">
                 <img
                   src="/assets/logos/eventsinfo-logo.png"
-                  alt="EventsInfo"
+                  alt="Events INFO"
                   className="max-w-full max-h-full object-contain"
                 />
               </div>
               <div className="text-center">
                 <div className="font-display font-extrabold text-sm sm:text-base tracking-wider text-[#00e676]">
-                  EventsInfo
+                  Events INFO
                 </div>
                 <div className="font-mono text-[11px] text-white/50 tracking-wide">
                   Global Event Management

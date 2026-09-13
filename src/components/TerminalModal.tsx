@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { X, Terminal as TerminalIcon, CornerDownLeft } from 'lucide-react';
 import { sound } from '../utils/audio';
 
@@ -106,7 +106,7 @@ BORN IN THE 0. RESURRECTED IN THE 1.`,
 CLEARANCE: PUBLIC TRANSIT
 ACTIVE WORLDS: AI, CYBER, CLOUD, ENTREPRENEURSHIP
 STAGE: PRE-LAUNCH // PHASE 1
-MANAGEMENT: TYGN B.Tech Student Community × EventsInfo`,
+MANAGEMENT: TYGN B.Tech Student Community × Events INFO`,
         });
         break;
 
