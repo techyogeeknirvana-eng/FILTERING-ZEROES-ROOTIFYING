@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Volume2, VolumeX, RotateCcw, Terminal, Menu, X, ArrowUpRight } from 'lucide-react';
 import { sound } from '../utils/audio';
 
@@ -27,6 +27,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onReplayIntro, onOpenTerminal })
 
   const navLinks = [
     { label: 'WHY ZERO?', href: '#manifesto' },
+    { label: 'ACCESS', href: '#access' },
     { label: 'FOUR WORLDS', href: '#domains' },
     { label: 'WHY ROOTIFY', href: '#why-rootify' },
     { label: 'JOURNEY', href: '#experience' },
@@ -134,6 +135,22 @@ export const Navbar: React.FC<NavbarProps> = ({ onReplayIntro, onOpenTerminal })
             <RotateCcw className="w-3.5 h-3.5" />
             <span className="hidden lg:inline">REPLAY INTRO</span>
           </button>
+
+          {/* Register / Access CTA */}
+          <a
+            href="#access"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-mono font-black tracking-wider text-cyber-cyan border border-cyber-cyan/60 bg-cyber-cyan/15 hover:bg-cyber-cyan hover:text-black transition-all rounded shadow-[0_0_15px_rgba(0,240,255,0.3)]"
+            data-cursor="access"
+            onClick={(e) => {
+              e.preventDefault();
+              sound.playButtonConfirm();
+              document.getElementById('access')?.scrollIntoView({ behavior: 'smooth' });
+            }}
+          >
+            <span className="w-1.5 h-1.5 rounded-full bg-cyber-cyan animate-ping hidden sm:inline-block" />
+            <span>ACCESS</span>
+            <ArrowUpRight className="w-3.5 h-3.5" />
+          </a>
 
           {/* Quick Partner CTA */}
           <a

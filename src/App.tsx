@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { LoadingCinematic } from './components/LoadingCinematic';
 import { Navbar } from './components/Navbar';
 import { CustomCursor } from './components/CustomCursor';
@@ -11,6 +11,7 @@ import { SpeakersSection } from './components/SpeakersSection';
 import { RootifyFinaleSection } from './components/RootifyFinaleSection';
 import { TimelineSection } from './components/TimelineSection';
 import { CommandCenterSection } from './components/CommandCenterSection';
+import { PassesSection } from './components/PassesSection';
 import { CommunityPartnerSection } from './components/CommunityPartnerSection';
 import { SponsorsSection } from './components/SponsorsSection';
 import { VenueSection } from './components/VenueSection';
@@ -58,6 +59,7 @@ export function App() {
       <main className="relative z-10 flex flex-col">
         <HeroSection onOpenTerminal={() => setTerminalOpen(true)} />
         <PhilosophySection />
+        <PassesSection />
         <FourDomainsSection />
         <WhyRootifySection />
         <EventJourneySection />

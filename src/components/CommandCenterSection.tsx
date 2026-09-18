@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { sound } from '../utils/audio';
 import { Lock, Terminal, Radio } from 'lucide-react';
 
@@ -113,6 +113,15 @@ export const CommandCenterSection: React.FC = () => {
   ]);
 
   const handleCardClick = (mod: ModuleCard) => {
+    if (mod.id === 'reg') {
+      sound.playButtonConfirm();
+      const el = document.getElementById('access');
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth' });
+      }
+      return;
+    }
+
     const currentState = cardStates[mod.id] || 'idle';
     if (currentState === 'authenticating') return;
 

@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { ArrowDown, Terminal, Brain, ShieldAlert, Cloud, Rocket } from 'lucide-react';
 import { sound } from '../utils/audio';
 
@@ -267,20 +267,26 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onOpenTerminal }) => {
 
           {/* CTAs */}
           <div className="mt-8 flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">
-            <div
-              className="w-full sm:w-auto relative group"
-              data-cursor="locked"
-              onClick={() => sound.playBeep(440, 0.05, 0.08)}
+            <a
+              href="#access"
+              onClick={(e) => {
+                e.preventDefault();
+                sound.playButtonConfirm();
+                const el = document.getElementById('access');
+                if (el) {
+                  el.scrollIntoView({ behavior: 'smooth' });
+                }
+              }}
+              className="w-full sm:w-auto relative group inline-flex items-center justify-center select-none"
+              data-cursor="access"
             >
-              <div className="absolute -inset-0.5 bg-gradient-to-r from-cyber-red to-cyber-cyan rounded opacity-40 group-hover:opacity-100 blur transition duration-300"></div>
-              <button className="relative w-full sm:w-auto px-7 py-3.5 bg-[#040507] border border-white/20 rounded font-mono font-bold text-xs sm:text-sm tracking-[0.2em] text-white flex items-center justify-center gap-3">
-                <span className="w-2 h-2 rounded-full bg-cyber-cyan animate-ping" />
-                <span>COMING SOON</span>
-                <span className="text-[10px] text-white/50 border border-white/20 px-1.5 py-0.5 rounded">
-                  [ LOCKED ]
-                </span>
-              </button>
-            </div>
+              <div className="absolute -inset-0.5 bg-gradient-to-r from-cyber-red via-white to-cyber-cyan rounded opacity-75 group-hover:opacity-100 blur transition-all duration-300 animate-pulse" />
+              <div className="relative w-full sm:w-auto px-8 py-3.5 bg-[#040507] border-2 border-cyber-cyan hover:border-cyber-red rounded font-mono font-black text-xs sm:text-sm tracking-[0.2em] text-white flex items-center justify-center gap-3 transition-all duration-200 group-hover:scale-[1.02] shadow-[0_0_25px_rgba(0,240,255,0.4)] group-hover:shadow-[0_0_35px_rgba(255,31,67,0.6)]">
+                <span className="w-2 h-2 rounded-full bg-cyber-red animate-ping" />
+                <span className="tracking-widest">REGISTER NOW</span>
+                <span className="text-cyber-cyan group-hover:translate-x-1 transition-transform font-black">→</span>
+              </div>
+            </a>
 
             <a
               href="#partner"
