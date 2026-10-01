@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Analytics } from '@vercel/analytics/react';
 import { LoadingCinematic } from './components/LoadingCinematic';
 import { Navbar } from './components/Navbar';
 import { CustomCursor } from './components/CustomCursor';
@@ -78,6 +79,7 @@ export function App() {
         onClose={() => setTerminalOpen(false)}
         onReplayIntro={handleReplayIntro}
       />
+      <Analytics />
     </div>
   );
 }
