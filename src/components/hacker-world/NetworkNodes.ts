@@ -48,6 +48,21 @@ export class NetworkNodesManager {
     this.onNodeProximityChange = onNodeProximityChange;
 
     this.nodes = [
+      // 0. Central ROOTIFY CORE (Center Origin)
+      {
+        id: 'core_rootify',
+        title: 'ROOTIFY CORE // 0 → 1',
+        code: 'CORE://0x00_NEXUS',
+        category: 'gate',
+        color: '#00f0ff',
+        coords: new THREE.Vector3(0, 1.8, 0),
+        description: 'The central neural singularity uniting AI, Security, Cloud, Web3 and Founders into one uncompromised signal.',
+        details: 'Born in the 0. Resurrected in the 1. The convergence hub of all federated nodes.',
+        status: 'ACTIVE',
+        targetAnchor: '#manifesto',
+        discovered: true,
+      },
+
       // 1. ROOTIFY GATE (North / Major Monumental Gateway)
       {
         id: 'gate_rootify',
@@ -184,7 +199,7 @@ export class NetworkNodesManager {
         discovered: false,
       },
 
-      // 4. The Network / Strategic Collaborators (East Cluster)
+      // 4. The Network / Strategic Collaborators (South-East Cluster)
       {
         id: 'comm_ace',
         title: 'ACE CLUB',
@@ -249,7 +264,7 @@ export class NetworkNodesManager {
     this.hackerLine = new THREE.Line(this.hackerLineGeo, hackerLineMat);
     this.group.add(this.hackerLine);
 
-    // Network line segments between discovered nodes
+    // Network line segments between nodes
     this.networkLineGeo = new THREE.BufferGeometry();
     const maxSegments = this.nodes.length * this.nodes.length;
     this.networkLineGeo.setAttribute(
@@ -269,6 +284,21 @@ export class NetworkNodesManager {
     this.group.add(this.networkLineSegments);
 
     scene.add(this.group);
+  }
+
+  public getNodeById(id: string): WorldNodeData | undefined {
+    return this.nodes.find((n) => n.id === id);
+  }
+
+  public highlightNode(id: string) {
+    const meshObj = this.nodeMeshes.find((m) => m.data.id === id);
+    if (!meshObj) return;
+
+    meshObj.data.discovered = true;
+    meshObj.ring.scale.set(1.8, 1.8, 1.8);
+    setTimeout(() => {
+      meshObj.ring.scale.set(1, 1, 1);
+    }, 1200);
   }
 
   /**
@@ -314,7 +344,7 @@ export class NetworkNodesManager {
 
       const colorVal = new THREE.Color(node.color);
 
-      // 1. Glowing Core (Octahedron or Icosahedron)
+      // 1. Glowing Core (Octahedron or Torus for Gate)
       const coreGeo =
         node.category === 'gate'
           ? new THREE.TorusGeometry(3.5, 0.25, 16, 40)
@@ -418,8 +448,9 @@ export class NetworkNodesManager {
     });
 
     // 2. Handle active proximity trigger
-    if (closestNode !== this.activeNodeId) {
-      this.activeNodeId = closestNode ? (closestNode as WorldNodeData).id : null;
+    const currentId = closestNode ? (closestNode as WorldNodeData).id : null;
+    if (currentId !== this.activeNodeId) {
+      this.activeNodeId = currentId;
       if (this.onNodeProximityChange) {
         this.onNodeProximityChange(closestNode);
       }
@@ -449,40 +480,27 @@ export class NetworkNodesManager {
     this.updateNetworkLines();
   }
 
-  /**
-   * Connects lines between discovered nodes to reveal the growing ecosystem
-   */
   private updateNetworkLines() {
-    const discovered = this.nodes.filter((n) => n.discovered);
-    const lineArray = (this.networkLineGeo.attributes.position as THREE.BufferAttribute).array as Float32Array;
-    let ptr = 0;
+    const pos = (this.networkLineGeo.attributes.position as THREE.BufferAttribute).array as Float32Array;
+    let pIdx = 0;
 
-    for (let i = 0; i < discovered.length; i++) {
-      for (let j = i + 1; j < discovered.length; j++) {
-        const n1 = discovered[i];
-        const n2 = discovered[j];
-        const dist = n1.coords.distanceTo(n2.coords);
+    // Connect core to all discovered nodes
+    const coreNode = this.nodes[0];
+    for (let i = 1; i < this.nodes.length; i++) {
+      const n = this.nodes[i];
+      if (n.discovered || n.category === 'gate') {
+        pos[pIdx++] = coreNode.coords.x;
+        pos[pIdx++] = coreNode.coords.y;
+        pos[pIdx++] = coreNode.coords.z;
 
-        // Connect if reasonable distance
-        if (dist < 26) {
-          lineArray[ptr++] = n1.coords.x;
-          lineArray[ptr++] = n1.coords.y;
-          lineArray[ptr++] = n1.coords.z;
-
-          lineArray[ptr++] = n2.coords.x;
-          lineArray[ptr++] = n2.coords.y;
-          lineArray[ptr++] = n2.coords.z;
-        }
+        pos[pIdx++] = n.coords.x;
+        pos[pIdx++] = n.coords.y;
+        pos[pIdx++] = n.coords.z;
       }
     }
 
-    // Clear remainder
-    for (let k = ptr; k < lineArray.length; k++) {
-      lineArray[k] = 0;
-    }
-
     this.networkLineGeo.attributes.position.needsUpdate = true;
-    this.networkLineGeo.setDrawRange(0, ptr / 3);
+    this.networkLineGeo.setDrawRange(0, pIdx / 3);
   }
 
   public getDiscoveredCount(): number {

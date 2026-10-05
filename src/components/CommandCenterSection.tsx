@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { sound } from '../utils/audio';
-import { Lock, Terminal, Radio } from 'lucide-react';
+import { Lock, Terminal, Radio, Compass } from 'lucide-react';
 
 interface ModuleCard {
   id: string;
@@ -109,8 +109,14 @@ export const CommandCenterSection: React.FC = () => {
   const [cardStates, setCardStates] = useState<Record<string, 'idle' | 'authenticating' | 'encrypted' | 'denied'>>({});
   const [terminalLogs, setTerminalLogs] = useState<string[]>([
     '> SYSTEM READY. ENCRYPTED COMMAND HUB ACTIVE.',
-    '> SELECT ANY CLASSIFIED NODE TO ATTEMPT CLEARANCE.',
+    '> SELECT ANY CLASSIFIED NODE TO ATTEMPT CLEARANCE OR LOCATE ON 3D NETWORK.',
   ]);
+
+  const locateOn3DNetwork = (modId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    sound.playNavWhoosh();
+    window.dispatchEvent(new CustomEvent('fz:command-card-select', { detail: { moduleId: modId } }));
+  };
 
   const handleCardClick = (mod: ModuleCard) => {
     if (mod.id === 'reg') {
@@ -126,7 +132,7 @@ export const CommandCenterSection: React.FC = () => {
     if (currentState === 'authenticating') return;
 
     setCardStates((prev) => ({ ...prev, [mod.id]: 'authenticating' }));
-    sound.playBeep(900, 0.04, 0.08);
+    sound.playNodeDetected();
 
     const timestamp = new Date().toLocaleTimeString();
     setTerminalLogs((prev) => [
@@ -137,7 +143,7 @@ export const CommandCenterSection: React.FC = () => {
 
     setTimeout(() => {
       setCardStates((prev) => ({ ...prev, [mod.id]: 'encrypted' }));
-      sound.playBeep(1200, 0.03, 0.08);
+      sound.playNodeScanning();
       setTerminalLogs((prev) => [
         `> PROTOCOL: RSA-4096 / SHA-256 SIGNATURE ENCRYPTED`,
         ...prev.slice(0, 6),
@@ -200,7 +206,7 @@ export const CommandCenterSection: React.FC = () => {
               <div
                 key={mod.id}
                 onClick={() => handleCardClick(mod)}
-                className={`relative p-5 rounded-lg border transition-all duration-300 cursor-pointer flex flex-col justify-between min-h-[220px] select-none ${
+                className={`relative p-5 rounded-lg border transition-all duration-300 cursor-pointer flex flex-col justify-between min-h-[230px] select-none ${
                   state === 'denied'
                     ? 'border-cyber-red bg-cyber-red/10 shadow-[0_0_20px_rgba(255,31,67,0.3)]'
                     : state === 'authenticating'
@@ -233,15 +239,27 @@ export const CommandCenterSection: React.FC = () => {
                   </p>
                 </div>
 
-                <div className="pt-3 border-t border-white/5 flex items-center justify-between">
-                  <span
-                    className={`font-mono text-[10px] px-2 py-0.5 rounded tracking-widest font-bold border transition-colors ${badgeClass}`}
+                <div className="space-y-2 pt-3 border-t border-white/5">
+                  <div className="flex items-center justify-between">
+                    <span
+                      className={`font-mono text-[10px] px-2 py-0.5 rounded tracking-widest font-bold border transition-colors ${badgeClass}`}
+                    >
+                      {statusDisplay}
+                    </span>
+                    <span className="font-mono text-[9px] text-white/30">
+                      {state === 'idle' ? 'PROBE' : 'LOCK'}
+                    </span>
+                  </div>
+
+                  {/* 3D Network Locate Trigger */}
+                  <button
+                    onClick={(e) => locateOn3DNetwork(mod.id, e)}
+                    className="w-full flex items-center justify-center gap-1.5 py-1 rounded bg-white/5 hover:bg-cyber-cyan/20 border border-white/10 hover:border-cyber-cyan/50 text-[10px] font-mono text-white/60 hover:text-cyber-cyan transition-colors"
+                    title="Track and glide camera to this node in the 3D Hacker World"
                   >
-                    {statusDisplay}
-                  </span>
-                  <span className="font-mono text-[9px] text-white/30">
-                    {state === 'idle' ? 'CLICK TO PROBE' : 'PROCESSING'}
-                  </span>
+                    <Compass className="w-3 h-3 text-cyber-cyan" />
+                    <span>LOCATE ON 3D NETWORK</span>
+                  </button>
                 </div>
               </div>
             );
@@ -280,7 +298,7 @@ export const CommandCenterSection: React.FC = () => {
           </div>
 
           <div className="mt-4 pt-3 border-t border-white/5 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-[10px] text-white/40">
-            <span>TIP: CLICK ANY LOCKED MODULE ABOVE TO TEST THE DECRYPTION INTERFACE.</span>
+            <span>TIP: CLICK ANY LOCKED MODULE ABOVE TO TEST THE DECRYPTION INTERFACE OR LOCATE IN 3D.</span>
             <span className="text-white/60">INTEGRITY: HIGH // ZERO FAKE DATA TOLERANCE</span>
           </div>
         </div>

@@ -23,10 +23,19 @@ export const HackerWorldCanvas: React.FC = () => {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [hasWebGL] = useState<boolean>(() => checkWebGLSupport());
 
-  const [isBooting, setIsBooting] = useState<boolean>(true);
+  const [isBooting, setIsBooting] = useState<boolean>(() => {
+    if (typeof window !== 'undefined') {
+      return !sessionStorage.getItem('fz_intro_seen');
+    }
+    return true;
+  });
+
   const [nearbyNode, setNearbyNode] = useState<WorldNodeData | null>(null);
   const [discoveredCount, setDiscoveredCount] = useState<number>(1);
   const [totalNodes, setTotalNodes] = useState<number>(12);
+  const [boundaryAlert, setBoundaryAlert] = useState<boolean>(false);
+  const isInteractingRef = useRef<boolean>(false);
+
   const [playerCoords, setPlayerCoords] = useState<{ x: number; z: number }>({
     x: 0,
     z: 0,
@@ -49,10 +58,22 @@ export const HackerWorldCanvas: React.FC = () => {
 
   const handleEnterWorld = useCallback(() => {
     setIsBooting(false);
+    sessionStorage.setItem('fz_intro_seen', 'true');
     sound.playSystemActivation();
   }, []);
 
+  const handleSkipToRegistration = useCallback(() => {
+    setIsBooting(false);
+    sessionStorage.setItem('fz_intro_seen', 'true');
+    sound.playButtonConfirm();
+    const el = document.getElementById('access');
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, []);
+
   const handleInteractNode = useCallback((node: WorldNodeData) => {
+    isInteractingRef.current = true;
     sound.playButtonConfirm();
     if (node.targetAnchor) {
       const el = document.querySelector(node.targetAnchor);
@@ -60,6 +81,9 @@ export const HackerWorldCanvas: React.FC = () => {
         el.scrollIntoView({ behavior: 'smooth' });
       }
     }
+    setTimeout(() => {
+      isInteractingRef.current = false;
+    }, 1500);
   }, []);
 
   useEffect(() => {
@@ -75,7 +99,6 @@ export const HackerWorldCanvas: React.FC = () => {
     const height = container.clientHeight || window.innerHeight;
 
     const camera = new THREE.PerspectiveCamera(55, width / height, 0.1, 200);
-    // Initial cinematic front/side camera for boot reveal
     camera.position.set(0, 1.8, 3.8);
 
     const renderer = new THREE.WebGLRenderer({
@@ -100,31 +123,61 @@ export const HackerWorldCanvas: React.FC = () => {
       setNearbyNode(node);
       if (node) {
         sound.playHoverClick();
-        setDiscoveredCount(nodesManager.getDiscoveredCount());
       }
+      setDiscoveredCount(nodesManager.getDiscoveredCount());
     });
-
     setTotalNodes(nodesManager.getTotalNodes());
-    setDiscoveredCount(nodesManager.getDiscoveredCount());
 
-    // 3. Movement & Physics Variables
+    // 3. Command Center Card Bridge Listener
+    const handleCommandCardSelect = (e: Event) => {
+      const customEvent = e as CustomEvent<{ moduleId: string }>;
+      const modId = customEvent.detail?.moduleId;
+      if (!modId) return;
+
+      const nodeMap: Record<string, string> = {
+        reg: 'gate_rootify',
+        communities: 'comm_ace',
+        partners: 'comm_fortixai',
+        mentors: 'exp_signal',
+        speakers: 'exp_signal',
+        challenges: 'exp_breach',
+        colleges: 'core_rootify',
+        venue: 'core_rootify',
+        sponsors: 'domain_venture',
+        guests: 'exp_signal',
+      };
+
+      const targetNodeId = nodeMap[modId] || 'core_rootify';
+      const node = nodesManager.getNodeById(targetNodeId);
+      if (node) {
+        nodesManager.highlightNode(targetNodeId);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        // Teleport hacker smoothly near the node
+        playerPos.set(node.coords.x * 0.75, 0, node.coords.z * 0.75);
+        player.setPosition(playerPos.x, 0, playerPos.z);
+        setNearbyNode(node);
+      }
+    };
+    window.addEventListener('fz:command-card-select', handleCommandCardSelect);
+
+    // 4. Movement & Physics Simulation Variables
     const playerPos = new THREE.Vector3(0, 0, 0);
-    const playerVelocity = new THREE.Vector3(0, 0, 0);
-    const speed = 7.5;
-    const maxArenaRadius = 50;
+    const playerVelocity = new THREE.Vector3();
+    const maxArenaRadius = 57.5; // Circular arena boundary
 
-    // Raycaster for click-to-move
+    const clock = new THREE.Clock();
+    let animId = 0;
+    let lastTime = performance.now();
+    let introGlideProgress = 0;
+
+    // Raycaster for Click-to-Move
     const raycaster = new THREE.Raycaster();
     const mouseNDC = new THREE.Vector2();
     const groundPlane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
 
-    // 4. Input Listeners
+    // Event Listeners for Input
     const handleKeyDown = (e: KeyboardEvent) => {
       keysRef.current[e.key.toLowerCase()] = true;
-      // Cancels click-to-move if WASD is pressed
-      if (['w', 'a', 's', 'd', 'arrowup', 'arrowdown', 'arrowleft', 'arrowright'].includes(e.key.toLowerCase())) {
-        targetWalkPosRef.current = null;
-      }
     };
 
     const handleKeyUp = (e: KeyboardEvent) => {
@@ -132,7 +185,6 @@ export const HackerWorldCanvas: React.FC = () => {
     };
 
     const handleMouseDown = (e: MouseEvent) => {
-      // Right click or left click drag to rotate camera
       isDraggingRef.current = true;
       lastMousePosRef.current = { x: e.clientX, y: e.clientY };
 
@@ -147,7 +199,6 @@ export const HackerWorldCanvas: React.FC = () => {
         if (raycaster.ray.intersectPlane(groundPlane, intersectPoint)) {
           if (intersectPoint.length() < maxArenaRadius) {
             targetWalkPosRef.current = intersectPoint;
-            sound.playBeep(700, 0.02, 0.03);
           }
         }
       }
@@ -188,15 +239,9 @@ export const HackerWorldCanvas: React.FC = () => {
     window.addEventListener('mouseup', handleMouseUp);
 
     // 5. Main 60 FPS Render Loop
-    let animId: number;
-    let lastTime = performance.now();
-    let introGlideProgress = 0;
-
-    const clock = new THREE.Clock();
-
     const animate = () => {
       const now = performance.now();
-      const delta = Math.min(0.1, (now - lastTime) / 1000);
+      const delta = Math.min((now - lastTime) / 1000, 0.1);
       lastTime = now;
       const elapsedTime = clock.getElapsedTime();
 
@@ -229,7 +274,6 @@ export const HackerWorldCanvas: React.FC = () => {
 
           if (dist > 0.4) {
             toTarget.normalize();
-            // Project into camera space for unified direction
             const forward = new THREE.Vector3(0, 0, -1).applyAxisAngle(
               new THREE.Vector3(0, 1, 0),
               cameraAzimuthRef.current
@@ -267,6 +311,10 @@ export const HackerWorldCanvas: React.FC = () => {
         moveDir.normalize();
       }
 
+      // Check sprint / run state (Shift key)
+      const isRunning = !!keys['shift'] && isMoving;
+      const speed = isRunning ? 7.2 : 4.2;
+
       // Accelerate / decelerate velocity
       const targetVelocity = moveDir.clone().multiplyScalar(isMoving ? speed : 0);
       playerVelocity.lerp(targetVelocity, delta * 9);
@@ -274,6 +322,17 @@ export const HackerWorldCanvas: React.FC = () => {
       // Apply movement and clamp inside circular arena
       playerPos.addScaledVector(playerVelocity, delta);
       const distFromCenter = Math.hypot(playerPos.x, playerPos.z);
+
+      // Boundary glow & alert detection (NO audio spam)
+      if (distFromCenter > maxArenaRadius - 2.0) {
+        const intensity = Math.min(1.0, (distFromCenter - (maxArenaRadius - 2.0)) / 2.0);
+        environment.setBoundaryGlow(intensity);
+        setBoundaryAlert(true);
+      } else {
+        environment.setBoundaryGlow(0);
+        setBoundaryAlert(false);
+      }
+
       if (distFromCenter > maxArenaRadius) {
         playerPos.x = (playerPos.x / distFromCenter) * maxArenaRadius;
         playerPos.z = (playerPos.z / distFromCenter) * maxArenaRadius;
@@ -286,10 +345,17 @@ export const HackerWorldCanvas: React.FC = () => {
         targetRotY = Math.atan2(moveDir.x, moveDir.z);
       }
 
-      // Update character locomotion / idle
-      player.update(delta, isMoving, moveDir, targetRotY);
+      // Update character locomotion / idle / interact with shift sprint support
+      player.update(
+        delta,
+        isMoving,
+        moveDir,
+        targetRotY,
+        isRunning,
+        isInteractingRef.current
+      );
 
-      // Update world environment & floating particles
+      // Update world environment & patrol drones
       environment.update(delta, playerPos);
 
       // Update network nodes & live laser connections
@@ -351,6 +417,7 @@ export const HackerWorldCanvas: React.FC = () => {
       window.removeEventListener('keydown', handleKeyDown);
       window.removeEventListener('keyup', handleKeyUp);
       window.removeEventListener('resize', handleResize);
+      window.removeEventListener('fz:command-card-select', handleCommandCardSelect);
       renderer.domElement.removeEventListener('mousedown', handleMouseDown);
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('mouseup', handleMouseUp);
@@ -380,11 +447,13 @@ export const HackerWorldCanvas: React.FC = () => {
       <HackerWorldHUD
         isBooting={isBooting}
         onEnterWorld={handleEnterWorld}
+        onSkipToRegistration={handleSkipToRegistration}
         nearbyNode={nearbyNode}
         onInteractNode={handleInteractNode}
         discoveredCount={discoveredCount}
         totalNodes={totalNodes}
         playerCoords={playerCoords}
+        boundaryAlert={boundaryAlert}
         onVirtualMove={(dir) => {
           virtualMoveRef.current = dir;
         }}
