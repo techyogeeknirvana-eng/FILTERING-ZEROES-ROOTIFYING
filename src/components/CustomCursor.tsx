@@ -1,18 +1,19 @@
-﻿import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 export const CustomCursor: React.FC = () => {
   const [pos, setPos] = useState({ x: -100, y: -100 });
   const [trail, setTrail] = useState({ x: -100, y: -100 });
   const [cursorType, setCursorType] = useState<string>('default');
   const [isVisible, setIsVisible] = useState(false);
-  const [isTouch, setIsTouch] = useState(false);
+  const [isTouch] = useState<boolean>(() => {
+    if (typeof window !== 'undefined') {
+      return window.matchMedia('(pointer: coarse)').matches;
+    }
+    return false;
+  });
 
   useEffect(() => {
-    // Check if touch device
-    if (window.matchMedia('(pointer: coarse)').matches) {
-      setIsTouch(true);
-      return;
-    }
+    if (isTouch) return;
 
     const onMouseMove = (e: MouseEvent) => {
       setPos({ x: e.clientX, y: e.clientY });
@@ -45,7 +46,7 @@ export const CustomCursor: React.FC = () => {
       document.removeEventListener('mouseleave', onMouseLeave);
       document.removeEventListener('mouseenter', onMouseEnter);
     };
-  }, []);
+  }, [isTouch]);
 
   // Smooth trail effect
   useEffect(() => {
