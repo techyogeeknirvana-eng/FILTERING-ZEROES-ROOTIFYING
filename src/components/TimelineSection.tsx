@@ -1,8 +1,27 @@
-﻿import React from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { sound } from '../utils/audio';
 import { Radio, Hammer, Trophy, Clock } from 'lucide-react';
 
 export const TimelineSection: React.FC = () => {
+  const sectionRef = useRef<HTMLElement>(null);
+  const [scrollProgress, setScrollProgress] = useState<number>(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (!sectionRef.current) return;
+      const rect = sectionRef.current.getBoundingClientRect();
+      const windowH = window.innerHeight;
+      const total = rect.height;
+      const current = windowH - rect.top - 120;
+      const progress = Math.min(1, Math.max(0, current / total));
+      setScrollProgress(progress);
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   const phases = [
     {
       period: 'SEPTEMBER / EARLY OCTOBER',
@@ -53,7 +72,11 @@ export const TimelineSection: React.FC = () => {
   ];
 
   return (
-    <section id="timeline" className="relative py-28 px-4 sm:px-6 bg-[#06080e] overflow-hidden border-t border-cyber-border/50">
+    <section
+      ref={sectionRef}
+      id="timeline"
+      className="relative py-28 px-4 sm:px-6 bg-[#06080e] overflow-hidden border-t border-cyber-border/50"
+    >
       <div className="absolute inset-0 scanline-bg opacity-20 pointer-events-none" />
 
       <div className="max-w-6xl mx-auto relative z-10">
@@ -70,9 +93,31 @@ export const TimelineSection: React.FC = () => {
           <div className="w-16 h-[2px] bg-gradient-to-r from-cyber-cyan to-cyber-red my-6" />
         </div>
 
-        <div className="relative border-l-2 border-white/10 ml-4 md:ml-32 space-y-12">
+        {/* Timeline Container with Progressive Laser Illumination */}
+        <div className="relative ml-4 md:ml-32 space-y-12">
+          {/* Static Background Guide Line */}
+          <div className="absolute left-0 top-0 bottom-0 w-[2px] bg-white/10 -translate-x-1/2 pointer-events-none" />
+
+          {/* Progressive Scroll-Illuminated Line */}
+          <div
+            className="absolute left-0 top-0 w-[2px] bg-gradient-to-b from-cyber-red via-cyber-cyan to-brand-green shadow-[0_0_15px_#00f0ff] -translate-x-1/2 pointer-events-none transition-all duration-150 ease-out"
+            style={{ height: `${Math.min(100, Math.max(0, scrollProgress * 100))}%` }}
+          />
+
+          {/* Leading Laser Tracer Pulse */}
+          <div
+            className="absolute left-0 w-3 h-3 rounded-full bg-cyber-cyan shadow-[0_0_20px_#00f0ff] -translate-x-1/2 -translate-y-1/2 pointer-events-none transition-all duration-150"
+            style={{
+              top: `${Math.min(100, Math.max(0, scrollProgress * 100))}%`,
+              opacity: scrollProgress > 0.05 && scrollProgress < 0.98 ? 1 : 0,
+            }}
+          />
+
           {phases.map((ph, idx) => {
             const Icon = ph.icon;
+            const threshold = (idx + 0.3) / phases.length;
+            const isIlluminated = scrollProgress >= threshold;
+
             return (
               <div
                 key={ph.period}
@@ -81,10 +126,12 @@ export const TimelineSection: React.FC = () => {
                 onMouseEnter={() => sound.playBeep(500 + idx * 100, 0.02, 0.03)}
               >
                 <div
-                  className="absolute -left-[17px] top-1.5 w-8 h-8 rounded-full border-2 bg-[#040507] flex items-center justify-center transition-transform group-hover:scale-125"
+                  className={`absolute -left-[17px] top-1.5 w-8 h-8 rounded-full border-2 bg-[#040507] flex items-center justify-center transition-all duration-500 group-hover:scale-125 ${
+                    isIlluminated ? 'scale-110 shadow-lg' : 'opacity-70'
+                  }`}
                   style={{
                     borderColor: ph.color,
-                    boxShadow: `0 0 15px ${ph.color}50`,
+                    boxShadow: isIlluminated ? `0 0 25px ${ph.color}` : `0 0 10px ${ph.color}40`,
                   }}
                 >
                   <Icon className="w-4 h-4" style={{ color: ph.color }} />
@@ -94,7 +141,13 @@ export const TimelineSection: React.FC = () => {
                   {ph.period}
                 </div>
 
-                <div className="p-6 sm:p-8 rounded-xl border border-cyber-border bg-cyber-surface/60 group-hover:bg-cyber-surface/90 transition-all duration-300 backdrop-blur-md">
+                <div
+                  className={`p-6 sm:p-8 rounded-xl border transition-all duration-300 backdrop-blur-md ${
+                    isIlluminated
+                      ? 'border-cyber-cyan/40 bg-cyber-surface/80 shadow-[0_0_30px_rgba(0,240,255,0.1)]'
+                      : 'border-cyber-border bg-cyber-surface/60 group-hover:bg-cyber-surface/90'
+                  }`}
+                >
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-white/5">
                     <div>
                       <span className="font-mono text-xs font-bold" style={{ color: ph.color }}>

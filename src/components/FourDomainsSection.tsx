@@ -1,6 +1,6 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { sound } from '../utils/audio';
-import { Brain, ShieldAlert, Cloud, Rocket, Terminal } from 'lucide-react';
+import { Brain, ShieldAlert, Cloud, Rocket, Terminal, Network, Sparkles, MessageSquare, Award } from 'lucide-react';
 
 export const FourDomainsSection: React.FC = () => {
   const [activeDomain, setActiveDomain] = useState<number>(0);
@@ -266,6 +266,65 @@ const founderVelocity = (insight, executionSpeed) => {
               <pre className="overflow-x-auto text-white/80 text-[11px] leading-relaxed selection:bg-white/20">
                 <code>{current.codeSnippet}</code>
               </pre>
+            </div>
+          </div>
+        </div>
+
+        {/* Expanded Horizons & Professional Development Telemetry */}
+        <div className="mt-8 p-6 rounded-xl border border-white/10 bg-cyber-surface/50 backdrop-blur-md">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 mb-5 border-b border-white/5">
+            <div className="flex items-center gap-2 font-mono text-xs tracking-wider text-white/70">
+              <span className="w-2 h-2 rounded-full bg-purple-400 animate-ping" />
+              <span className="text-white font-bold">// EXPANDED HORIZONS & PROFESSIONAL EXCELLENCE</span>
+            </div>
+            <span className="font-mono text-[10px] text-white/40">
+              MULTI-DISCIPLINARY COHESION
+            </span>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 font-mono text-xs">
+            {/* Web3 */}
+            <div className="p-4 rounded-lg bg-black/50 border border-purple-500/30 flex flex-col justify-between">
+              <div className="flex items-center gap-2 text-purple-400 font-bold mb-2">
+                <Network className="w-4 h-4" />
+                <span>WEB3 & PROTOCOLS</span>
+              </div>
+              <p className="text-[11px] text-white/70 leading-relaxed font-sans">
+                Decentralized state machines, cryptographic verification, smart contract architectures, and tokenized ecosystem governance.
+              </p>
+            </div>
+
+            {/* Emerging Technologies */}
+            <div className="p-4 rounded-lg bg-black/50 border border-cyber-cyan/30 flex flex-col justify-between">
+              <div className="flex items-center gap-2 text-cyber-cyan font-bold mb-2">
+                <Sparkles className="w-4 h-4" />
+                <span>EMERGING TECH</span>
+              </div>
+              <p className="text-[11px] text-white/70 leading-relaxed font-sans">
+                Quantum-resilient algorithms, spatial computing, edge telemetry, and neuro-symbolic reasoning paradigms.
+              </p>
+            </div>
+
+            {/* Domain Expertise */}
+            <div className="p-4 rounded-lg bg-black/50 border border-yellow-400/30 flex flex-col justify-between">
+              <div className="flex items-center gap-2 text-yellow-400 font-bold mb-2">
+                <Award className="w-4 h-4" />
+                <span>DOMAIN EXPERTISE</span>
+              </div>
+              <p className="text-[11px] text-white/70 leading-relaxed font-sans">
+                Rigorous deep-dive capability. Breaking through surface abstractions down to privilege ring 0 and mathematical fundamentals.
+              </p>
+            </div>
+
+            {/* Verbal Communication & Professional Etiquette */}
+            <div className="p-4 rounded-lg bg-black/50 border border-brand-green/30 flex flex-col justify-between">
+              <div className="flex items-center gap-2 text-brand-green font-bold mb-2">
+                <MessageSquare className="w-4 h-4" />
+                <span>COMMUNICATION & ETIQUETTE</span>
+              </div>
+              <p className="text-[11px] text-white/70 leading-relaxed font-sans">
+                Verbal precision, high-stakes boardroom articulation, technical defense, and executive professional etiquette.
+              </p>
             </div>
           </div>
         </div>

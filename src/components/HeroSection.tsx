@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { ArrowDown, Terminal, Brain, ShieldAlert, Cloud, Rocket } from 'lucide-react';
+import { ArrowDown, Terminal, Brain, ShieldAlert, Cloud, Rocket, Network } from 'lucide-react';
 import { sound } from '../utils/audio';
 
 interface HeroSectionProps {
@@ -10,6 +10,13 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onOpenTerminal }) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const [activeHoverWorld, setActiveHoverWorld] = useState<string | null>(null);
+  const [entryStage, setEntryStage] = useState<number>(() => {
+    if (typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      return 6;
+    }
+    return 0;
+  });
+  const hasStartedRef = useRef(false);
 
   // Parallax tracker
   useEffect(() => {
@@ -22,7 +29,58 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onOpenTerminal }) => {
     return () => window.removeEventListener('mousemove', handleMove);
   }, []);
 
-  // Background Particle Canvas
+  // Cinematic 3-5s entry sequence with prefers-reduced-motion support
+  useEffect(() => {
+    if (entryStage === 6 || hasStartedRef.current) return;
+    hasStartedRef.current = true;
+
+    // Sequence stages:
+    // 1: 0 appears (250ms)
+    // 2: 1 appears (750ms)
+    // 3: Connecting lines & vector establish (1300ms)
+    // 4: Hacker cyber visual reveals (1900ms)
+    // 5: Glitch title & sliding ROOTIFYING (2500ms)
+    // 6: Tagline & CTA button reveal (3100ms)
+    const t1 = setTimeout(() => {
+      setEntryStage(1);
+      sound.playBeep(420, 0.03, 0.04);
+    }, 250);
+
+    const t2 = setTimeout(() => {
+      setEntryStage(2);
+      sound.playBeep(840, 0.03, 0.04);
+    }, 750);
+
+    const t3 = setTimeout(() => {
+      setEntryStage(3);
+      sound.playClassifiedBeep();
+    }, 1300);
+
+    const t4 = setTimeout(() => {
+      setEntryStage(4);
+      sound.playSystemActivation();
+    }, 1900);
+
+    const t5 = setTimeout(() => {
+      setEntryStage(5);
+      sound.playBeep(1100, 0.04, 0.05);
+    }, 2500);
+
+    const t6 = setTimeout(() => {
+      setEntryStage(6);
+    }, 3100);
+
+    return () => {
+      clearTimeout(t1);
+      clearTimeout(t2);
+      clearTimeout(t3);
+      clearTimeout(t4);
+      clearTimeout(t5);
+      clearTimeout(t6);
+    };
+  }, [entryStage]);
+
+  // Background 0 -> 1 Particle Canvas with Interconnecting Synapses
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -44,56 +102,92 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onOpenTerminal }) => {
       y: number;
       vx: number;
       vy: number;
-      char: string;
+      char: '0' | '1';
       size: number;
       alpha: number;
       color: string;
+      flipCooldown: number;
     }
 
     const particles: Particle[] = [];
-    const chars = ['0', '1', '0x0', 'ROOT', '1', '0'];
+    const count = Math.min(85, Math.floor((width * height) / 14000));
 
-    for (let i = 0; i < 90; i++) {
-      const isRed = Math.random() > 0.5;
+    for (let i = 0; i < count; i++) {
+      const isOne = Math.random() > 0.5;
       particles.push({
         x: Math.random() * width,
         y: Math.random() * height,
-        vx: (Math.random() - 0.5) * 0.5,
-        vy: (Math.random() - 0.5) * 0.5,
-        char: chars[Math.floor(Math.random() * chars.length)],
+        vx: (Math.random() - 0.5) * 0.45,
+        vy: (Math.random() - 0.5) * 0.45,
+        char: isOne ? '1' : '0',
         size: Math.random() * 2 + 1,
-        alpha: Math.random() * 0.5 + 0.1,
-        color: isRed ? '#ff1f43' : '#00f0ff',
+        alpha: Math.random() * 0.45 + 0.15,
+        color: isOne ? '#00f0ff' : '#ff1f43',
+        flipCooldown: Math.floor(Math.random() * 180),
       });
     }
 
     let animationId: number;
 
     const render = () => {
-      ctx.fillStyle = 'rgba(4, 5, 7, 0.25)';
+      ctx.fillStyle = 'rgba(4, 5, 7, 0.28)';
       ctx.fillRect(0, 0, width, height);
 
-      particles.forEach((p, idx) => {
-        p.x += p.vx + mousePos.x * 0.2;
-        p.y += p.vy + mousePos.y * 0.2;
+      const len = particles.length;
+
+      // Update positions and 0 -> 1 transformation
+      for (let i = 0; i < len; i++) {
+        const p = particles[i];
+        p.x += p.vx + mousePos.x * 0.15;
+        p.y += p.vy + mousePos.y * 0.15;
 
         if (p.x < 0) p.x = width;
         if (p.x > width) p.x = 0;
         if (p.y < 0) p.y = height;
         if (p.y > height) p.y = 0;
 
+        // Dynamic 0 <-> 1 bit transformation
+        p.flipCooldown++;
+        if (p.flipCooldown > 160 + (i % 50)) {
+          p.char = p.char === '0' ? '1' : '0';
+          p.color = p.char === '1' ? '#00f0ff' : '#ff1f43';
+          p.flipCooldown = 0;
+        }
+
+        // Draw connections between proximate particles
+        for (let j = i + 1; j < len; j++) {
+          const p2 = particles[j];
+          const dx = p.x - p2.x;
+          const dy = p.y - p2.y;
+          const distSq = dx * dx + dy * dy;
+          if (distSq < 4900) {
+            // ~70px distance
+            const alpha = (1 - Math.sqrt(distSq) / 70) * 0.14;
+            ctx.strokeStyle =
+              p.char === '1' || p2.char === '1'
+                ? `rgba(0, 240, 255, ${alpha})`
+                : `rgba(255, 31, 67, ${alpha})`;
+            ctx.lineWidth = 0.6;
+            ctx.beginPath();
+            ctx.moveTo(p.x, p.y);
+            ctx.lineTo(p2.x, p2.y);
+            ctx.stroke();
+          }
+        }
+
+        // Render particle glyph / node
         ctx.fillStyle = p.color;
         ctx.globalAlpha = p.alpha;
 
-        if (idx % 2 === 0) {
-          ctx.font = '10px monospace';
+        if (i % 2 === 0) {
+          ctx.font = '11px monospace';
           ctx.fillText(p.char, p.x, p.y);
         } else {
           ctx.beginPath();
           ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
           ctx.fill();
         }
-      });
+      }
 
       animationId = requestAnimationFrame(render);
     };
@@ -107,10 +201,11 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onOpenTerminal }) => {
   }, [mousePos]);
 
   const domainHoverDetails = [
-    { id: 'ai', label: 'AI', desc: 'NEURAL NETWORK BRAIN', icon: Brain, color: '#00f0ff' },
-    { id: 'cyber', label: 'CYBER', desc: 'GLOBAL DEFENSE MATRIX', icon: ShieldAlert, color: '#ff1f43' },
-    { id: 'cloud', label: 'CLOUD', desc: 'HYPERSCALE TOWERS', icon: Cloud, color: '#0070f3' },
-    { id: 'ent', label: 'ENTREPRENEURSHIP', desc: 'FUTURISTIC CITY EXPANSION', icon: Rocket, color: '#00e676' },
+    { id: 'ai', label: 'AI', desc: 'NEURAL NETWORKS & AUTONOMY', icon: Brain, color: '#00f0ff' },
+    { id: 'cyber', label: 'CYBER', desc: 'OFFENSIVE HARDENING & DEFENSE', icon: ShieldAlert, color: '#ff1f43' },
+    { id: 'cloud', label: 'CLOUD', desc: 'HYPERSCALE ARCHITECTURE', icon: Cloud, color: '#0070f3' },
+    { id: 'web3', label: 'WEB3', desc: 'DECENTRALIZED PROTOCOLS', icon: Network, color: '#a855f7' },
+    { id: 'ent', label: 'VENTURE', desc: 'FOUNDER CRAFT & SCALE', icon: Rocket, color: '#00e676' },
   ];
 
   return (
@@ -139,20 +234,22 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onOpenTerminal }) => {
       {/* Main Cinematic Grid: Left = The Skull Guardian of the Root, Right = Master Typography */}
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 my-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
         {/* ==============================================================
-            LEFT / CENTER: THE HOODED CYBER SKULL GUARDIAN OF THE 4 WORLDS
+            LEFT / CENTER: THE EDITORIAL CYBER HACKER & GUARDIAN OF THE ROOT
             ============================================================== */}
         <div className="lg:col-span-6 flex flex-col items-center justify-center">
           <div
-            className="relative w-full max-w-lg aspect-[4/3] rounded-2xl overflow-hidden border border-white/20 bg-cyber-surface/60 shadow-[0_0_60px_rgba(255,31,67,0.25)] group transition-transform duration-300 ease-out"
+            className={`relative w-full max-w-lg aspect-[4/3] rounded-2xl overflow-hidden border border-white/20 bg-cyber-surface/60 shadow-[0_0_60px_rgba(255,31,67,0.25)] group transition-all duration-700 ease-out ${
+              entryStage >= 4 ? 'opacity-100 scale-100 filter-none' : 'opacity-0 scale-95 blur-sm'
+            }`}
             style={{
-              transform: `perspective(1000px) rotateY(${mousePos.x * 6}deg) rotateX(${-mousePos.y * 6}deg)`,
+              transform: `perspective(1000px) rotateY(${mousePos.x * 5}deg) rotateX(${-mousePos.y * 5}deg)`,
             }}
             data-cursor="explore"
           >
-            {/* The Master Visual of the Skull Guardian Controlling the 4 Worlds */}
+            {/* The Master Visual of the Editorial Cyber Hacker Controlling the Multidisciplinary Worlds */}
             <img
-              src="/assets/skull/skull_hero_guardian.jpg"
-              alt="Guardian of the Root controlling AI, Cyber, Cloud, Entrepreneurship"
+              src="/assets/hero/hero_cyber_hacker.jpg"
+              alt="FILTERING ZEROES: ROOTIFYING - Cyber Architecture & Guardian of the Root"
               className="w-full h-full object-cover filter contrast-110 brightness-95 group-hover:scale-105 transition-transform duration-700"
             />
 
@@ -160,33 +257,25 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onOpenTerminal }) => {
             <div className="absolute inset-0 scanline-bg opacity-30 pointer-events-none" />
             <div className="absolute inset-0 bg-gradient-to-t from-[#040507] via-transparent to-transparent opacity-80 pointer-events-none" />
 
-            {/* Glowing Red Eyes Subtle Tracking */}
-            <div
-              className="absolute top-[32%] left-[48%] w-3 h-3 rounded-full bg-cyber-red shadow-[0_0_20px_#ff0033] animate-pulse pointer-events-none"
-              style={{
-                transform: `translate(${mousePos.x * 3}px, ${mousePos.y * 3}px)`,
-              }}
-            />
-            <div
-              className="absolute top-[32%] right-[48%] w-3 h-3 rounded-full bg-cyber-red shadow-[0_0_20px_#ff0033] animate-pulse pointer-events-none"
-              style={{
-                transform: `translate(${mousePos.x * 3}px, ${mousePos.y * 3}px)`,
-              }}
-            />
+            {/* Holographic scanner beam during entrance */}
+            {entryStage >= 4 && entryStage < 6 && (
+              <div className="absolute inset-x-0 h-1 bg-gradient-to-r from-transparent via-cyber-cyan to-transparent shadow-[0_0_20px_#00f0ff] animate-[scanline-vertical_1.5s_linear_infinite] pointer-events-none" />
+            )}
 
             {/* Bottom Overlay Label */}
             <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between pointer-events-none font-mono text-[10px] text-white/70">
-              <span className="bg-black/80 px-2 py-0.5 rounded border border-white/10 tracking-widest text-cyber-cyan">
+              <span className="bg-black/85 px-2.5 py-1 rounded border border-cyber-cyan/40 tracking-widest text-cyber-cyan flex items-center gap-1.5 shadow-[0_0_15px_rgba(0,240,255,0.3)]">
+                <span className="w-1.5 h-1.5 rounded-full bg-cyber-cyan animate-ping" />
                 // GUARDIAN OF THE ROOT
               </span>
-              <span className="text-white/40 tracking-wider">
+              <span className="bg-black/70 px-2 py-0.5 rounded text-white/60 tracking-wider">
                 0 &rarr; ROOT &rarr; 1
               </span>
             </div>
           </div>
 
-          {/* Interactive 4 Worlds Quick Badges underneath */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 w-full max-w-lg mt-4 font-mono text-[11px]">
+          {/* Interactive Worlds Quick Badges underneath */}
+          <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 w-full max-w-lg mt-4 font-mono text-[10px]">
             {domainHoverDetails.map((dom) => {
               const Icon = dom.icon;
               return (
@@ -197,7 +286,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onOpenTerminal }) => {
                     sound.playHoverClick();
                   }}
                   onMouseLeave={() => setActiveHoverWorld(null)}
-                  className={`p-2 rounded border bg-cyber-surface/60 backdrop-blur-md flex items-center gap-2 transition-all cursor-pointer ${
+                  className={`p-2 rounded border bg-cyber-surface/60 backdrop-blur-md flex flex-col sm:flex-row items-center justify-center gap-1.5 transition-all cursor-pointer ${
                     activeHoverWorld === dom.id
                       ? 'border-white text-white shadow-lg -translate-y-1'
                       : 'border-white/10 text-white/60 hover:border-white/30'
@@ -219,7 +308,9 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onOpenTerminal }) => {
             ============================================================== */}
         <div className="lg:col-span-6 flex flex-col items-start text-left">
           <div
-            className="inline-flex items-center gap-3 px-3.5 py-1 rounded-full border border-white/15 bg-cyber-surface/80 backdrop-blur-md mb-6 hover:border-white/30 transition-all cursor-default"
+            className={`inline-flex items-center gap-3 px-3.5 py-1 rounded-full border border-white/15 bg-cyber-surface/80 backdrop-blur-md mb-6 hover:border-white/30 transition-all duration-500 cursor-default ${
+              entryStage >= 1 ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-2'
+            }`}
             data-cursor="explore"
           >
             <span className="flex h-2 w-2 relative">
@@ -233,7 +324,11 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onOpenTerminal }) => {
             <span className="font-mono text-xs font-bold text-cyber-cyan">0 / 1</span>
           </div>
 
-          <h1 className="font-display font-black text-4xl sm:text-6xl xl:text-7xl tracking-tighter text-white leading-none uppercase">
+          <h1
+            className={`font-display font-black text-4xl sm:text-6xl xl:text-7xl tracking-tighter text-white leading-none uppercase transition-all duration-700 ${
+              entryStage >= 5 ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-4'
+            }`}
+          >
             <span className="block text-transparent bg-clip-text bg-gradient-to-r from-cyber-red via-white to-cyber-cyan">
               FILTERING ZEROES:
             </span>
@@ -242,31 +337,75 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onOpenTerminal }) => {
             </span>
           </h1>
 
-          {/* Core Identity 0 / 1 */}
-          <div className="flex items-center gap-6 my-6 font-mono">
-            <span className="text-3xl sm:text-5xl font-black text-cyber-red text-glow-red">0</span>
-            <span className="text-xl sm:text-3xl text-white/30 font-light">/</span>
-            <span className="text-3xl sm:text-5xl font-black text-cyber-cyan text-glow-cyan">1</span>
+          {/* Core Identity 0 / 1 with Connecting Lines Animation */}
+          <div className="relative flex items-center gap-4 sm:gap-6 my-6 font-mono">
+            {/* 0 */}
+            <span
+              className={`text-3xl sm:text-5xl font-black text-cyber-red text-glow-red transition-all duration-500 ${
+                entryStage >= 1 ? 'opacity-100 scale-100' : 'opacity-0 scale-75'
+              }`}
+            >
+              0
+            </span>
+
+            {/* Connecting Line Vector */}
+            <div className="relative flex items-center justify-center w-16 sm:w-24">
+              <div
+                className={`h-[2px] bg-gradient-to-r from-cyber-red via-white to-cyber-cyan transition-all duration-700 ${
+                  entryStage >= 3 ? 'w-full opacity-100' : 'w-0 opacity-0'
+                }`}
+              />
+              <span
+                className={`absolute text-[11px] font-mono text-white/60 tracking-widest transition-opacity duration-500 bg-[#040507] px-1 ${
+                  entryStage >= 3 ? 'opacity-100' : 'opacity-0'
+                }`}
+              >
+                ROOT
+              </span>
+            </div>
+
+            {/* 1 */}
+            <span
+              className={`text-3xl sm:text-5xl font-black text-cyber-cyan text-glow-cyan transition-all duration-500 ${
+                entryStage >= 2 ? 'opacity-100 scale-100' : 'opacity-0 scale-75'
+              }`}
+            >
+              1
+            </span>
           </div>
 
           {/* Hero Quote */}
-          <p className="font-serif italic text-xl sm:text-2xl text-white/90 tracking-wide max-w-xl leading-relaxed">
+          <p
+            className={`font-serif italic text-xl sm:text-2xl text-white/90 tracking-wide max-w-xl leading-relaxed transition-all duration-700 ${
+              entryStage >= 6 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'
+            }`}
+          >
             “Born in the 0. Resurrected in the 1.”
           </p>
 
-          {/* Four Domains Subtitle */}
-          <div className="mt-4 font-mono text-xs sm:text-sm tracking-[0.2em] text-white/70 uppercase">
+          {/* Multi-Phase Technology Domains Subtitle */}
+          <div
+            className={`mt-4 font-mono text-xs sm:text-sm tracking-[0.16em] text-white/70 uppercase transition-all duration-700 flex flex-wrap items-center ${
+              entryStage >= 6 ? 'opacity-100' : 'opacity-0'
+            }`}
+          >
             <span className="text-cyber-cyan font-bold">AI</span>
             <span className="text-white/30 mx-2">×</span>
             <span className="text-cyber-red font-bold">CYBER</span>
             <span className="text-white/30 mx-2">×</span>
             <span className="text-cyber-cyan font-bold">CLOUD</span>
             <span className="text-white/30 mx-2">×</span>
+            <span className="text-purple-400 font-bold">WEB3</span>
+            <span className="text-white/30 mx-2">×</span>
             <span className="text-brand-green font-bold">ENTREPRENEURSHIP</span>
           </div>
 
-          {/* CTAs */}
-          <div className="mt-8 flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">
+          {/* CTAs reveal last */}
+          <div
+            className={`mt-8 flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto transition-all duration-700 ${
+              entryStage >= 6 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4 pointer-events-none'
+            }`}
+          >
             <a
               href="#access"
               onClick={(e) => {

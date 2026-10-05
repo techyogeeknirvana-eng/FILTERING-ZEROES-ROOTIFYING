@@ -34,8 +34,13 @@ export const Footer: React.FC = () => {
         </p>
 
         {/* Domain Line */}
-        <div className="font-mono text-xs tracking-[0.25em] text-white/50 uppercase mb-12">
-          AI × CYBER × CLOUD × ENTREPRENEURSHIP
+        <div className="font-mono text-xs tracking-[0.25em] text-white/60 uppercase mb-2">
+          AI | CYBERSECURITY | CLOUD | WEB3 | ENTREPRENEURSHIP
+        </div>
+
+        {/* Experience Formats Line */}
+        <div className="font-mono text-[11px] tracking-[0.2em] text-white/40 uppercase mb-12">
+          HACKATHON | CTF | WORKSHOPS | EXPERT SESSIONS | NETWORKING
         </div>
 
         {/* ORGANISED & MANAGED BY - EXACT UPLOADED LOGOS */}

@@ -1,4 +1,4 @@
-﻿import React from 'react';
+import React from 'react';
 import { sound } from '../utils/audio';
 import { Flame } from 'lucide-react';
 
@@ -43,15 +43,45 @@ export const RootifyFinaleSection: React.FC = () => {
           <p className="mt-4 font-display font-extrabold text-lg sm:text-2xl text-white tracking-[0.25em] uppercase text-glow-red">
             THE GAME WHERE WORLDS COLLIDE
           </p>
-          <div className="w-20 h-[3px] bg-gradient-to-r from-cyber-red via-white to-cyber-cyan my-6" />
+
+          {/* 0 / 1 Inward Convergence Pulse */}
+          <div className="flex items-center justify-center gap-3 sm:gap-6 my-6 font-mono select-none">
+            {/* 0 Vector (from left, red) */}
+            <div className="flex items-center gap-2 text-cyber-red">
+              <span className="text-3xl sm:text-5xl font-black text-glow-red animate-pulse">0</span>
+              <div className="hidden sm:flex items-center">
+                <span className="w-12 h-[2px] bg-gradient-to-r from-cyber-red to-transparent" />
+                <span className="text-[10px] font-bold text-cyber-red">▶▶</span>
+              </div>
+            </div>
+
+            {/* Convergence Node Indicator */}
+            <div className="px-3.5 py-1 rounded-full border border-white/20 bg-cyber-surface/90 text-[10px] sm:text-xs font-mono tracking-widest text-white/80 flex items-center gap-2 shadow-[0_0_20px_rgba(255,255,255,0.15)]">
+              <span className="w-1.5 h-1.5 rounded-full bg-cyber-red animate-ping" />
+              <span>0 / 1 COLLISION MATRIX</span>
+              <span className="w-1.5 h-1.5 rounded-full bg-cyber-cyan animate-ping" />
+            </div>
+
+            {/* 1 Vector (from right, cyan) */}
+            <div className="flex items-center gap-2 text-cyber-cyan">
+              <div className="hidden sm:flex items-center">
+                <span className="text-[10px] font-bold text-cyber-cyan">◀◀</span>
+                <span className="w-12 h-[2px] bg-gradient-to-l from-cyber-cyan to-transparent" />
+              </div>
+              <span className="text-3xl sm:text-5xl font-black text-glow-cyan animate-pulse">1</span>
+            </div>
+          </div>
+
+          <div className="w-20 h-[3px] bg-gradient-to-r from-cyber-red via-white to-cyber-cyan my-4" />
         </div>
 
         <div className="p-8 sm:p-12 rounded-2xl border border-cyber-red/40 bg-cyber-surface/70 backdrop-blur-xl relative overflow-hidden mb-16 shadow-[0_0_40px_rgba(255,31,67,0.15)]">
           <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-center text-center">
             <div className="md:col-span-4 p-6 rounded-xl border border-cyber-cyan/40 bg-cyber-cyan/10 flex flex-col items-center">
-              <span className="font-mono text-xs text-cyber-cyan tracking-widest uppercase font-bold mb-2">
-                HACKATHON CRUCIBLE
-              </span>
+              <div className="flex items-center gap-2 font-mono text-[10px] text-cyber-cyan tracking-widest uppercase font-bold mb-2">
+                <span className="px-1.5 py-0.5 rounded bg-cyber-cyan/20 border border-cyber-cyan/30 text-white font-black">0</span>
+                <span>HACKATHON CRUCIBLE</span>
+              </div>
               <span className="font-display font-black text-4xl sm:text-5xl text-white">
                 TOP 5
               </span>
@@ -61,13 +91,14 @@ export const RootifyFinaleSection: React.FC = () => {
             </div>
 
             <div className="md:col-span-1 flex items-center justify-center font-display font-black text-3xl text-white/50">
-              +
+              <span className="animate-pulse text-white">×</span>
             </div>
 
             <div className="md:col-span-4 p-6 rounded-xl border border-cyber-red/40 bg-cyber-red/10 flex flex-col items-center">
-              <span className="font-mono text-xs text-cyber-red tracking-widest uppercase font-bold mb-2">
-                CTF ARENA
-              </span>
+              <div className="flex items-center gap-2 font-mono text-[10px] text-cyber-red tracking-widest uppercase font-bold mb-2">
+                <span className="px-1.5 py-0.5 rounded bg-cyber-red/20 border border-cyber-red/30 text-white font-black">1</span>
+                <span>CTF ARENA</span>
+              </div>
               <span className="font-display font-black text-4xl sm:text-5xl text-white">
                 TOP 5
               </span>
@@ -78,7 +109,7 @@ export const RootifyFinaleSection: React.FC = () => {
 
             <div className="md:col-span-3 p-6 rounded-xl border-2 border-white bg-white/10 flex flex-col items-center shadow-[0_0_30px_rgba(255,255,255,0.2)]">
               <span className="font-mono text-xs text-white/80 tracking-widest uppercase font-bold mb-2">
-                THE FINAL ARENA
+                CONVERGED ARENA
               </span>
               <span className="font-display font-black text-5xl sm:text-6xl text-transparent bg-clip-text bg-gradient-to-r from-cyber-red to-cyber-cyan">
                 10

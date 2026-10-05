@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { sound } from '../utils/audio';
 import { ArrowRight, Filter, GitBranch, Hammer, Globe, Cpu, Radio } from 'lucide-react';
 
@@ -96,14 +96,102 @@ export const PhilosophySection: React.FC = () => {
       <div className="absolute bottom-10 right-0 w-80 h-80 bg-cyber-cyan/5 rounded-full blur-[140px] pointer-events-none" />
 
       <div className="max-w-6xl mx-auto relative z-10">
+        {/* About FILTERING ZEROES: ROOTIFYING - Crawlable SEO & Pillar Foundation */}
+        <div id="about" className="mb-24">
+          <div className="flex flex-col items-center text-center mb-12">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1 mb-4 rounded border border-cyber-cyan/40 bg-cyber-cyan/10 text-cyber-cyan font-mono text-xs tracking-widest uppercase">
+              <span>SYSTEM ARCHITECTURE // ABOUT THE EXPERIENCE</span>
+            </div>
+            <h2 className="font-display font-black text-3xl sm:text-5xl md:text-6xl text-white tracking-tight uppercase">
+              ABOUT <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyber-red via-white to-cyber-cyan">FILTERING ZEROES: ROOTIFYING</span>
+            </h2>
+            <p className="mt-4 text-white/80 font-mono text-xs sm:text-base max-w-3xl leading-relaxed">
+              FILTERING ZEROES: ROOTIFYING is a premier multi-phase student technology experience engineered to bridge theoretical knowledge with high-stakes production execution. Uniting future pioneers across AI, Cybersecurity, Cloud, Web3, and Entrepreneurship, it transforms raw individual capability into resilient, sovereign leadership.
+            </p>
+          </div>
+
+          {/* 5 Core Philosophy Pillars: LEARN, BUILD, COMPETE, CONNECT, GROW */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+            {/* LEARN */}
+            <div className="p-5 rounded-xl border border-white/10 bg-cyber-surface/70 hover:border-cyber-cyan/60 transition-all flex flex-col justify-between group">
+              <div>
+                <div className="font-mono text-xs text-cyber-cyan font-bold tracking-widest mb-1">// PILLAR 01</div>
+                <h3 className="font-display font-black text-xl text-white tracking-wider mb-2 group-hover:text-cyber-cyan transition-colors">LEARN</h3>
+                <p className="font-mono text-xs text-white/70 leading-relaxed">
+                  Master first principles. From ring-0 kernel architectures to autonomous neural agents and distributed consensus.
+                </p>
+              </div>
+              <div className="mt-4 pt-3 border-t border-white/5 font-mono text-[10px] text-cyber-cyan">
+                [ FOUNDATION & DEPTH ]
+              </div>
+            </div>
+
+            {/* BUILD */}
+            <div className="p-5 rounded-xl border border-white/10 bg-cyber-surface/70 hover:border-cyber-red/60 transition-all flex flex-col justify-between group">
+              <div>
+                <div className="font-mono text-xs text-cyber-red font-bold tracking-widest mb-1">// PILLAR 02</div>
+                <h3 className="font-display font-black text-xl text-white tracking-wider mb-2 group-hover:text-cyber-red transition-colors">BUILD</h3>
+                <p className="font-mono text-xs text-white/70 leading-relaxed">
+                  Transform concepts into hardened battle systems. Engineer scalable architectures capable of sustaining real-world load.
+                </p>
+              </div>
+              <div className="mt-4 pt-3 border-t border-white/5 font-mono text-[10px] text-cyber-red">
+                [ PRODUCTION SYNTHESIS ]
+              </div>
+            </div>
+
+            {/* COMPETE */}
+            <div className="p-5 rounded-xl border border-white/10 bg-cyber-surface/70 hover:border-yellow-400/60 transition-all flex flex-col justify-between group">
+              <div>
+                <div className="font-mono text-xs text-yellow-400 font-bold tracking-widest mb-1">// PILLAR 03</div>
+                <h3 className="font-display font-black text-xl text-white tracking-wider mb-2 group-hover:text-yellow-400 transition-colors">COMPETE</h3>
+                <p className="font-mono text-xs text-white/70 leading-relaxed">
+                  Test your mettle in elite Hackathon crucibles and intense CTF war rooms. The arena where theory faces adversarial pressure.
+                </p>
+              </div>
+              <div className="mt-4 pt-3 border-t border-white/5 font-mono text-[10px] text-yellow-400">
+                [ TOURNAMENT CRUCIBLE ]
+              </div>
+            </div>
+
+            {/* CONNECT */}
+            <div className="p-5 rounded-xl border border-white/10 bg-cyber-surface/70 hover:border-purple-400/60 transition-all flex flex-col justify-between group">
+              <div>
+                <div className="font-mono text-xs text-purple-400 font-bold tracking-widest mb-1">// PILLAR 04</div>
+                <h3 className="font-display font-black text-xl text-white tracking-wider mb-2 group-hover:text-purple-400 transition-colors">CONNECT</h3>
+                <p className="font-mono text-xs text-white/70 leading-relaxed">
+                  Build high-conviction alliances across student communities, engineering mentors, founders, and industry leaders.
+                </p>
+              </div>
+              <div className="mt-4 pt-3 border-t border-white/5 font-mono text-[10px] text-purple-400">
+                [ STRATEGIC NETWORK ]
+              </div>
+            </div>
+
+            {/* GROW */}
+            <div className="p-5 rounded-xl border border-white/10 bg-cyber-surface/70 hover:border-brand-green/60 transition-all flex flex-col justify-between group">
+              <div>
+                <div className="font-mono text-xs text-brand-green font-bold tracking-widest mb-1">// PILLAR 05</div>
+                <h3 className="font-display font-black text-xl text-white tracking-wider mb-2 group-hover:text-brand-green transition-colors">GROW</h3>
+                <p className="font-mono text-xs text-white/70 leading-relaxed">
+                  Elevate professional etiquette, verbal communication, and venture execution. Resurrected from raw 0 into sovereign 1.
+                </p>
+              </div>
+              <div className="mt-4 pt-3 border-t border-white/5 font-mono text-[10px] text-brand-green">
+                [ ASCENSION & RESURRECTION ]
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* Section Header */}
         <div className="flex flex-col items-center text-center mb-16">
           <div className="inline-flex items-center gap-2 px-3 py-1 mb-4 rounded border border-cyber-red/40 bg-cyber-red/10 text-cyber-red font-mono text-xs tracking-widest uppercase">
             <span>PHILOSOPHY // FIRST PRINCIPLES</span>
           </div>
-          <h2 className="font-display font-black text-4xl sm:text-6xl text-white tracking-tight uppercase">
+          <h3 className="font-display font-black text-4xl sm:text-6xl text-white tracking-tight uppercase">
             WHY <span className="text-cyber-red text-glow-red">ZERO?</span>
-          </h2>
+          </h3>
           <div className="w-16 h-[2px] bg-gradient-to-r from-cyber-red to-cyber-cyan my-6" />
         </div>
 

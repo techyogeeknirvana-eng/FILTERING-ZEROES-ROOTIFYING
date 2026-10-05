@@ -134,10 +134,13 @@ export const CommunityPartnerSection: React.FC = () => {
     {
       id: 2,
       label: 'NODE 02',
-      code: 'NETWORK ENCRYPTED',
-      isVerified: false,
+      code: 'VERIFIED CONNECTION',
+      isVerified: true,
+      name: 'FORTIXAI SECURITY',
+      subLabel: 'OFFENSIVE CYBERSECURITY & THREAT INTEL',
+      image: '/assets/collaborators/fortixai-security.png',
       coords: 'LAT: 0x2B // LON: 0x0A',
-      status: hoveredNode === 2 ? '[ IDENTITY CLASSIFIED ]' : unknownStatuses[0],
+      status: hoveredNode === 2 ? '[ CONNECTION ACTIVE ]' : 'CONNECTION VERIFIED',
     },
     {
       id: 3,
@@ -145,7 +148,7 @@ export const CommunityPartnerSection: React.FC = () => {
       code: 'NETWORK ENCRYPTED',
       isVerified: false,
       coords: 'LAT: 0x3C // LON: 0x1B',
-      status: hoveredNode === 3 ? '[ IDENTITY CLASSIFIED ]' : unknownStatuses[1],
+      status: hoveredNode === 3 ? '[ IDENTITY CLASSIFIED ]' : unknownStatuses[0],
     },
     {
       id: 4,
@@ -153,7 +156,7 @@ export const CommunityPartnerSection: React.FC = () => {
       code: 'NETWORK ENCRYPTED',
       isVerified: false,
       coords: 'LAT: 0x4D // LON: 0x2C',
-      status: hoveredNode === 4 ? '[ IDENTITY CLASSIFIED ]' : unknownStatuses[2],
+      status: hoveredNode === 4 ? '[ IDENTITY CLASSIFIED ]' : unknownStatuses[1],
     },
     {
       id: 5,
@@ -161,7 +164,7 @@ export const CommunityPartnerSection: React.FC = () => {
       code: 'NETWORK ENCRYPTED',
       isVerified: false,
       coords: 'LAT: 0x5E // LON: 0x3D',
-      status: hoveredNode === 5 ? '[ IDENTITY CLASSIFIED ]' : unknownStatuses[3],
+      status: hoveredNode === 5 ? '[ IDENTITY CLASSIFIED ]' : unknownStatuses[2],
     },
   ];
 
@@ -169,7 +172,11 @@ export const CommunityPartnerSection: React.FC = () => {
     setHoveredNode(node.id);
     if (node.isVerified) {
       sound.playButtonConfirm();
-      setActiveMessage('> CONNECTION ACTIVE // NODE://ACE_CLUB');
+      if (node.id === 1) {
+        setActiveMessage('> CONNECTION ACTIVE // NODE://ACE_CLUB');
+      } else if (node.id === 2) {
+        setActiveMessage('> CONNECTION ACTIVE // NODE://FORTIXAI_SECURITY');
+      }
     } else {
       sound.playHoverClick();
       setActiveMessage('> IDENTITY CLASSIFIED // ENCRYPTION: ACTIVE');
@@ -208,8 +215,8 @@ export const CommunityPartnerSection: React.FC = () => {
           <div>NODES://05</div>
         </div>
         <div className="hidden xl:block absolute top-12 right-8 font-mono text-[9px] text-right text-white/20 tracking-widest leading-relaxed">
-          <div>VERIFIED://01</div>
-          <div>PENDING://04</div>
+          <div>VERIFIED://02</div>
+          <div>PENDING://03</div>
           <div>SIGNAL://CONNECTED</div>
         </div>
       </div>
@@ -224,7 +231,7 @@ export const CommunityPartnerSection: React.FC = () => {
                 {scanStep === 1 && '> SCANNING NETWORK...'}
                 {scanStep === 2 && '> 05 NODES DETECTED // INITIALIZING MAP...'}
                 {scanStep === 3 && '> LOCATING AUTHENTICATED HUBS...'}
-                {scanStep === 4 && '> NODE 01 VERIFIED // DATA PULSE TRANSMITTED'}
+                {scanStep === 4 && '> 02 NODES VERIFIED // DATA PULSE TRANSMITTED'}
               </span>
             </div>
           </div>
@@ -267,40 +274,39 @@ export const CommunityPartnerSection: React.FC = () => {
             viewBox="0 0 1000 650"
             fill="none"
           >
-            {/* Top Node (500, 110) to Left Node (250, 310) */}
+            {/* Horizontal Line between Node 01 & Node 02 */}
             <path
-              d="M 500 150 L 250 310"
-              stroke={scanStep >= 4 ? '#00f0ff' : 'rgba(255,255,255,0.1)'}
+              d="M 320 180 L 680 180"
+              stroke={scanStep >= 4 ? '#00f0ff' : 'rgba(255,255,255,0.12)'}
               strokeWidth="1.5"
               strokeDasharray={scanStep >= 4 ? '4 4' : '2 4'}
               className={scanStep === 4 ? 'animate-pulse' : ''}
             />
-            {/* Top Node (500, 110) to Right Node (750, 310) */}
+            {/* Node 01 to Bottom Left Node 03 */}
             <path
-              d="M 500 150 L 750 310"
-              stroke={scanStep >= 4 ? '#00f0ff' : 'rgba(255,255,255,0.1)'}
-              strokeWidth="1.5"
-              strokeDasharray={scanStep >= 4 ? '4 4' : '2 4'}
-              className={scanStep === 4 ? 'animate-pulse' : ''}
-            />
-            {/* Left Node (250, 310) to Bottom Left (360, 520) */}
-            <path
-              d="M 250 370 L 360 520"
+              d="M 320 300 L 200 480"
               stroke="rgba(255,255,255,0.1)"
               strokeWidth="1.5"
               strokeDasharray="2 4"
             />
-            {/* Right Node (750, 310) to Bottom Right (640, 520) */}
+            {/* Center link to Node 04 */}
             <path
-              d="M 750 370 L 640 520"
+              d="M 500 240 L 500 480"
               stroke="rgba(255,255,255,0.1)"
               strokeWidth="1.5"
               strokeDasharray="2 4"
             />
-            {/* Bottom Left (360, 520) to Bottom Right (640, 520) */}
+            {/* Node 02 to Bottom Right Node 05 */}
             <path
-              d="M 360 520 L 640 520"
-              stroke="rgba(255,255,255,0.08)"
+              d="M 680 300 L 800 480"
+              stroke="rgba(255,255,255,0.1)"
+              strokeWidth="1.5"
+              strokeDasharray="2 4"
+            />
+            {/* Lower row interconnection */}
+            <path
+              d="M 200 480 L 800 480"
+              stroke="rgba(255,255,255,0.06)"
               strokeWidth="1.5"
               strokeDasharray="3 3"
             />
@@ -308,78 +314,87 @@ export const CommunityPartnerSection: React.FC = () => {
 
           {/* 5-Node Constellation Grid */}
           <div className="relative z-10 flex flex-col items-center gap-8 sm:gap-10">
-            {/* ROW 1: NODE 01 (CONFIRMED COLLABORATOR) */}
-            <div className="w-full max-w-sm">
-              <div
-                onMouseEnter={() => handleNodeEnter(nodes[0])}
-                onMouseLeave={handleNodeLeave}
-                className={`relative rounded-2xl p-6 sm:p-7 bg-[#06080e]/95 border transition-all duration-300 select-none flex flex-col justify-between ${
-                  hoveredNode === 1
-                    ? 'border-cyber-cyan shadow-[0_0_40px_rgba(0,240,255,0.35)] -translate-y-1.5'
-                    : 'border-cyber-cyan/50 shadow-[0_0_25px_rgba(0,240,255,0.18)]'
-                }`}
-                data-cursor="access"
-              >
-                {/* Corner Brackets */}
-                <div className="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-cyber-cyan rounded-tl-xl pointer-events-none" />
-                <div className="absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 border-cyber-red rounded-tr-xl pointer-events-none" />
-                <div className="absolute bottom-0 left-0 w-4 h-4 border-b-2 border-l-2 border-cyber-cyan rounded-bl-xl pointer-events-none" />
-                <div className="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-cyber-red rounded-br-xl pointer-events-none" />
+            {/* ROW 1: 02 VERIFIED STRATEGIC COLLABORATORS (ACE CLUB & FORTIXAI SECURITY) */}
+            <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+              {nodes.slice(0, 2).map((node) => {
+                const isHovered = hoveredNode === node.id;
+                const isNode1 = node.id === 1;
+                return (
+                  <div
+                    key={node.id}
+                    onMouseEnter={() => handleNodeEnter(node)}
+                    onMouseLeave={handleNodeLeave}
+                    className={`relative rounded-2xl p-6 sm:p-7 bg-[#06080e]/95 border transition-all duration-300 select-none flex flex-col justify-between ${
+                      isHovered
+                        ? isNode1
+                          ? 'border-cyber-cyan shadow-[0_0_40px_rgba(0,240,255,0.35)] -translate-y-1.5'
+                          : 'border-cyber-blue shadow-[0_0_40px_rgba(0,112,243,0.35)] -translate-y-1.5'
+                        : 'border-cyber-cyan/50 shadow-[0_0_25px_rgba(0,240,255,0.18)]'
+                    }`}
+                    data-cursor="access"
+                  >
+                    {/* Corner Brackets */}
+                    <div className="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-cyber-cyan rounded-tl-xl pointer-events-none" />
+                    <div className="absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 border-cyber-red rounded-tr-xl pointer-events-none" />
+                    <div className="absolute bottom-0 left-0 w-4 h-4 border-b-2 border-l-2 border-cyber-cyan rounded-bl-xl pointer-events-none" />
+                    <div className="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-cyber-red rounded-br-xl pointer-events-none" />
 
-                {/* Scanline overlay */}
-                <div className="absolute inset-0 scanline-bg opacity-20 rounded-2xl pointer-events-none" />
+                    {/* Scanline overlay */}
+                    <div className="absolute inset-0 scanline-bg opacity-20 rounded-2xl pointer-events-none" />
 
-                {/* Card Header Telemetry */}
-                <div className="flex items-center justify-between pb-3 mb-4 border-b border-cyber-cyan/25 text-[10px] font-mono">
-                  <div className="flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-brand-green animate-ping" />
-                    <span className="text-cyber-cyan font-bold tracking-widest">
-                      01 // VERIFIED CONNECTION
-                    </span>
+                    {/* Card Header Telemetry */}
+                    <div className="flex items-center justify-between pb-3 mb-4 border-b border-cyber-cyan/25 text-[10px] font-mono">
+                      <div className="flex items-center gap-2">
+                        <span className="w-2 h-2 rounded-full bg-brand-green animate-ping" />
+                        <span className="text-cyber-cyan font-bold tracking-widest">
+                          0{node.id} // VERIFIED CONNECTION
+                        </span>
+                      </div>
+                      <span className="text-white/40 tracking-wider font-mono">
+                        {node.coords}
+                      </span>
+                    </div>
+
+                    {/* Collaborator Logo Container - Aspect Ratio Preserved Strictly */}
+                    <div className="my-2 flex flex-col items-center text-center">
+                      <div className="relative w-36 h-36 sm:w-40 sm:h-40 rounded-xl overflow-hidden border-2 border-cyber-cyan/40 bg-[#020408] p-3 flex items-center justify-center shadow-[0_0_20px_rgba(0,240,255,0.2)] group-hover:border-cyber-cyan transition-all">
+                        <img
+                          src={node.image}
+                          alt={`${node.name} - Strategic Collaborator`}
+                          className="w-full h-full object-contain filter contrast-105 brightness-100 transition-transform duration-300 hover:scale-105"
+                        />
+                        {/* Subtle Holographic Scan Sweep on Hover */}
+                        {isHovered && (
+                          <div className="absolute inset-x-0 h-1 bg-gradient-to-r from-transparent via-cyber-cyan to-transparent shadow-[0_0_15px_#00f0ff] animate-[scanline-vertical_1.2s_linear_infinite]" />
+                        )}
+                      </div>
+
+                      <h3 className="mt-4 font-display font-black text-xl sm:text-2xl text-white tracking-wider uppercase">
+                        {node.name}
+                      </h3>
+                      <p className="font-mono text-[10px] sm:text-[11px] text-white/70 tracking-widest uppercase mt-1">
+                        {node.subLabel}
+                      </p>
+                    </div>
+
+                    {/* Card Footer Status */}
+                    <div className="pt-3.5 mt-4 border-t border-cyber-cyan/20 flex items-center justify-between font-mono text-[10px]">
+                      <div className="inline-flex items-center gap-1.5 text-brand-green font-bold tracking-widest">
+                        <ShieldCheck className="w-3.5 h-3.5" />
+                        <span>{node.status}</span>
+                      </div>
+                      <span className="text-cyber-cyan/60 tracking-wider">
+                        NETWORK NODE // ACTIVE
+                      </span>
+                    </div>
                   </div>
-                  <span className="text-white/40 tracking-wider font-mono">
-                    {nodes[0].coords}
-                  </span>
-                </div>
-
-                {/* Collaborator Logo Container - Aspect Ratio Preserved Strictly */}
-                <div className="my-2 flex flex-col items-center text-center">
-                  <div className="relative w-36 h-36 sm:w-40 sm:h-40 rounded-xl overflow-hidden border-2 border-cyber-cyan/40 bg-[#020408] p-2 flex items-center justify-center shadow-[0_0_20px_rgba(0,240,255,0.2)] group-hover:border-cyber-cyan transition-all">
-                    <img
-                      src={nodes[0].image}
-                      alt="ACE Club - Strategic Collaborator"
-                      className="w-full h-full object-contain filter contrast-105 brightness-100 transition-transform duration-300 hover:scale-105"
-                    />
-                    {/* Subtle Holographic Scan Sweep on Hover */}
-                    {hoveredNode === 1 && (
-                      <div className="absolute inset-x-0 h-1 bg-gradient-to-r from-transparent via-cyber-cyan to-transparent shadow-[0_0_15px_#00f0ff] animate-[scanline-vertical_1.2s_linear_infinite]" />
-                    )}
-                  </div>
-
-                  <h3 className="mt-4 font-display font-black text-xl sm:text-2xl text-white tracking-wider uppercase">
-                    {nodes[0].name}
-                  </h3>
-                  <p className="font-mono text-[10px] sm:text-[11px] text-white/70 tracking-widest uppercase mt-1">
-                    {nodes[0].subLabel}
-                  </p>
-                </div>
-
-                {/* Card Footer Status */}
-                <div className="pt-3.5 mt-4 border-t border-cyber-cyan/20 flex items-center justify-between font-mono text-[10px]">
-                  <div className="inline-flex items-center gap-1.5 text-brand-green font-bold tracking-widest">
-                    <ShieldCheck className="w-3.5 h-3.5" />
-                    <span>{nodes[0].status}</span>
-                  </div>
-                  <span className="text-cyber-cyan/60 tracking-wider">
-                    NETWORK NODE // ACTIVE
-                  </span>
-                </div>
-              </div>
+                );
+              })}
             </div>
 
-            {/* ROW 2 & ROW 3: THE 4 MYSTERIOUS UNKNOWN NODES */}
-            <div className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-7">
-              {nodes.slice(1).map((node) => {
+            {/* ROW 2: THE 3 MYSTERIOUS UNKNOWN NODES (03, 04, 05) */}
+            <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-4xl mx-auto">
+              {nodes.slice(2).map((node) => {
                 const isHovered = hoveredNode === node.id;
                 return (
                   <div
@@ -469,9 +484,9 @@ export const CommunityPartnerSection: React.FC = () => {
           </h3>
 
           <div className="flex flex-wrap items-center justify-center gap-4 text-xs sm:text-sm font-mono my-3">
-            <span className="text-cyber-cyan font-bold">01 CONNECTION VERIFIED</span>
+            <span className="text-cyber-cyan font-bold">02 CONNECTIONS VERIFIED</span>
             <span className="text-white/20">|</span>
-            <span className="text-cyber-red font-bold">04 SIGNALS PENDING</span>
+            <span className="text-cyber-red font-bold">03 SIGNALS PENDING</span>
           </div>
 
           <div className="font-mono text-xs sm:text-sm text-white/70 tracking-widest uppercase mt-4 flex items-center justify-center gap-1.5">
