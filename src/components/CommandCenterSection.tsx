@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { sound } from '../utils/audio';
-import { Lock, Terminal, Radio, Compass } from 'lucide-react';
+import { Lock, Terminal, Radio, Compass, Network, ArrowUpRight } from 'lucide-react';
 
 interface ModuleCard {
   id: string;
   name: string;
   code: string;
-  initialStatus: 'CLASSIFIED' | 'REVEALING SOON' | 'ACCESS PENDING';
+  initialStatus: 'CLASSIFIED' | 'REVEALING SOON' | 'ACCESS PENDING' | 'NETWORK CONNECTED';
   iconType: string;
   color: string;
   meta: string;
@@ -22,6 +22,15 @@ export const CommandCenterSection: React.FC = () => {
       iconType: 'gate',
       color: '#00f0ff',
       meta: 'Candidate verification portal and security clearance protocols.',
+    },
+    {
+      id: 'communities',
+      name: 'COMMUNITIES',
+      code: 'FEDERATED_NODES',
+      initialStatus: 'NETWORK CONNECTED',
+      iconType: 'nodes',
+      color: '#00f0ff',
+      meta: 'Active student leadership guilds and cyber threat intelligence networks.',
     },
     {
       id: 'mentors',
@@ -87,15 +96,6 @@ export const CommandCenterSection: React.FC = () => {
       meta: 'Industry leaders underwriting the sovereign technology arena.',
     },
     {
-      id: 'communities',
-      name: 'COMMUNITIES',
-      code: 'FEDERATED_NODES',
-      initialStatus: 'ACCESS PENDING',
-      iconType: 'nodes',
-      color: '#00e676',
-      meta: 'Grassroot hacker guilds, AI builder rings, and student collectives.',
-    },
-    {
       id: 'challenges',
       name: 'CHALLENGES',
       code: 'CTF_EXPLOIT_SUITE',
@@ -109,7 +109,7 @@ export const CommandCenterSection: React.FC = () => {
   const [cardStates, setCardStates] = useState<Record<string, 'idle' | 'authenticating' | 'encrypted' | 'denied'>>({});
   const [terminalLogs, setTerminalLogs] = useState<string[]>([
     '> SYSTEM READY. ENCRYPTED COMMAND HUB ACTIVE.',
-    '> SELECT ANY CLASSIFIED NODE TO ATTEMPT CLEARANCE OR LOCATE ON 3D NETWORK.',
+    '> SELECT COMMUNITIES TO OPEN THE NETWORK // OR SELECT ANY MODULE TO PROBE CLEARANCE.',
   ]);
 
   const locateOn3DNetwork = (modId: string, e: React.MouseEvent) => {
@@ -119,6 +119,7 @@ export const CommandCenterSection: React.FC = () => {
   };
 
   const handleCardClick = (mod: ModuleCard) => {
+    // 1. Direct navigation for Registration
     if (mod.id === 'reg') {
       sound.playButtonConfirm();
       const el = document.getElementById('access');
@@ -128,6 +129,25 @@ export const CommandCenterSection: React.FC = () => {
       return;
     }
 
+    // 2. Direct connection for Communities -> The Network section
+    if (mod.id === 'communities') {
+      sound.playButtonConfirm();
+      sound.playNavWhoosh();
+      const timestamp = new Date().toLocaleTimeString();
+      setTerminalLogs((prev) => [
+        `> [${timestamp}] LINK ESTABLISHED: node://communities`,
+        `> ROUTING DIRECTLY TO // THE NETWORK (STRATEGIC COLLABORATORS)`,
+        `> ACTIVE VERIFIED NODES: ACE CLUB • FORTIXAI SECURITY`,
+        ...prev.slice(0, 5),
+      ]);
+      const target = document.getElementById('network') || document.getElementById('partner');
+      if (target) {
+        target.scrollIntoView({ behavior: 'smooth' });
+      }
+      return;
+    }
+
+    // 3. Probe other restricted modules
     const currentState = cardStates[mod.id] || 'idle';
     if (currentState === 'authenticating') return;
 
@@ -176,10 +196,10 @@ export const CommandCenterSection: React.FC = () => {
             <span>ENCRYPTED COMMAND HUB</span>
           </div>
           <h2 className="font-display font-black text-4xl sm:text-6xl text-white tracking-tight uppercase">
-            COMING <span className="text-cyber-red text-glow-red">SOON</span>
+            COMMAND <span className="text-cyber-cyan text-glow-cyan">MATRIX</span>
           </h2>
           <p className="mt-4 text-white/60 font-mono text-xs sm:text-sm tracking-widest max-w-xl">
-            RESTRICTED AIR-GAPPED MODULES // SELECT ANY NODE TO ATTEMPT DECRYPTION
+            ACCESS REVEALED HUBS // SELECT COMMUNITIES TO OPEN THE NETWORK OR PROBE AIR-GAPPED MODULES
           </p>
           <div className="w-16 h-[2px] bg-gradient-to-r from-cyber-red to-cyber-cyan my-6" />
         </div>
@@ -187,11 +207,16 @@ export const CommandCenterSection: React.FC = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-10">
           {initialModules.map((mod) => {
             const state = cardStates[mod.id] || 'idle';
+            const isCommunities = mod.id === 'communities';
+            const isReg = mod.id === 'reg';
 
             let statusDisplay = `[ ${mod.initialStatus} ]`;
             let badgeClass = 'text-white/60 border-white/20 bg-white/5';
 
-            if (state === 'authenticating') {
+            if (isCommunities) {
+              statusDisplay = '[ NETWORK CONNECTED ]';
+              badgeClass = 'text-cyber-cyan border-cyber-cyan/60 bg-cyber-cyan/15 animate-pulse';
+            } else if (state === 'authenticating') {
               statusDisplay = '[ AUTHENTICATING... ]';
               badgeClass = 'text-cyber-cyan border-cyber-cyan bg-cyber-cyan/20 animate-pulse';
             } else if (state === 'encrypted') {
@@ -206,8 +231,10 @@ export const CommandCenterSection: React.FC = () => {
               <div
                 key={mod.id}
                 onClick={() => handleCardClick(mod)}
-                className={`relative p-5 rounded-lg border transition-all duration-300 cursor-pointer flex flex-col justify-between min-h-[230px] select-none ${
-                  state === 'denied'
+                className={`relative p-5 rounded-lg border transition-all duration-300 cursor-pointer flex flex-col justify-between min-h-[240px] select-none ${
+                  isCommunities
+                    ? 'border-cyber-cyan/60 bg-cyber-cyan/10 hover:border-cyber-cyan hover:bg-cyber-cyan/20 shadow-[0_0_25px_rgba(0,240,255,0.25)] hover:scale-[1.02]'
+                    : state === 'denied'
                     ? 'border-cyber-red bg-cyber-red/10 shadow-[0_0_20px_rgba(255,31,67,0.3)]'
                     : state === 'authenticating'
                     ? 'border-cyber-cyan bg-cyber-cyan/10 shadow-[0_0_20px_rgba(0,240,255,0.3)]'
@@ -219,47 +246,78 @@ export const CommandCenterSection: React.FC = () => {
                   <span className="font-mono text-[10px] text-white/40 tracking-wider">
                     {mod.code}
                   </span>
-                  <Lock
-                    className={`w-4 h-4 transition-colors ${
-                      state === 'denied'
-                        ? 'text-cyber-red'
-                        : state === 'authenticating'
-                        ? 'text-cyber-cyan'
-                        : 'text-white/30'
-                    }`}
-                  />
+                  {isCommunities ? (
+                    <Network className="w-4 h-4 text-cyber-cyan animate-pulse" />
+                  ) : isReg ? (
+                    <ArrowUpRight className="w-4 h-4 text-cyber-cyan" />
+                  ) : (
+                    <Lock
+                      className={`w-4 h-4 transition-colors ${
+                        state === 'denied'
+                          ? 'text-cyber-red'
+                          : state === 'authenticating'
+                          ? 'text-cyber-cyan'
+                          : 'text-white/30'
+                      }`}
+                    />
+                  )}
                 </div>
 
                 <div className="my-3">
-                  <h3 className="font-display font-black text-lg text-white tracking-wider uppercase mb-1">
+                  <h3 className={`font-display font-black text-lg tracking-wider uppercase mb-1 ${
+                    isCommunities ? 'text-cyber-cyan' : 'text-white'
+                  }`}>
                     {mod.name}
                   </h3>
-                  <p className="font-mono text-[10px] text-white/50 line-clamp-2 leading-relaxed">
+                  <p className="font-mono text-[10px] text-white/60 line-clamp-2 leading-relaxed">
                     {mod.meta}
                   </p>
                 </div>
 
-                <div className="space-y-2 pt-3 border-t border-white/5">
+                <div className="space-y-2 pt-3 border-t border-white/10">
                   <div className="flex items-center justify-between">
                     <span
                       className={`font-mono text-[10px] px-2 py-0.5 rounded tracking-widest font-bold border transition-colors ${badgeClass}`}
                     >
                       {statusDisplay}
                     </span>
-                    <span className="font-mono text-[9px] text-white/30">
-                      {state === 'idle' ? 'PROBE' : 'LOCK'}
+                    <span className="font-mono text-[9px] text-white/40">
+                      {isCommunities ? 'ACTIVE' : state === 'idle' ? 'PROBE' : 'LOCK'}
                     </span>
                   </div>
 
-                  {/* 3D Network Locate Trigger */}
-                  <button
-                    onClick={(e) => locateOn3DNetwork(mod.id, e)}
-                    className="w-full flex items-center justify-center gap-1.5 py-1 rounded bg-white/5 hover:bg-cyber-cyan/20 border border-white/10 hover:border-cyber-cyan/50 text-[10px] font-mono text-white/60 hover:text-cyber-cyan transition-colors"
-                    title="Track and glide camera to this node in the 3D Hacker World"
-                  >
-                    <Compass className="w-3 h-3 text-cyber-cyan" />
-                    <span>LOCATE ON 3D NETWORK</span>
-                  </button>
+                  {/* Primary Action Button */}
+                  {isCommunities ? (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleCardClick(mod);
+                      }}
+                      className="w-full flex items-center justify-center gap-1.5 py-1.5 rounded bg-cyber-cyan text-black font-bold font-mono text-[10px] tracking-wider hover:bg-white transition-all shadow-[0_0_20px_rgba(0,240,255,0.4)] cursor-pointer"
+                    >
+                      <Network className="w-3.5 h-3.5" />
+                      <span>OPEN THE NETWORK &rarr;</span>
+                    </button>
+                  ) : isReg ? (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleCardClick(mod);
+                      }}
+                      className="w-full flex items-center justify-center gap-1.5 py-1 rounded bg-cyber-cyan/20 hover:bg-cyber-cyan hover:text-black border border-cyber-cyan text-cyber-cyan font-bold font-mono text-[10px] tracking-wider transition-all cursor-pointer"
+                    >
+                      <span>REGISTER NOW &rarr;</span>
+                    </button>
+                  ) : (
+                    <button
+                      onClick={(e) => locateOn3DNetwork(mod.id, e)}
+                      className="w-full flex items-center justify-center gap-1.5 py-1 rounded bg-white/5 hover:bg-cyber-cyan/20 border border-white/10 hover:border-cyber-cyan/50 text-[10px] font-mono text-white/60 hover:text-cyber-cyan transition-colors"
+                      title="Track and glide camera to this node in the 3D Hacker World"
+                    >
+                      <Compass className="w-3 h-3 text-cyber-cyan" />
+                      <span>LOCATE ON 3D NETWORK</span>
+                    </button>
+                  )}
                 </div>
               </div>
             );
@@ -285,6 +343,8 @@ export const CommandCenterSection: React.FC = () => {
                 className={`transition-all ${
                   log.includes('REJECTED') || log.includes('FAIL')
                     ? 'text-cyber-red font-semibold'
+                    : log.includes('LINK ESTABLISHED') || log.includes('ROUTING DIRECTLY')
+                    ? 'text-brand-green font-bold'
                     : log.includes('PROBE')
                     ? 'text-cyber-cyan'
                     : log.includes('ENCRYPTED')
@@ -298,7 +358,7 @@ export const CommandCenterSection: React.FC = () => {
           </div>
 
           <div className="mt-4 pt-3 border-t border-white/5 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-[10px] text-white/40">
-            <span>TIP: CLICK ANY LOCKED MODULE ABOVE TO TEST THE DECRYPTION INTERFACE OR LOCATE IN 3D.</span>
+            <span>TIP: SELECT COMMUNITIES TO ACCESS THE NETWORK, OR CLICK ANY LOCKED MODULE TO PROBE CIPHERS.</span>
             <span className="text-white/60">INTEGRITY: HIGH // ZERO FAKE DATA TOLERANCE</span>
           </div>
         </div>
