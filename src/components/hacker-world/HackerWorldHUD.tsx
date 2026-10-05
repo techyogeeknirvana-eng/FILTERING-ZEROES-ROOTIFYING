@@ -592,12 +592,25 @@ export const HackerWorldHUD: React.FC<HackerWorldHUDProps> = ({
                   <button
                     onClick={() => {
                       sound.playButtonConfirm();
-                      onInteractNode(activeModalNode);
+                      sound.playNavWhoosh();
+                      const targetAnchor = activeModalNode.targetAnchor || '#manifesto';
+                      const targetTitle = activeModalNode.title;
                       setActiveModalNode(null);
-                      if (activeModalNode.targetAnchor) {
-                        const el = document.querySelector(activeModalNode.targetAnchor);
-                        if (el) el.scrollIntoView({ behavior: 'smooth' });
+
+                      const el = document.querySelector(targetAnchor);
+                      if (el) {
+                        el.scrollIntoView({ behavior: 'smooth' });
                       }
+
+                      // Dispatch 8-second auto-return telemetry event
+                      window.dispatchEvent(
+                        new CustomEvent('fz:telemetry-inspect', {
+                          detail: {
+                            targetAnchor,
+                            title: targetTitle,
+                          },
+                        })
+                      );
                     }}
                     className="px-6 py-2.5 rounded-lg bg-cyber-cyan text-black font-black text-xs tracking-widest uppercase hover:bg-white transition-all flex items-center gap-2 cursor-pointer shadow-[0_0_20px_rgba(0,240,255,0.4)]"
                   >

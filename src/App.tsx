@@ -18,6 +18,7 @@ import { VenueSection } from './components/VenueSection';
 import { Footer } from './components/Footer';
 import { TerminalModal } from './components/TerminalModal';
 import { AudioPlayerHUD } from './components/AudioPlayerHUD';
+import { TelemetryInspectionBanner } from './components/TelemetryInspectionBanner';
 
 export function App() {
   const [showIntro, setShowIntro] = useState<boolean>(() => {
@@ -73,6 +74,7 @@ export function App() {
       </main>
       <Footer />
       <AudioPlayerHUD />
+      <TelemetryInspectionBanner />
       <TerminalModal
         isOpen={terminalOpen}
         onClose={() => setTerminalOpen(false)}

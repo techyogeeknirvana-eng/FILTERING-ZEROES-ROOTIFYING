@@ -72,18 +72,11 @@ export const HackerWorldCanvas: React.FC = () => {
     }
   }, []);
 
-  const handleInteractNode = useCallback((node: WorldNodeData) => {
+  const handleInteractNode = useCallback((_node: WorldNodeData) => {
     isInteractingRef.current = true;
-    sound.playButtonConfirm();
-    if (node.targetAnchor) {
-      const el = document.querySelector(node.targetAnchor);
-      if (el) {
-        el.scrollIntoView({ behavior: 'smooth' });
-      }
-    }
     setTimeout(() => {
       isInteractingRef.current = false;
-    }, 1500);
+    }, 1800);
   }, []);
 
   useEffect(() => {

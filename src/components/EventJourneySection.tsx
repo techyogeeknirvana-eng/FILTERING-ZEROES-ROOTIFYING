@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { sound } from '../utils/audio';
 import { Radio, Users, Sparkles, Filter, Terminal, Award } from 'lucide-react';
 
@@ -86,6 +86,7 @@ export const EventJourneySection: React.FC = () => {
 
   return (
     <section id="experience" className="relative py-28 px-4 sm:px-6 bg-[#06080e] overflow-hidden border-t border-cyber-border/40">
+      <div id="journey" className="absolute -top-24 pointer-events-none" />
       <div className="absolute inset-0 scanline-bg opacity-25 pointer-events-none" />
 
       <div className="max-w-7xl mx-auto relative z-10">
