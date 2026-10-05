@@ -6,7 +6,7 @@ interface ModuleCard {
   id: string;
   name: string;
   code: string;
-  initialStatus: 'CLASSIFIED' | 'REVEALING SOON' | 'ACCESS PENDING' | 'NETWORK CONNECTED';
+  initialStatus: 'CLASSIFIED' | 'REVEALING SOON' | 'ACCESS PENDING' | 'NETWORK CONNECTED' | 'REGISTRATION OPEN';
   iconType: string;
   color: string;
   meta: string;
@@ -18,7 +18,7 @@ export const CommandCenterSection: React.FC = () => {
       id: 'reg',
       name: 'REGISTER NOW',
       code: 'AUTH_GATEWAY_V1',
-      initialStatus: 'ACCESS PENDING',
+      initialStatus: 'REGISTRATION OPEN',
       iconType: 'gate',
       color: '#00f0ff',
       meta: 'Candidate verification portal and security clearance protocols.',
@@ -109,7 +109,7 @@ export const CommandCenterSection: React.FC = () => {
   const [cardStates, setCardStates] = useState<Record<string, 'idle' | 'authenticating' | 'encrypted' | 'denied'>>({});
   const [terminalLogs, setTerminalLogs] = useState<string[]>([
     '> SYSTEM READY. ENCRYPTED COMMAND HUB ACTIVE.',
-    '> SELECT COMMUNITIES TO OPEN THE NETWORK // OR SELECT ANY MODULE TO PROBE CLEARANCE.',
+    '> SELECT REGISTER NOW OR COMMUNITIES TO ENTER ACTIVE ZONES // OR PROBE AIR-GAPPED MODULES.',
   ]);
 
   const locateOn3DNetwork = (modId: string, e: React.MouseEvent) => {
@@ -122,6 +122,14 @@ export const CommandCenterSection: React.FC = () => {
     // 1. Direct navigation for Registration
     if (mod.id === 'reg') {
       sound.playButtonConfirm();
+      sound.playNavWhoosh();
+      const timestamp = new Date().toLocaleTimeString();
+      setTerminalLogs((prev) => [
+        `> [${timestamp}] AUTH GATEWAY ACTIVE: node://registration`,
+        `> ROUTING DIRECTLY TO // PASSES & REGISTRATION MATRIX (#access)`,
+        `> PASS TIERS: APPRENTICE • VANGUARD • SOVEREIGN VIP`,
+        ...prev.slice(0, 5),
+      ]);
       const el = document.getElementById('access');
       if (el) {
         el.scrollIntoView({ behavior: 'smooth' });
@@ -199,7 +207,7 @@ export const CommandCenterSection: React.FC = () => {
             COMMAND <span className="text-cyber-cyan text-glow-cyan">MATRIX</span>
           </h2>
           <p className="mt-4 text-white/60 font-mono text-xs sm:text-sm tracking-widest max-w-xl">
-            ACCESS REVEALED HUBS // SELECT COMMUNITIES TO OPEN THE NETWORK OR PROBE AIR-GAPPED MODULES
+            ACCESS REVEALED HUBS // SELECT REGISTER NOW OR COMMUNITIES TO ENTER ACTIVE ZONES
           </p>
           <div className="w-16 h-[2px] bg-gradient-to-r from-cyber-red to-cyber-cyan my-6" />
         </div>
@@ -209,12 +217,16 @@ export const CommandCenterSection: React.FC = () => {
             const state = cardStates[mod.id] || 'idle';
             const isCommunities = mod.id === 'communities';
             const isReg = mod.id === 'reg';
+            const isUnlocked = isCommunities || isReg;
 
             let statusDisplay = `[ ${mod.initialStatus} ]`;
             let badgeClass = 'text-white/60 border-white/20 bg-white/5';
 
             if (isCommunities) {
               statusDisplay = '[ NETWORK CONNECTED ]';
+              badgeClass = 'text-cyber-cyan border-cyber-cyan/60 bg-cyber-cyan/15 animate-pulse';
+            } else if (isReg) {
+              statusDisplay = '[ REGISTRATION OPEN ]';
               badgeClass = 'text-cyber-cyan border-cyber-cyan/60 bg-cyber-cyan/15 animate-pulse';
             } else if (state === 'authenticating') {
               statusDisplay = '[ AUTHENTICATING... ]';
@@ -232,7 +244,7 @@ export const CommandCenterSection: React.FC = () => {
                 key={mod.id}
                 onClick={() => handleCardClick(mod)}
                 className={`relative p-5 rounded-lg border transition-all duration-300 cursor-pointer flex flex-col justify-between min-h-[240px] select-none ${
-                  isCommunities
+                  isUnlocked
                     ? 'border-cyber-cyan/60 bg-cyber-cyan/10 hover:border-cyber-cyan hover:bg-cyber-cyan/20 shadow-[0_0_25px_rgba(0,240,255,0.25)] hover:scale-[1.02]'
                     : state === 'denied'
                     ? 'border-cyber-red bg-cyber-red/10 shadow-[0_0_20px_rgba(255,31,67,0.3)]'
@@ -249,7 +261,7 @@ export const CommandCenterSection: React.FC = () => {
                   {isCommunities ? (
                     <Network className="w-4 h-4 text-cyber-cyan animate-pulse" />
                   ) : isReg ? (
-                    <ArrowUpRight className="w-4 h-4 text-cyber-cyan" />
+                    <ArrowUpRight className="w-4 h-4 text-cyber-cyan animate-pulse" />
                   ) : (
                     <Lock
                       className={`w-4 h-4 transition-colors ${
@@ -265,7 +277,7 @@ export const CommandCenterSection: React.FC = () => {
 
                 <div className="my-3">
                   <h3 className={`font-display font-black text-lg tracking-wider uppercase mb-1 ${
-                    isCommunities ? 'text-cyber-cyan' : 'text-white'
+                    isUnlocked ? 'text-cyber-cyan' : 'text-white'
                   }`}>
                     {mod.name}
                   </h3>
@@ -282,7 +294,7 @@ export const CommandCenterSection: React.FC = () => {
                       {statusDisplay}
                     </span>
                     <span className="font-mono text-[9px] text-white/40">
-                      {isCommunities ? 'ACTIVE' : state === 'idle' ? 'PROBE' : 'LOCK'}
+                      {isUnlocked ? 'ACTIVE' : state === 'idle' ? 'PROBE' : 'LOCK'}
                     </span>
                   </div>
 
@@ -304,9 +316,10 @@ export const CommandCenterSection: React.FC = () => {
                         e.stopPropagation();
                         handleCardClick(mod);
                       }}
-                      className="w-full flex items-center justify-center gap-1.5 py-1 rounded bg-cyber-cyan/20 hover:bg-cyber-cyan hover:text-black border border-cyber-cyan text-cyber-cyan font-bold font-mono text-[10px] tracking-wider transition-all cursor-pointer"
+                      className="w-full flex items-center justify-center gap-1.5 py-1.5 rounded bg-cyber-cyan text-black font-bold font-mono text-[10px] tracking-wider hover:bg-white transition-all shadow-[0_0_20px_rgba(0,240,255,0.4)] cursor-pointer"
                     >
-                      <span>REGISTER NOW &rarr;</span>
+                      <ArrowUpRight className="w-3.5 h-3.5" />
+                      <span>OPEN REGISTRATION &rarr;</span>
                     </button>
                   ) : (
                     <button
@@ -343,7 +356,7 @@ export const CommandCenterSection: React.FC = () => {
                 className={`transition-all ${
                   log.includes('REJECTED') || log.includes('FAIL')
                     ? 'text-cyber-red font-semibold'
-                    : log.includes('LINK ESTABLISHED') || log.includes('ROUTING DIRECTLY')
+                    : log.includes('LINK ESTABLISHED') || log.includes('ROUTING DIRECTLY') || log.includes('AUTH GATEWAY')
                     ? 'text-brand-green font-bold'
                     : log.includes('PROBE')
                     ? 'text-cyber-cyan'
@@ -358,7 +371,7 @@ export const CommandCenterSection: React.FC = () => {
           </div>
 
           <div className="mt-4 pt-3 border-t border-white/5 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-[10px] text-white/40">
-            <span>TIP: SELECT COMMUNITIES TO ACCESS THE NETWORK, OR CLICK ANY LOCKED MODULE TO PROBE CIPHERS.</span>
+            <span>TIP: SELECT REGISTER NOW OR COMMUNITIES TO ACCESS ACTIVE HUBS, OR PROBE AIR-GAPPED MODULES.</span>
             <span className="text-white/60">INTEGRITY: HIGH // ZERO FAKE DATA TOLERANCE</span>
           </div>
         </div>
