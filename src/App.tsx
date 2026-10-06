@@ -1,3 +1,4 @@
+// Website update
 import { useState, useEffect } from 'react';
 import { LoadingCinematic } from './components/LoadingCinematic';
 import { Navbar } from './components/Navbar';
