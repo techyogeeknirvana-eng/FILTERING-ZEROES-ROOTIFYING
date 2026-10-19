@@ -31,6 +31,7 @@ export interface SpeakerSlot {
   name?: string;
   organization?: string;
   image?: string;
+  imagePosition?: string;
   topics?: string[];
   detailedTopics?: KeynoteTopicDetail[];
   bio?: string;
@@ -102,6 +103,7 @@ export const SpeakersSection: React.FC = () => {
       role: 'Communication & Soft Skills Trainer',
       organization: 'GL Bajaj Institute of Technology & Management',
       image: '/assets/speakers/monica-sodhi.jpg',
+      imagePosition: 'center top',
       bio: 'Specialist in executive communication, high-impact technical storytelling, interview mastery, and professional articulation for top-tier engineering talent and emerging industry leaders.',
       topics: [
         'Executive Communication & Technical Articulation',
@@ -353,6 +355,7 @@ export const SpeakersSection: React.FC = () => {
                         src={sp.image}
                         alt={sp.name}
                         className="w-full h-full object-cover rounded-xl filter contrast-110 brightness-100"
+                        style={{ objectPosition: sp.imagePosition || 'center' }}
                       />
                       {/* Tech Corner Reticles */}
                       <div className="absolute top-1 left-1 w-2.5 h-2.5 border-t-2 border-l-2 border-white pointer-events-none" />
@@ -533,6 +536,7 @@ export const SpeakersSection: React.FC = () => {
                   src={selectedSpeaker.image}
                   alt={selectedSpeaker.name}
                   className="w-full h-full object-cover rounded-xl filter contrast-110"
+                  style={{ objectPosition: selectedSpeaker.imagePosition || 'center' }}
                 />
                 <div className="absolute top-1 left-1 w-3 h-3 border-t-2 border-l-2 border-white pointer-events-none" />
                 <div className="absolute top-1 right-1 w-3 h-3 border-t-2 border-r-2 border-white pointer-events-none" />
