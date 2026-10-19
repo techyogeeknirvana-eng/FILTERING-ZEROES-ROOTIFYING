@@ -145,10 +145,13 @@ export const CommunityPartnerSection: React.FC = () => {
     {
       id: 3,
       label: 'NODE 03',
-      code: 'NETWORK ENCRYPTED',
-      isVerified: false,
+      code: 'VERIFIED CONNECTION',
+      isVerified: true,
+      name: 'PRAKSHA',
+      subLabel: 'INNOVATION & STUDENT COMMUNITY',
+      image: '/assets/collaborators/praksha-logo.png',
       coords: 'LAT: 0x3C // LON: 0x1B',
-      status: hoveredNode === 3 ? '[ IDENTITY CLASSIFIED ]' : unknownStatuses[0],
+      status: hoveredNode === 3 ? '[ CONNECTION ACTIVE ]' : 'CONNECTION VERIFIED',
     },
     {
       id: 4,
@@ -156,7 +159,7 @@ export const CommunityPartnerSection: React.FC = () => {
       code: 'NETWORK ENCRYPTED',
       isVerified: false,
       coords: 'LAT: 0x4D // LON: 0x2C',
-      status: hoveredNode === 4 ? '[ IDENTITY CLASSIFIED ]' : unknownStatuses[1],
+      status: hoveredNode === 4 ? '[ IDENTITY CLASSIFIED ]' : unknownStatuses[0],
     },
     {
       id: 5,
@@ -164,7 +167,7 @@ export const CommunityPartnerSection: React.FC = () => {
       code: 'NETWORK ENCRYPTED',
       isVerified: false,
       coords: 'LAT: 0x5E // LON: 0x3D',
-      status: hoveredNode === 5 ? '[ IDENTITY CLASSIFIED ]' : unknownStatuses[2],
+      status: hoveredNode === 5 ? '[ IDENTITY CLASSIFIED ]' : unknownStatuses[1],
     },
   ];
 
@@ -176,6 +179,8 @@ export const CommunityPartnerSection: React.FC = () => {
         setActiveMessage('> CONNECTION ACTIVE // NODE://ACE_CLUB');
       } else if (node.id === 2) {
         setActiveMessage('> CONNECTION ACTIVE // NODE://FORTIXAI_SECURITY');
+      } else if (node.id === 3) {
+        setActiveMessage('> CONNECTION ACTIVE // NODE://PRAKSHA');
       }
     } else {
       sound.playHoverClick();
@@ -215,8 +220,8 @@ export const CommunityPartnerSection: React.FC = () => {
           <div>NODES://05</div>
         </div>
         <div className="hidden xl:block absolute top-12 right-8 font-mono text-[9px] text-right text-white/20 tracking-widest leading-relaxed">
-          <div>VERIFIED://02</div>
-          <div>PENDING://03</div>
+          <div>VERIFIED://03</div>
+          <div>PENDING://02</div>
           <div>SIGNAL://CONNECTED</div>
         </div>
       </div>
@@ -231,7 +236,7 @@ export const CommunityPartnerSection: React.FC = () => {
                 {scanStep === 1 && '> SCANNING NETWORK...'}
                 {scanStep === 2 && '> 05 NODES DETECTED // INITIALIZING MAP...'}
                 {scanStep === 3 && '> LOCATING AUTHENTICATED HUBS...'}
-                {scanStep === 4 && '> 02 NODES VERIFIED // DATA PULSE TRANSMITTED'}
+                {scanStep === 4 && '> 03 NODES VERIFIED // DATA PULSE TRANSMITTED'}
               </span>
             </div>
           </div>
@@ -314,11 +319,10 @@ export const CommunityPartnerSection: React.FC = () => {
 
           {/* 5-Node Constellation Grid */}
           <div className="relative z-10 flex flex-col items-center gap-8 sm:gap-10">
-            {/* ROW 1: 02 VERIFIED STRATEGIC COLLABORATORS (ACE CLUB & FORTIXAI SECURITY) */}
-            <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-              {nodes.slice(0, 2).map((node) => {
+            {/* ROW 1: 03 VERIFIED STRATEGIC COLLABORATORS (ACE CLUB, FORTIXAI SECURITY & PRAKSHA) */}
+            <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 max-w-5xl mx-auto">
+              {nodes.slice(0, 3).map((node) => {
                 const isHovered = hoveredNode === node.id;
-                const isNode1 = node.id === 1;
                 return (
                   <div
                     key={node.id}
@@ -326,9 +330,11 @@ export const CommunityPartnerSection: React.FC = () => {
                     onMouseLeave={handleNodeLeave}
                     className={`relative rounded-2xl p-6 sm:p-7 bg-[#06080e]/95 border transition-all duration-300 select-none flex flex-col justify-between ${
                       isHovered
-                        ? isNode1
+                        ? node.id === 1
                           ? 'border-cyber-cyan shadow-[0_0_40px_rgba(0,240,255,0.35)] -translate-y-1.5'
-                          : 'border-cyber-blue shadow-[0_0_40px_rgba(0,112,243,0.35)] -translate-y-1.5'
+                          : node.id === 2
+                          ? 'border-cyber-blue shadow-[0_0_40px_rgba(0,112,243,0.35)] -translate-y-1.5'
+                          : 'border-amber-400 shadow-[0_0_40px_rgba(250,204,21,0.35)] -translate-y-1.5'
                         : 'border-cyber-cyan/50 shadow-[0_0_25px_rgba(0,240,255,0.18)]'
                     }`}
                     data-cursor="access"
@@ -392,9 +398,9 @@ export const CommunityPartnerSection: React.FC = () => {
               })}
             </div>
 
-            {/* ROW 2: THE 3 MYSTERIOUS UNKNOWN NODES (03, 04, 05) */}
-            <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-4xl mx-auto">
-              {nodes.slice(2).map((node) => {
+            {/* ROW 2: THE 2 MYSTERIOUS UNKNOWN NODES (04, 05) */}
+            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-2xl mx-auto">
+              {nodes.slice(3).map((node) => {
                 const isHovered = hoveredNode === node.id;
                 return (
                   <div

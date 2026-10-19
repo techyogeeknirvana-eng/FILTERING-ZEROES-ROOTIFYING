@@ -2,15 +2,14 @@ import React, { useState, useEffect, useRef } from 'react';
 import {
   X,
   Lock,
-  Radio,
-  Sparkles,
   ArrowRight,
   ExternalLink,
-  ShieldAlert,
   Zap,
   Activity,
   ChevronRight,
   CheckCircle2,
+  Volume2,
+  VolumeX,
 } from 'lucide-react';
 import { sound } from '../utils/audio';
 
@@ -44,90 +43,94 @@ const CHECKPOINTS: CheckpointData[] = [
     phaseNumber: '02',
     isUnlocked: false,
     title: 'CHECKPOINT 02',
-    statusLabel: 'SIGNAL DETECTED — REVEALING SOON',
+    statusLabel: 'REVEALING SOON',
   },
   {
     id: 3,
     phaseNumber: '03',
     isUnlocked: false,
     title: 'CHECKPOINT 03',
-    statusLabel: 'SIGNAL DETECTED — REVEALING SOON',
+    statusLabel: 'REVEALING SOON',
   },
   {
     id: 4,
     phaseNumber: '04',
     isUnlocked: false,
     title: 'CHECKPOINT 04',
-    statusLabel: 'SIGNAL DETECTED — REVEALING SOON',
+    statusLabel: 'REVEALING SOON',
   },
   {
     id: 5,
     phaseNumber: '05',
     isUnlocked: false,
     title: 'CHECKPOINT 05',
-    statusLabel: 'SIGNAL DETECTED — REVEALING SOON',
+    statusLabel: 'REVEALING SOON',
   },
   {
     id: 6,
     phaseNumber: '06',
     isUnlocked: false,
     title: 'CHECKPOINT 06',
-    statusLabel: 'SIGNAL DETECTED — REVEALING SOON',
+    statusLabel: 'REVEALING SOON',
   },
   {
     id: 7,
     phaseNumber: '07',
     isUnlocked: false,
     title: 'CHECKPOINT 07',
-    statusLabel: 'SIGNAL DETECTED — REVEALING SOON',
+    statusLabel: 'REVEALING SOON',
   },
   {
     id: 8,
     phaseNumber: '08',
     isUnlocked: false,
     title: 'CHECKPOINT 08',
-    statusLabel: 'SIGNAL DETECTED — REVEALING SOON',
+    statusLabel: 'REVEALING SOON',
   },
 ];
+
+type DragonMood = 'emerging' | 'idle' | 'celebrating' | 'roaring';
 
 export const RootifyingJourneyModal: React.FC<RootifyingJourneyModalProps> = ({
   isOpen,
   onClose,
 }) => {
   const [animReady, setAnimReady] = useState(false);
+  const [dragonMood, setDragonMood] = useState<DragonMood>('emerging');
+  const [dragonDialogue, setDragonDialogue] = useState<string>(
+    'I AM THE CYBER-DRAKE GUARDIAN. SEEK THE UNSEALED SIGNAL.'
+  );
   const [illuminatedSteps, setIlluminatedSteps] = useState<number[]>([]);
-  const [lockedAlertMessage, setLockedAlertMessage] = useState<string | null>(null);
-  const [lockedAlertId, setLockedAlertId] = useState<number | null>(null);
+  const [activePulseTargetId, setActivePulseTargetId] = useState<number | null>(null);
   const [shakingId, setShakingId] = useState<number | null>(null);
-  const alertTimeoutRef = useRef<number | null>(null);
+  const [isAudioMuted, setIsAudioMuted] = useState<boolean>(() => sound.getIsMuted());
+  const moodTimeoutRef = useRef<number | null>(null);
 
-  // Keyboard navigation & body scroll lock
+  // Setup on modal opening
   useEffect(() => {
     if (!isOpen) return;
 
-    // Play entrance sound
     sound.playSystemActivation();
 
-    // Prevent background scrolling while modal is open
     const prevOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
 
-    // Progressive entrance sequence
+    // Dragon emerges from digital mist
     const t0 = setTimeout(() => {
       setAnimReady(true);
-    }, 100);
+      setDragonMood('idle');
+      setDragonDialogue('THE ROOTIFYING PATH AWAITS. ONLY ONE FREQUENCY IS DECODED.');
+    }, 1100);
 
-    // Sequentially illuminate checkpoints as the path draws
+    // Sequential illumination along the winding trail
     const timers: number[] = [];
     CHECKPOINTS.forEach((_, idx) => {
       const t = setTimeout(() => {
         setIlluminatedSteps((prev) => [...prev, idx + 1]);
         if (idx === 0) {
           sound.playAccessVerified();
-        } else if (idx % 2 === 0) {
-          sound.playNodeDetected();
         }
-      }, 300 + idx * 240);
+      }, 350 + idx * 220);
       timers.push(t);
     });
 
@@ -142,25 +145,46 @@ export const RootifyingJourneyModal: React.FC<RootifyingJourneyModalProps> = ({
     return () => {
       clearTimeout(t0);
       timers.forEach(clearTimeout);
-      if (alertTimeoutRef.current) clearTimeout(alertTimeoutRef.current);
+      if (moodTimeoutRef.current) clearTimeout(moodTimeoutRef.current);
       document.body.style.overflow = prevOverflow;
       window.removeEventListener('keydown', handleKeyDown);
     };
   }, [isOpen, onClose]);
 
-  const handleLockedClick = (id: number) => {
-    sound.playBeep(260, 0.08, 0.04);
+  // Interaction when Open Checkpoint 01 is clicked
+  const handleOpenCheckpointClick = () => {
+    sound.playDragonWelcome();
+    setDragonMood('celebrating');
+    setDragonDialogue('THE FIRST SIGNAL IS OPEN. YOUR JOURNEY BEGINS NOW.');
+
+    if (moodTimeoutRef.current) clearTimeout(moodTimeoutRef.current);
+    moodTimeoutRef.current = window.setTimeout(() => {
+      setDragonMood('idle');
+      setDragonDialogue('PROCEED TO UNSTOP REGISTRATION TO CLAIM YOUR PASS.');
+    }, 4500);
+  };
+
+  // Interaction when Locked Checkpoints 02–08 are clicked
+  const handleLockedCheckpointClick = (id: number) => {
+    sound.playDragonRoar();
+    setDragonMood('roaring');
+    setActivePulseTargetId(id);
     setShakingId(id);
-    setTimeout(() => setShakingId(null), 500);
+    setDragonDialogue('THIS SIGNAL REMAINS SEALED. ITS TIME WILL COME.');
 
-    setLockedAlertId(id);
-    setLockedAlertMessage('This signal has not been decoded yet. Stay tuned.');
+    setTimeout(() => setShakingId(null), 600);
 
-    if (alertTimeoutRef.current) clearTimeout(alertTimeoutRef.current);
-    alertTimeoutRef.current = window.setTimeout(() => {
-      setLockedAlertMessage(null);
-      setLockedAlertId(null);
+    if (moodTimeoutRef.current) clearTimeout(moodTimeoutRef.current);
+    moodTimeoutRef.current = window.setTimeout(() => {
+      setDragonMood('idle');
+      setActivePulseTargetId(null);
+      setDragonDialogue('THE ROOTIFYING PATH AWAITS. ONLY ONE FREQUENCY IS DECODED.');
     }, 3800);
+  };
+
+  const toggleMute = () => {
+    const next = sound.toggleMute();
+    setIsAudioMuted(next);
   };
 
   if (!isOpen) return null;
@@ -170,43 +194,90 @@ export const RootifyingJourneyModal: React.FC<RootifyingJourneyModalProps> = ({
       role="dialog"
       aria-modal="true"
       aria-labelledby="journey-modal-title"
-      className="fixed inset-0 z-50 flex flex-col bg-[#030408]/98 backdrop-blur-xl text-[#e2e8f0] selection:bg-cyber-red selection:text-white transition-opacity duration-300 overflow-hidden"
+      className="fixed inset-0 z-50 flex flex-col bg-[#020307]/98 backdrop-blur-2xl text-[#e2e8f0] selection:bg-cyber-red selection:text-white transition-opacity duration-300 overflow-hidden"
     >
       {/* =========================================================
-          BACKGROUND ATMOSPHERE & CYBERNETIC PARTICLES
+          PROMINENT FIXED TOP-RIGHT CLOSE BUTTON (ALWAYS VISIBLE)
+          ========================================================= */}
+      <button
+        onClick={() => {
+          sound.playHoverClick();
+          onClose();
+        }}
+        className="fixed top-3 right-3 sm:top-5 sm:right-6 z-[60] w-12 h-12 rounded-xl bg-black/85 hover:bg-cyber-red/25 border-2 border-white/20 hover:border-cyber-red text-white flex items-center justify-center shadow-[0_0_30px_rgba(0,0,0,0.9)] hover:shadow-[0_0_30px_rgba(255,31,67,0.7)] backdrop-blur-md transition-all duration-200 group active:scale-90"
+        aria-label="Close Journey and return to website"
+        title="Close Journey [ESC]"
+      >
+        <X className="w-6 h-6 text-cyber-red group-hover:rotate-90 transition-transform duration-200" />
+      </button>
+
+      {/* Floating Sound Toggle */}
+      <button
+        onClick={toggleMute}
+        className="fixed top-3 right-18 sm:top-5 sm:right-22 z-[60] h-12 px-3 rounded-xl bg-black/85 hover:bg-cyber-cyan/20 border-2 border-white/20 hover:border-cyber-cyan text-white/80 hover:text-white flex items-center gap-2 shadow-[0_0_20px_rgba(0,0,0,0.8)] backdrop-blur-md transition-all duration-200 text-xs font-mono"
+        title="Toggle Sound Design"
+      >
+        {isAudioMuted ? (
+          <>
+            <VolumeX className="w-4 h-4 text-cyber-red" />
+            <span className="hidden md:inline text-[10px] uppercase font-bold text-cyber-red">MUTED</span>
+          </>
+        ) : (
+          <>
+            <Volume2 className="w-4 h-4 text-cyber-cyan animate-pulse" />
+            <span className="hidden md:inline text-[10px] uppercase font-bold text-cyber-cyan">AUDIO ON</span>
+          </>
+        )}
+      </button>
+
+      {/* =========================================================
+          BACKGROUND ATMOSPHERE & CYBERNETIC MIST
           ========================================================= */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        {/* Ambient Fog Blobs */}
-        <div className="absolute -top-32 -left-32 w-96 h-96 rounded-full bg-cyber-red/10 blur-[130px]" />
-        <div className="absolute top-1/2 -right-32 w-[32rem] h-[32rem] rounded-full bg-cyber-cyan/10 blur-[150px]" />
-        <div className="absolute -bottom-32 left-1/3 w-[28rem] h-[28rem] rounded-full bg-blue-600/10 blur-[140px]" />
+        {/* Dynamic Guardian Color Halo */}
+        <div
+          className={`absolute top-0 left-1/2 -translate-x-1/2 w-[42rem] h-[26rem] rounded-full blur-[140px] transition-colors duration-700 ${
+            dragonMood === 'roaring'
+              ? 'bg-cyber-red/25'
+              : dragonMood === 'celebrating'
+              ? 'bg-amber-400/20'
+              : 'bg-cyber-cyan/15'
+          }`}
+        />
+        <div className="absolute bottom-0 right-0 w-[30rem] h-[30rem] rounded-full bg-blue-600/10 blur-[150px]" />
+        <div className="absolute bottom-0 left-0 w-[26rem] h-[26rem] rounded-full bg-cyber-red/10 blur-[140px]" />
 
         {/* Digital Grid & Scanlines */}
         <div className="absolute inset-0 hud-grid opacity-15" />
         <div className="absolute inset-0 scanline-bg opacity-20" />
 
-        {/* Binary Dust Flares */}
-        <div className="absolute top-1/4 left-1/5 w-1.5 h-1.5 rounded-full bg-cyber-cyan animate-ping opacity-60" />
-        <div className="absolute top-2/3 right-1/4 w-1.5 h-1.5 rounded-full bg-cyber-red animate-ping opacity-60 delay-700" />
-        <div className="absolute bottom-1/4 left-1/2 w-1 h-1 rounded-full bg-white animate-pulse opacity-40 delay-1000" />
+        {/* Ambient Mountain Silhouettes in Background */}
+        <svg
+          className="absolute bottom-0 inset-x-0 w-full opacity-20 text-white"
+          viewBox="0 0 1440 320"
+          fill="currentColor"
+          preserveAspectRatio="none"
+        >
+          <path d="M0,320 L0,220 L180,140 L340,240 L520,80 L720,200 L940,60 L1180,210 L1360,110 L1440,160 L1440,320 Z" fill="#040714" />
+          <path d="M0,320 L0,260 L240,190 L460,260 L680,170 L890,260 L1120,180 L1340,270 L1440,240 L1440,320 Z" fill="#060c20" />
+        </svg>
       </div>
 
       {/* =========================================================
-          TOP COMMAND HUD BAR
+          TOP COMMAND TELEMETRY BAR
           ========================================================= */}
-      <header className="relative z-30 shrink-0 border-b border-white/10 bg-[#04060c]/90 px-4 sm:px-8 py-3.5 flex items-center justify-between shadow-[0_4px_30px_rgba(0,0,0,0.6)]">
-        {/* Left Branding & Protocol Info */}
-        <div className="flex items-center gap-3 sm:gap-4">
-          <div className="w-9 h-9 rounded-lg border border-cyber-cyan/40 bg-cyber-cyan/10 flex items-center justify-center shadow-[0_0_15px_rgba(0,240,255,0.3)]">
-            <Radio className="w-4 h-4 text-cyber-cyan animate-pulse" />
+      <header className="relative z-30 shrink-0 border-b border-white/10 bg-[#04060c]/90 px-4 sm:px-8 py-3 flex items-center justify-between shadow-[0_4px_30px_rgba(0,0,0,0.7)] pr-32 sm:pr-40">
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 rounded-lg border border-cyber-cyan/50 bg-cyber-cyan/15 flex items-center justify-center shadow-[0_0_15px_rgba(0,240,255,0.4)]">
+            <Zap className="w-4 h-4 text-cyber-cyan animate-pulse" />
           </div>
           <div>
             <div className="flex items-center gap-2">
               <span className="font-mono text-[10px] sm:text-xs font-black tracking-[0.25em] text-cyber-cyan uppercase">
-                ROOTIFY PROTOCOL // THE SIGNAL PATH
+                ROOTIFY PROTOCOL // CYBER-DRAKE ROUTE
               </span>
-              <span className="hidden sm:inline-flex items-center px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-brand-green/20 text-brand-green border border-brand-green/40 animate-pulse">
-                LIVE
+              <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[8px] font-mono font-bold bg-brand-green/20 text-brand-green border border-brand-green/40">
+                LIVE GUARDIAN
               </span>
             </div>
             <h1
@@ -218,256 +289,325 @@ export const RootifyingJourneyModal: React.FC<RootifyingJourneyModalProps> = ({
           </div>
         </div>
 
-        {/* Center Tagline (Hidden on mobile) */}
-        <div className="hidden lg:flex flex-col items-center">
-          <span className="font-mono text-[11px] font-extrabold tracking-[0.25em] bg-gradient-to-r from-cyber-red via-white to-cyber-cyan bg-clip-text text-transparent">
-            BORN IN THE 0. RESURRECTED IN THE 1.
+        <div className="hidden lg:flex items-center gap-4 font-mono text-[10px] text-white/50">
+          <span className="text-white/40">STATUS:</span>
+          <span className="text-brand-green font-bold flex items-center gap-1.5">
+            <span className="w-2 h-2 rounded-full bg-brand-green animate-ping" />
+            PHASE 01 UNSEALED
           </span>
-          <span className="font-mono text-[9px] text-white/40 tracking-wider">
-            PHASE 0 ──────── 8 CHECKPOINTS ────────▶ PHASE 1
-          </span>
-        </div>
-
-        {/* Right Actions: Telemetry Badge & Close Button */}
-        <div className="flex items-center gap-3">
-          <div className="hidden sm:flex items-center gap-2 px-3 py-1 rounded border border-white/10 bg-white/5 font-mono text-[11px]">
-            <span className="text-white/40">DECODED:</span>
-            <span className="text-cyber-cyan font-bold">1 / 8</span>
-          </div>
-
-          <button
-            onClick={() => {
-              sound.playHoverClick();
-              onClose();
-            }}
-            className="group relative px-4 py-2 rounded-lg font-mono text-xs font-bold tracking-widest uppercase border border-white/20 bg-white/5 hover:bg-cyber-red/20 hover:border-cyber-red hover:text-white transition-all duration-200 flex items-center gap-2 text-white/80 shadow-[0_0_15px_rgba(0,0,0,0.5)] active:scale-95"
-            aria-label="Close Journey Interface"
-          >
-            <span className="hidden sm:inline text-white/50 text-[10px]">[ESC]</span>
-            <span>CLOSE</span>
-            <X className="w-4 h-4 text-cyber-red group-hover:rotate-90 transition-transform duration-200" />
-          </button>
+          <span className="text-white/20">|</span>
+          <span className="text-white/40">SEALED SIGNALS:</span>
+          <span className="text-cyber-red font-bold">07 ENCRYPTED</span>
         </div>
       </header>
 
       {/* =========================================================
-          GLOBAL HOLOGRAPHIC ENCRYPTION ALERT (When locked node is tapped)
+          MAIN SCROLLABLE CANVAS
           ========================================================= */}
-      {lockedAlertMessage && (
-        <div className="absolute top-18 inset-x-0 z-40 flex justify-center px-4 pointer-events-none animate-in fade-in slide-in-from-top-4 duration-200">
-          <div className="pointer-events-auto max-w-md w-full px-5 py-3.5 rounded-xl border border-cyber-red/60 bg-black/90 shadow-[0_0_35px_rgba(255,31,67,0.45)] backdrop-blur-md flex items-center gap-3.5 text-left">
-            <div className="shrink-0 w-8 h-8 rounded-lg bg-cyber-red/20 border border-cyber-red flex items-center justify-center">
-              <ShieldAlert className="w-4 h-4 text-cyber-red animate-pulse" />
-            </div>
-            <div className="flex-1">
-              <div className="font-mono text-[10px] font-black uppercase tracking-widest text-cyber-red">
-                CHECKPOINT {String(lockedAlertId).padStart(2, '0')} // SIGNAL CIPHER ACTIVE
-              </div>
-              <div className="font-mono text-xs sm:text-sm text-white font-semibold">
-                "{lockedAlertMessage}"
-              </div>
-            </div>
-            <button
-              onClick={() => {
-                setLockedAlertMessage(null);
-                setLockedAlertId(null);
-              }}
-              className="text-white/40 hover:text-white p-1"
-            >
-              <X className="w-3.5 h-3.5" />
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* =========================================================
-          MAIN SCROLLABLE JOURNEY CANVAS
-          ========================================================= */}
-      <main className="relative z-10 flex-1 overflow-y-auto overflow-x-hidden p-4 sm:p-8 lg:p-10 custom-scrollbar">
-        <div className="max-w-7xl mx-auto pb-16">
-          {/* Section Sub-Header / Mission Overview */}
-          <div className="text-center mb-8 sm:mb-12">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-cyber-cyan/30 bg-cyber-cyan/10 font-mono text-[10px] sm:text-xs text-cyber-cyan tracking-widest uppercase mb-3 shadow-[0_0_15px_rgba(0,240,255,0.2)]">
-              <Sparkles className="w-3.5 h-3.5 text-cyber-cyan" />
-              <span>TRANSMISSION TRAJECTORY: ZERO TO ROOT</span>
-            </div>
-            <h2 className="font-display font-black text-2xl sm:text-4xl lg:text-5xl uppercase tracking-tight text-white">
-              THE <span className="text-cyber-cyan text-glow-cyan">SIGNAL</span>{' '}
-              <span className="text-white">PATH</span>
-            </h2>
-            <p className="mt-2 font-mono text-xs sm:text-sm text-white/60 max-w-2xl mx-auto tracking-wide">
-              An 8-checkpoint mission route traversing from Phase 0 into Phase 1 sovereign territory.
-              Decode each signal as it surfaces.
-            </p>
-          </div>
-
+      <main className="relative z-10 flex-1 overflow-y-auto overflow-x-hidden p-3 sm:p-6 lg:p-8 custom-scrollbar">
+        <div className="max-w-7xl mx-auto pb-12">
           {/* =====================================================
-              DESKTOP VIEW: CINEMATIC WINDING SERPENTINE SNAKE PATH
-              (Visible on lg screens >= 1024px)
+              THE CYBER-DRAGON GUARDIAN HERO STAGE
               ===================================================== */}
-          <div className="hidden lg:block relative my-8">
-            {/* SVG Connecting Neon Rope / Wire with Glowing Filters */}
-            <svg
-              className="absolute inset-0 w-full h-full pointer-events-none"
-              style={{ minHeight: '620px' }}
-              viewBox="0 0 1150 620"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <defs>
-                {/* Neon Glow Filters */}
-                <filter id="neon-glow" x="-20%" y="-20%" width="140%" height="140%">
-                  <feGaussianBlur stdDeviation="6" result="blur1" />
-                  <feGaussianBlur stdDeviation="14" result="blur2" />
-                  <feMerge>
-                    <feMergeNode in="blur2" />
-                    <feMergeNode in="blur1" />
-                    <feMergeNode in="SourceGraphic" />
-                  </feMerge>
-                </filter>
-                <linearGradient id="pathGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="#00f0ff" />
-                  <stop offset="35%" stopColor="#ffffff" />
-                  <stop offset="70%" stopColor="#ff1f43" />
-                  <stop offset="100%" stopColor="#00f0ff" />
-                </linearGradient>
-              </defs>
-
-              {/* Background ambient rail track */}
-              <path
-                d="M 140 140 L 980 140 C 1080 140 1080 470 980 470 L 140 470"
-                stroke="rgba(255, 255, 255, 0.08)"
-                strokeWidth="10"
-                strokeLinecap="round"
-                strokeLinejoin="round"
+          <section className="relative mb-6 text-center">
+            {/* Dragon Avatar SVG & Animations */}
+            <div className="relative inline-block mx-auto">
+              <CyberDragonVisual
+                mood={dragonMood}
+                animReady={animReady}
               />
 
-              {/* Glowing Outer Neon Halo */}
-              <path
-                d="M 140 140 L 980 140 C 1080 140 1080 470 980 470 L 140 470"
-                stroke="url(#pathGradient)"
-                strokeWidth="6"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                filter="url(#neon-glow)"
-                opacity={animReady ? '0.75' : '0'}
-                className="transition-opacity duration-1000"
-              />
-
-              {/* Core Active Laser Fiber (Draws progressively) */}
-              <path
-                d="M 140 140 L 980 140 C 1080 140 1080 470 980 470 L 140 470"
-                stroke="url(#pathGradient)"
-                strokeWidth="3.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeDasharray="2600"
-                strokeDashoffset={animReady ? '0' : '2600'}
-                style={{
-                  transition: 'stroke-dashoffset 2.2s cubic-bezier(0.4, 0, 0.2, 1)',
-                }}
-              />
-
-              {/* High-speed animated data pulses travelling down the wire */}
-              {animReady && (
-                <path
-                  d="M 140 140 L 980 140 C 1080 140 1080 470 980 470 L 140 470"
-                  stroke="#ffffff"
-                  strokeWidth="4"
-                  strokeLinecap="round"
-                  strokeDasharray="18 240"
-                  style={{
-                    animation: 'signal-pulse-flow 3.5s linear infinite',
-                  }}
-                />
-              )}
-            </svg>
-
-            {/* Checkpoints Grid: 2 Winding Rows */}
-            <div className="relative z-10 space-y-24 py-4">
-              {/* Row 1: Left to Right (CP 01 -> CP 02 -> CP 03 -> CP 04) */}
-              <div className="grid grid-cols-4 gap-6 items-start">
-                {CHECKPOINTS.slice(0, 4).map((cp) => (
-                  <CheckpointCard
-                    key={cp.id}
-                    checkpoint={cp}
-                    isIlluminated={illuminatedSteps.includes(cp.id)}
-                    isShaking={shakingId === cp.id}
-                    onLockedClick={() => handleLockedClick(cp.id)}
-                  />
-                ))}
-              </div>
-
-              {/* Row 2: Right to Left (CP 05 -> CP 06 -> CP 07 -> CP 08) */}
-              <div className="grid grid-cols-4 gap-6 items-start">
-                {/* Visual order: CP 08 (left) <- CP 07 <- CP 06 <- CP 05 (right, near the curve) */}
-                {[CHECKPOINTS[7], CHECKPOINTS[6], CHECKPOINTS[5], CHECKPOINTS[4]].map((cp) => (
-                  <CheckpointCard
-                    key={cp.id}
-                    checkpoint={cp}
-                    isIlluminated={illuminatedSteps.includes(cp.id)}
-                    isShaking={shakingId === cp.id}
-                    onLockedClick={() => handleLockedClick(cp.id)}
-                  />
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* =====================================================
-              MOBILE / TABLET VIEW: VERTICAL ANIMATED HIGHWAY
-              (Visible on screens < 1024px)
-              ===================================================== */}
-          <div className="block lg:hidden relative my-6">
-            {/* Vertical Animated Glowing Line */}
-            <div className="absolute left-6 sm:left-8 top-6 bottom-6 w-1 bg-white/10 rounded-full">
+              {/* Dragon Mood Particle Ring */}
               <div
-                className="w-full bg-gradient-to-b from-cyber-cyan via-white to-cyber-red rounded-full shadow-[0_0_15px_#00f0ff] transition-all duration-1000"
-                style={{
-                  height: `${Math.min(100, (illuminatedSteps.length / 8) * 100)}%`,
-                }}
+                className={`absolute inset-0 rounded-full blur-2xl pointer-events-none transition-all duration-500 ${
+                  dragonMood === 'roaring'
+                    ? 'bg-cyber-red/40 scale-125'
+                    : dragonMood === 'celebrating'
+                    ? 'bg-amber-400/35 scale-125'
+                    : 'bg-cyber-cyan/20 scale-100'
+                }`}
               />
             </div>
 
-            {/* Vertical Checkpoints Stack */}
-            <div className="space-y-6 pl-14 sm:pl-20">
-              {CHECKPOINTS.map((cp) => (
-                <CheckpointCard
-                  key={cp.id}
-                  checkpoint={cp}
-                  isIlluminated={illuminatedSteps.includes(cp.id)}
-                  isShaking={shakingId === cp.id}
-                  onLockedClick={() => handleLockedClick(cp.id)}
-                  isMobile
+            {/* Dragon Dialogue Speech Banner */}
+            <div className="mt-2 max-w-2xl mx-auto px-4">
+              <div
+                className={`relative px-5 py-3 rounded-2xl border backdrop-blur-xl transition-all duration-300 shadow-2xl flex items-center justify-center gap-3 ${
+                  dragonMood === 'roaring'
+                    ? 'border-cyber-red bg-[#16060a]/95 text-cyber-red shadow-[0_0_35px_rgba(255,31,67,0.5)] animate-card-shake'
+                    : dragonMood === 'celebrating'
+                    ? 'border-amber-400 bg-[#161204]/95 text-amber-300 shadow-[0_0_35px_rgba(250,204,21,0.5)]'
+                    : 'border-cyber-cyan/40 bg-[#060b18]/90 text-white/90 shadow-[0_0_25px_rgba(0,240,255,0.25)]'
+                }`}
+              >
+                {/* Speech Bubble Arrow */}
+                <div
+                  className={`absolute -top-2 left-1/2 -translate-x-1/2 w-4 h-4 rotate-45 border-t border-l ${
+                    dragonMood === 'roaring'
+                      ? 'border-cyber-red bg-[#16060a]'
+                      : dragonMood === 'celebrating'
+                      ? 'border-amber-400 bg-[#161204]'
+                      : 'border-cyber-cyan/40 bg-[#060b18]'
+                  }`}
                 />
-              ))}
+
+                <div className="text-center font-mono">
+                  <div
+                    className={`text-[9px] sm:text-[10px] font-black uppercase tracking-[0.25em] mb-0.5 ${
+                      dragonMood === 'roaring'
+                        ? 'text-cyber-red'
+                        : dragonMood === 'celebrating'
+                        ? 'text-amber-400'
+                        : 'text-cyber-cyan'
+                    }`}
+                  >
+                    {dragonMood === 'roaring' && '⚠ GUARDIAN ROAR // ACCESS SEALED'}
+                    {dragonMood === 'celebrating' && '✦ GUARDIAN APPROVAL // SIGNAL VERIFIED'}
+                    {dragonMood === 'emerging' && '⚡ PROTOCOL SYNCHRONIZATION'}
+                    {dragonMood === 'idle' && '◆ GUARDIAN TELEMETRY // ACTIVE SENTINEL'}
+                  </div>
+                  <div className="text-xs sm:text-sm md:text-base font-bold tracking-wide">
+                    "{dragonDialogue}"
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* =====================================================
+              PRIMARY HIGHLIGHT: CHECKPOINT 01 — THE SIGNAL
+              (Front & Center, Fully Visible on Laptops & Mobile)
+              ===================================================== */}
+          <div className="mb-10 max-w-2xl mx-auto px-2">
+            <div className="text-center mb-3">
+              <span className="font-mono text-[10px] tracking-widest text-cyber-cyan uppercase font-bold">
+                [ CURRENT ACTIVE MISSION GATEWAY ]
+              </span>
+            </div>
+
+            <div
+              onClick={handleOpenCheckpointClick}
+              className="relative rounded-2xl p-6 sm:p-7 bg-[#050916] border-2 border-cyber-cyan shadow-[0_0_45px_rgba(0,240,255,0.45)] hover:shadow-[0_0_60px_rgba(0,240,255,0.7)] transition-all duration-300 group cursor-pointer"
+            >
+              {/* Outer Radiating Cyber Corner Glyphs */}
+              <div className="absolute -top-1.5 -left-1.5 w-5 h-5 border-t-2 border-l-2 border-cyber-cyan rounded-tl-lg pointer-events-none" />
+              <div className="absolute -top-1.5 -right-1.5 w-5 h-5 border-t-2 border-r-2 border-cyber-red rounded-tr-lg pointer-events-none" />
+              <div className="absolute -bottom-1.5 -left-1.5 w-5 h-5 border-b-2 border-l-2 border-cyber-cyan rounded-bl-lg pointer-events-none" />
+              <div className="absolute -bottom-1.5 -right-1.5 w-5 h-5 border-b-2 border-r-2 border-cyber-red rounded-br-lg pointer-events-none" />
+
+              {/* Pulsing Beacon Halo */}
+              <div className="absolute inset-0 rounded-2xl border border-cyber-cyan/50 animate-ping opacity-20 pointer-events-none" />
+
+              {/* Header Telemetry */}
+              <div className="flex items-center justify-between pb-3 mb-4 border-b border-cyber-cyan/30">
+                <div className="flex items-center gap-2">
+                  <span className="relative flex h-3 w-3">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-green opacity-75" />
+                    <span className="relative inline-flex rounded-full h-3 w-3 bg-brand-green" />
+                  </span>
+                  <span className="font-mono text-xs font-black tracking-widest text-cyber-cyan uppercase">
+                    CHECKPOINT 01 // UNLOCKED
+                  </span>
+                </div>
+                <span className="px-3 py-1 rounded-full font-mono text-[10px] font-black tracking-widest uppercase bg-brand-green/20 text-brand-green border border-brand-green/50 shadow-[0_0_15px_rgba(0,255,136,0.4)]">
+                  NOW OPEN
+                </span>
+              </div>
+
+              {/* Main Title & Story */}
+              <div className="text-center sm:text-left mb-5">
+                <h2 className="font-display font-black text-2xl sm:text-3xl text-white tracking-wide uppercase text-glow-cyan">
+                  PHASE 01: THE SIGNAL
+                </h2>
+                <p className="mt-2 font-mono text-xs sm:text-sm text-white/80 leading-relaxed">
+                  Your journey begins here. Step into the first signal and build your edge.
+                </p>
+              </div>
+
+              {/* Telemetry Matrix Grid */}
+              <div className="grid grid-cols-3 gap-2 sm:gap-3 p-3.5 rounded-xl bg-black/60 border border-cyber-cyan/30 mb-6 font-mono text-center">
+                <div className="p-2 rounded bg-white/5">
+                  <div className="text-[9px] text-white/40 uppercase">MODULE</div>
+                  <div className="text-xs sm:text-sm font-bold text-white">WORKSHOP 01</div>
+                </div>
+                <div className="p-2 rounded bg-white/5">
+                  <div className="text-[9px] text-white/40 uppercase">ADMISSION</div>
+                  <div className="text-xs sm:text-sm font-black text-cyber-cyan">FREE</div>
+                </div>
+                <div className="p-2 rounded bg-white/5">
+                  <div className="text-[9px] text-white/40 uppercase">STATUS</div>
+                  <div className="text-xs sm:text-sm font-bold text-brand-green flex items-center justify-center gap-1">
+                    <CheckCircle2 className="w-3 h-3 text-brand-green" />
+                    VERIFIED
+                  </div>
+                </div>
+              </div>
+
+              {/* Prominent Official REGISTER FREE Button */}
+              <a
+                href={CHECKPOINTS[0].link}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  sound.playAccessGranted();
+                }}
+                className="cyber-button group/btn relative w-full py-4 px-6 rounded-xl font-mono font-black text-sm sm:text-base tracking-[0.25em] uppercase bg-gradient-to-r from-cyber-red via-white to-cyber-cyan text-black hover:text-black shadow-[0_0_30px_rgba(0,240,255,0.8)] hover:shadow-[0_0_50px_rgba(255,31,67,0.9)] transition-all duration-300 flex items-center justify-center gap-3 active:scale-95"
+              >
+                <span>REGISTER FREE</span>
+                <ArrowRight className="w-5 h-5 group-hover/btn:translate-x-2 transition-transform duration-200" />
+              </a>
+
+              <div className="mt-3 flex items-center justify-center gap-1.5 font-mono text-[10px] text-white/50">
+                <span>OFFICIAL VERIFIED UNSTOP GATEWAY</span>
+                <ExternalLink className="w-3 h-3 text-white/40" />
+              </div>
             </div>
           </div>
 
           {/* =====================================================
-              BOTTOM TELEMETRY FOOTER & BRANDING
+              THE REMAINING 7 SEALED CHECKPOINTS (02 TO 08)
+              ALONG THE DRAGON-GUARDED MOUNTAIN ROUTE
               ===================================================== */}
-          <div className="mt-12 pt-6 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4 font-mono text-xs text-white/50">
+          <section className="mt-8">
+            <div className="text-center mb-6">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-white/10 bg-white/5 font-mono text-[10px] sm:text-xs text-white/60 tracking-widest uppercase">
+                <Lock className="w-3 h-3 text-cyber-red" />
+                <span>UPCOMING TRANSMISSIONS // SEALED BY THE GUARDIAN</span>
+              </div>
+              <h3 className="mt-2 font-display font-black text-xl sm:text-2xl text-white uppercase tracking-tight">
+                THE 8-CHECKPOINT TRAIL
+              </h3>
+              <p className="font-mono text-xs text-white/50 max-w-xl mx-auto mt-1">
+                Subsequent checkpoints remain classified until their designated signal frequency is unsealed.
+              </p>
+            </div>
+
+            {/* Desktop / Tablet Mountain Ridge Winding Trail */}
+            <div className="relative">
+              {/* Connecting SVG Cyber Fiber Line */}
+              <svg
+                className="hidden lg:block absolute inset-0 w-full h-full pointer-events-none"
+                viewBox="0 0 1150 440"
+                fill="none"
+              >
+                <path
+                  d="M 90 80 L 1060 80 C 1120 80 1120 360 1060 360 L 90 360"
+                  stroke={activePulseTargetId ? '#ff1f43' : 'rgba(255, 255, 255, 0.12)'}
+                  strokeWidth="6"
+                  strokeLinecap="round"
+                  strokeDasharray="6 14"
+                  className="transition-colors duration-300"
+                />
+                {animReady && (
+                  <path
+                    d="M 90 80 L 1060 80 C 1120 80 1120 360 1060 360 L 90 360"
+                    stroke={activePulseTargetId ? '#ff1f43' : '#00f0ff'}
+                    strokeWidth="2.5"
+                    strokeLinecap="round"
+                    strokeDasharray="20 180"
+                    style={{
+                      animation: 'signal-pulse-flow 3.5s linear infinite',
+                    }}
+                  />
+                )}
+              </svg>
+
+              {/* Grid of Remaining Checkpoints (02 through 08) */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 relative z-10">
+                {CHECKPOINTS.slice(1).map((cp) => {
+                  const isTarget = activePulseTargetId === cp.id;
+                  const isShaking = shakingId === cp.id;
+                  const isIlluminated = illuminatedSteps.includes(cp.id);
+
+                  return (
+                    <div
+                      key={cp.id}
+                      onClick={() => handleLockedCheckpointClick(cp.id)}
+                      className={`relative flex flex-col justify-between rounded-xl p-5 bg-[#050711]/90 border transition-all duration-300 cursor-pointer select-none group min-h-[220px] ${
+                        isTarget
+                          ? 'border-cyber-red shadow-[0_0_35px_rgba(255,31,67,0.6)] bg-[#12060b]'
+                          : 'border-white/10 hover:border-cyber-cyan/40 hover:bg-[#070b18]'
+                      } ${isIlluminated ? 'opacity-90' : 'opacity-40'} ${
+                        isShaking ? 'animate-card-shake' : ''
+                      }`}
+                      title="Click to probe checkpoint cipher"
+                    >
+                      {/* Corner Accents */}
+                      <div className="absolute top-0 left-0 w-3 h-3 border-t border-l border-white/20 rounded-tl-lg pointer-events-none" />
+                      <div className="absolute bottom-0 right-0 w-3 h-3 border-b border-r border-white/20 rounded-br-lg pointer-events-none" />
+
+                      <div>
+                        {/* Top Telemetry */}
+                        <div className="flex items-center justify-between pb-2 mb-3 border-b border-white/5 font-mono text-[9px] text-white/40">
+                          <span className="flex items-center gap-1">
+                            <Lock className="w-3 h-3 text-cyber-red/80" />
+                            <span>{cp.phaseNumber} // CIPHER LOCKED</span>
+                          </span>
+                          <span className="px-1.5 py-0.5 rounded bg-white/5 text-white/50 font-bold">
+                            ENCRYPTED
+                          </span>
+                        </div>
+
+                        {/* Title: Number only */}
+                        <div className="mb-3">
+                          <h4 className="font-display font-black text-lg text-white/70 group-hover:text-white tracking-wide uppercase transition-colors">
+                            {cp.title}
+                          </h4>
+                          <div className="mt-2 inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-cyber-red/10 border border-cyber-red/30 text-cyber-red font-mono text-[10px] font-bold tracking-wider uppercase">
+                            <span className="w-1.5 h-1.5 rounded-full bg-cyber-red animate-pulse" />
+                            <span>{cp.statusLabel}</span>
+                          </div>
+                        </div>
+
+                        {/* Encrypted Telemetry Fragment */}
+                        <div className="p-2.5 rounded bg-black/50 border border-white/5 font-mono text-[9px] text-white/40 space-y-1">
+                          <div className="flex items-center justify-between">
+                            <span>FREQUENCY:</span>
+                            <span className="text-white/20">███.██ MHz</span>
+                          </div>
+                          <div className="flex items-center justify-between">
+                            <span>SEAL INTEGRITY:</span>
+                            <span className="text-amber-500/80">GUARDIAN SEAL</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Interactive Prompt Footer */}
+                      <div className="pt-3 mt-4 border-t border-white/5 flex items-center justify-between font-mono text-[10px] text-white/40 group-hover:text-cyber-cyan transition-colors">
+                        <span className="flex items-center gap-1">
+                          <Activity className="w-3 h-3" />
+                          <span>PROBE SIGNAL</span>
+                        </span>
+                        <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </section>
+
+          {/* =====================================================
+              BOTTOM PROTOCOL FOOTER
+              ===================================================== */}
+          <footer className="mt-12 pt-6 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4 font-mono text-xs text-white/50">
             <div className="flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-cyber-cyan animate-pulse" />
-              <span>PHASE ZERO CLEARANCE // SOVEREIGN MISSION PROTOCOL</span>
+              <span>PHASE ZERO CLEARANCE // GUARDIAN PROTOCOL ACTIVE</span>
             </div>
             <div className="text-center sm:text-right">
-              <span className="text-white/70 font-bold">BORN IN THE 0. RESURRECTED IN THE 1.</span>
+              <span className="text-white/80 font-bold">BORN IN THE 0. RESURRECTED IN THE 1.</span>
             </div>
-          </div>
+          </footer>
         </div>
       </main>
 
-      {/* Embedded Custom Keyframe Animations */}
+      {/* Embedded Animations */}
       <style>{`
         @keyframes signal-pulse-flow {
-          0% {
-            stroke-dashoffset: 800;
-          }
-          100% {
-            stroke-dashoffset: 0;
-          }
+          0% { stroke-dashoffset: 800; }
+          100% { stroke-dashoffset: 0; }
         }
         @keyframes card-shake {
           0%, 100% { transform: translateX(0); }
@@ -479,205 +619,160 @@ export const RootifyingJourneyModal: React.FC<RootifyingJourneyModalProps> = ({
         .animate-card-shake {
           animation: card-shake 0.45s ease-in-out;
         }
+        @keyframes dragon-breathe {
+          0%, 100% { transform: translateY(0px) scale(1); }
+          50% { transform: translateY(-4px) scale(1.02); }
+        }
+        .animate-dragon-breathe {
+          animation: dragon-breathe 4s ease-in-out infinite;
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .animate-card-shake,
+          .animate-dragon-breathe {
+            animation: none !important;
+          }
+        }
       `}</style>
     </div>
   );
 };
 
 /* =========================================================================
-   INDIVIDUAL CHECKPOINT CARD COMPONENT
+   CYBER-DRAGON GUARDIAN VISUAL COMPONENT
    ========================================================================= */
-interface CheckpointCardProps {
-  checkpoint: CheckpointData;
-  isIlluminated: boolean;
-  isShaking: boolean;
-  onLockedClick: () => void;
-  isMobile?: boolean;
+interface CyberDragonVisualProps {
+  mood: DragonMood;
+  animReady: boolean;
 }
 
-const CheckpointCard: React.FC<CheckpointCardProps> = ({
-  checkpoint,
-  isIlluminated,
-  isShaking,
-  onLockedClick,
-  isMobile = false,
+const CyberDragonVisual: React.FC<CyberDragonVisualProps> = ({
+  mood,
+  animReady,
 }) => {
-  const { isUnlocked, title, statusLabel, description, link } = checkpoint;
+  const isRoaring = mood === 'roaring';
+  const isCelebrating = mood === 'celebrating';
 
-  // -----------------------------------------------------------
-  // CHECKPOINT 01: UNLOCKED FIRST SIGNAL WORKSHOP CARD
-  // -----------------------------------------------------------
-  if (isUnlocked) {
-    return (
-      <div
-        className={`relative flex flex-col rounded-xl p-5 sm:p-6 bg-[#060a14] border-2 border-cyber-cyan shadow-[0_0_35px_rgba(0,240,255,0.35)] transition-all duration-300 ${
-          isIlluminated ? 'opacity-100 scale-100' : 'opacity-40 scale-95'
-        } ${isShaking ? 'animate-card-shake' : ''}`}
-      >
-        {/* Node marker pin on desktop */}
-        {!isMobile && (
-          <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 flex items-center justify-center">
-            <span className="relative flex h-7 w-7">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyber-cyan opacity-75" />
-              <span className="relative inline-flex rounded-full h-7 w-7 bg-black border-2 border-cyber-cyan items-center justify-center text-[10px] font-mono font-black text-cyber-cyan">
-                01
-              </span>
-            </span>
-          </div>
-        )}
+  const primaryGlowColor = isRoaring ? '#ff1f43' : isCelebrating ? '#ffd700' : '#00f0ff';
+  const eyeColor = isRoaring ? '#ff1f43' : isCelebrating ? '#00f0ff' : '#00f0ff';
 
-        {/* Mobile Connector Pin */}
-        {isMobile && (
-          <div className="absolute -left-12 sm:-left-16 top-6 flex items-center justify-center">
-            <span className="relative flex h-8 w-8">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyber-cyan opacity-75" />
-              <span className="relative inline-flex rounded-full h-8 w-8 bg-black border-2 border-cyber-cyan items-center justify-center text-xs font-mono font-black text-cyber-cyan">
-                01
-              </span>
-            </span>
-          </div>
-        )}
-
-        {/* Ambient Top Glow Line */}
-        <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-cyber-red via-white to-cyber-cyan rounded-t-xl" />
-
-        {/* Header Telemetry */}
-        <div className="flex items-center justify-between pb-3 mb-3 border-b border-cyber-cyan/30 mt-1">
-          <div className="flex items-center gap-1.5 font-mono text-[10px] text-cyber-cyan font-bold tracking-widest uppercase">
-            <Activity className="w-3.5 h-3.5 text-cyber-cyan animate-pulse" />
-            <span>UNLOCKED NODE</span>
-          </div>
-          <span className="font-mono text-[9px] px-2 py-0.5 rounded font-black tracking-wider uppercase bg-brand-green/20 text-brand-green border border-brand-green/40 shadow-[0_0_10px_rgba(0,255,136,0.3)] flex items-center gap-1">
-            <span className="w-1.5 h-1.5 rounded-full bg-brand-green animate-ping" />
-            {statusLabel}
-          </span>
-        </div>
-
-        {/* Checkpoint Title & Micro-story */}
-        <div className="mb-4">
-          <h3 className="font-display font-black text-lg sm:text-xl text-white tracking-wide uppercase text-glow-cyan">
-            {title}
-          </h3>
-          <p className="mt-2 font-mono text-xs text-white/80 leading-relaxed">
-            {description}
-          </p>
-        </div>
-
-        {/* Workshop Telemetry Details */}
-        <div className="p-3 rounded-lg bg-black/60 border border-cyber-cyan/30 mb-5 font-mono text-[11px] space-y-1.5">
-          <div className="flex items-center justify-between text-white/50">
-            <span>TRACK:</span>
-            <span className="text-white font-bold">WORKSHOP 01</span>
-          </div>
-          <div className="flex items-center justify-between text-white/50">
-            <span>ENTRY FEE:</span>
-            <span className="text-cyber-cyan font-black">100% FREE</span>
-          </div>
-          <div className="flex items-center justify-between text-white/50">
-            <span>CLEARANCE:</span>
-            <span className="text-brand-green font-bold flex items-center gap-1">
-              <CheckCircle2 className="w-3 h-3 text-brand-green" />
-              VERIFIED OPEN
-            </span>
-          </div>
-        </div>
-
-        {/* Prominent REGISTER FREE Button */}
-        <a
-          href={link}
-          target="_blank"
-          rel="noopener noreferrer"
-          onClick={() => sound.playAccessGranted()}
-          className="cyber-button group relative w-full py-3.5 px-4 rounded-lg font-mono font-black text-xs sm:text-sm tracking-[0.2em] uppercase bg-gradient-to-r from-cyber-red via-white to-cyber-cyan text-black hover:text-black font-extrabold shadow-[0_0_25px_rgba(0,240,255,0.6)] hover:shadow-[0_0_40px_rgba(255,31,67,0.8)] transition-all duration-200 flex items-center justify-center gap-2 active:scale-95"
-          data-cursor="access"
-        >
-          <span>REGISTER FREE</span>
-          <ArrowRight className="w-4 h-4 group-hover:translate-x-1.5 transition-transform" />
-        </a>
-
-        {/* Sub-label for gateway */}
-        <div className="mt-2 text-center font-mono text-[9px] text-white/40 flex items-center justify-center gap-1">
-          <span>HOSTED ON UNSTOP</span>
-          <ExternalLink className="w-2.5 h-2.5 text-white/40" />
-        </div>
-      </div>
-    );
-  }
-
-  // -----------------------------------------------------------
-  // CHECKPOINTS 02 TO 08: LOCKED / REVEALING SOON
-  // -----------------------------------------------------------
   return (
     <div
-      onClick={onLockedClick}
-      className={`relative flex flex-col justify-between rounded-xl p-5 sm:p-6 bg-[#04060c]/90 border border-white/10 hover:border-cyber-cyan/40 hover:bg-[#070b16] transition-all duration-300 cursor-pointer select-none group ${
-        isIlluminated ? 'opacity-85' : 'opacity-40'
-      } ${isShaking ? 'animate-card-shake border-cyber-red shadow-[0_0_20px_rgba(255,31,67,0.4)]' : ''}`}
-      title="Click to probe checkpoint transmission"
+      className={`relative w-48 h-32 sm:w-64 sm:h-40 mx-auto transition-transform duration-500 ${
+        animReady ? 'scale-100 opacity-100' : 'scale-90 opacity-0'
+      } ${!isRoaring ? 'animate-dragon-breathe' : 'scale-110'}`}
     >
-      {/* Node marker pin on desktop */}
-      {!isMobile && (
-        <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 flex items-center justify-center">
-          <div className="w-7 h-7 rounded-full bg-black border border-white/20 group-hover:border-cyber-cyan/50 flex items-center justify-center text-[10px] font-mono text-white/40 group-hover:text-cyber-cyan transition-colors">
-            {checkpoint.phaseNumber}
-          </div>
-        </div>
-      )}
+      <svg
+        viewBox="0 0 320 200"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        className="w-full h-full filter drop-shadow-[0_0_20px_rgba(0,240,255,0.4)]"
+      >
+        <defs>
+          <linearGradient id="dragonArmor" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#1e293b" />
+            <stop offset="50%" stopColor="#0f172a" />
+            <stop offset="100%" stopColor="#020617" />
+          </linearGradient>
+          <linearGradient id="hornGlow" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor={primaryGlowColor} />
+            <stop offset="100%" stopColor="#ff1f43" />
+          </linearGradient>
+        </defs>
 
-      {/* Mobile Connector Pin */}
-      {isMobile && (
-        <div className="absolute -left-12 sm:-left-16 top-6 flex items-center justify-center">
-          <div className="w-8 h-8 rounded-full bg-black border border-white/20 group-hover:border-cyber-cyan/50 flex items-center justify-center text-xs font-mono text-white/40 group-hover:text-cyber-cyan transition-colors">
-            {checkpoint.phaseNumber}
-          </div>
-        </div>
-      )}
+        {/* Biomechanical Left Wing Spikes */}
+        <path
+          d="M 120 120 L 20 60 L 60 110 L 10 100 L 50 140 L 110 135"
+          fill="url(#dragonArmor)"
+          stroke={primaryGlowColor}
+          strokeWidth="1.5"
+          className="transition-all duration-300"
+        />
 
-      <div>
-        {/* Header Telemetry */}
-        <div className="flex items-center justify-between pb-3 mb-3 border-b border-white/5">
-          <div className="flex items-center gap-1.5 font-mono text-[10px] text-white/40 group-hover:text-white/60 tracking-widest uppercase">
-            <Lock className="w-3 h-3 text-white/40 group-hover:text-cyber-cyan transition-colors" />
-            <span>LOCKED NODE</span>
-          </div>
-          <span className="font-mono text-[9px] px-2 py-0.5 rounded font-bold tracking-wider uppercase bg-white/5 border border-white/10 text-white/40 group-hover:text-white/60">
-            [ ENCRYPTED ]
-          </span>
-        </div>
+        {/* Biomechanical Right Wing Spikes */}
+        <path
+          d="M 200 120 L 300 60 L 260 110 L 310 100 L 270 140 L 210 135"
+          fill="url(#dragonArmor)"
+          stroke={primaryGlowColor}
+          strokeWidth="1.5"
+          className="transition-all duration-300"
+        />
 
-        {/* Title: Only Checkpoint number */}
-        <div className="mb-4">
-          <h3 className="font-display font-black text-base sm:text-lg text-white/70 group-hover:text-white tracking-wider uppercase transition-colors">
-            {title}
-          </h3>
-          {/* Exact required label */}
-          <div className="mt-2 inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-cyber-red/10 border border-cyber-red/30 text-cyber-red font-mono text-[10px] sm:text-[11px] font-bold tracking-wider uppercase">
-            <span className="w-1.5 h-1.5 rounded-full bg-cyber-red animate-pulse" />
-            <span>{statusLabel}</span>
-          </div>
-        </div>
+        {/* Left Horn */}
+        <path
+          d="M 140 70 C 120 30 80 20 50 25 C 80 45 110 65 130 85 Z"
+          fill="url(#hornGlow)"
+          stroke="#ffffff"
+          strokeWidth="1"
+          opacity={isRoaring ? '1' : '0.85'}
+        />
 
-        {/* Mystery Encrypted Cipher Panel */}
-        <div className="p-3 rounded-lg bg-black/40 border border-white/5 font-mono text-[10px] text-white/40 space-y-1 mb-4 group-hover:border-white/10 transition-colors">
-          <div className="flex items-center justify-between">
-            <span>CIPHER FREQUENCY:</span>
-            <span className="text-white/30">████.██ MHz</span>
-          </div>
-          <div className="flex items-center justify-between">
-            <span>DECRYPTION STATUS:</span>
-            <span className="text-amber-500/80">IN QUEUE</span>
-          </div>
-        </div>
-      </div>
+        {/* Right Horn */}
+        <path
+          d="M 180 70 C 200 30 240 20 270 25 C 240 45 210 65 190 85 Z"
+          fill="url(#hornGlow)"
+          stroke="#ffffff"
+          strokeWidth="1"
+          opacity={isRoaring ? '1' : '0.85'}
+        />
 
-      {/* Inaccessible Trigger Indicator */}
-      <div className="pt-3 border-t border-white/5 flex items-center justify-between font-mono text-[10px] text-white/40 group-hover:text-cyber-cyan transition-colors">
-        <span className="flex items-center gap-1">
-          <Zap className="w-3 h-3" />
-          <span>PROBE SIGNAL</span>
-        </span>
-        <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
-      </div>
+        {/* Upper Crest Spikes */}
+        <polygon points="160,20 152,50 168,50" fill={primaryGlowColor} />
+        <polygon points="145,35 138,60 152,60" fill={primaryGlowColor} opacity="0.8" />
+        <polygon points="175,35 168,60 182,60" fill={primaryGlowColor} opacity="0.8" />
+
+        {/* Armored Dragon Head Contour */}
+        <polygon
+          points="160,45 195,80 180,140 160,175 140,140 125,80"
+          fill="url(#dragonArmor)"
+          stroke={primaryGlowColor}
+          strokeWidth="2"
+        />
+
+        {/* Brow Plates */}
+        <polygon points="160,65 185,85 160,95 135,85" fill="#334155" stroke="#ffffff" strokeWidth="0.5" />
+
+        {/* Fierce Cyber Eyes (Electric Blue in normal/friendly, Laser Crimson in roar) */}
+        <g className="transition-all duration-300">
+          {/* Left Eye */}
+          <polygon
+            points="142,95 154,98 144,103"
+            fill={eyeColor}
+            filter="drop-shadow(0 0 6px currentColor)"
+          />
+          {/* Right Eye */}
+          <polygon
+            points="178,95 166,98 176,103"
+            fill={eyeColor}
+            filter="drop-shadow(0 0 6px currentColor)"
+          />
+
+          {/* Celebratory Sunburst Eye Sparks */}
+          {isCelebrating && (
+            <>
+              <circle cx="148" cy="99" r="6" fill="#ffd700" opacity="0.6" className="animate-ping" />
+              <circle cx="172" cy="99" r="6" fill="#ffd700" opacity="0.6" className="animate-ping" />
+            </>
+          )}
+        </g>
+
+        {/* Snout Armor & Biomechanical Grille */}
+        <polygon points="152,120 168,120 160,145" fill="#0f172a" stroke={primaryGlowColor} strokeWidth="1" />
+        <line x1="154" y1="126" x2="166" y2="126" stroke={primaryGlowColor} strokeWidth="1" />
+        <line x1="156" y1="132" x2="164" y2="132" stroke={primaryGlowColor} strokeWidth="1" />
+
+        {/* Jaw & Mouth Aperture */}
+        {isRoaring ? (
+          <g>
+            {/* Open Roaring Plasma Mouth */}
+            <polygon points="150,150 170,150 160,178" fill="#ff1f43" />
+            <polygon points="154,152 166,152 160,170" fill="#ffffff" />
+            {/* Roar Plasma Ring */}
+            <circle cx="160" cy="165" r="18" stroke="#ff1f43" strokeWidth="2" className="animate-ping" opacity="0.75" />
+          </g>
+        ) : (
+          <path d="M 152 152 L 160 156 L 168 152" stroke={primaryGlowColor} strokeWidth="2" strokeLinecap="round" />
+        )}
+      </svg>
     </div>
   );
 };

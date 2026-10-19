@@ -418,6 +418,74 @@ class CinematicSoundEngine {
     osc.stop(this.ctx.currentTime + 0.33);
   }
 
+  // Cyber-Dragon Guardian: Controlled Low-Frequency Roar
+  public playDragonRoar() {
+    if (this.isMuted) return;
+    this.initCtx();
+    if (!this.ctx || !this.sfxGain) return;
+
+    try {
+      const osc = this.ctx.createOscillator();
+      const sub = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      const filter = this.ctx.createBiquadFilter();
+
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(110, this.ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(65, this.ctx.currentTime + 0.35);
+
+      sub.type = 'sine';
+      sub.frequency.setValueAtTime(55, this.ctx.currentTime);
+      sub.frequency.exponentialRampToValueAtTime(40, this.ctx.currentTime + 0.4);
+
+      filter.type = 'lowpass';
+      filter.frequency.setValueAtTime(320, this.ctx.currentTime);
+      filter.frequency.exponentialRampToValueAtTime(120, this.ctx.currentTime + 0.4);
+
+      gain.gain.setValueAtTime(0.045, this.ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + 0.42);
+
+      osc.connect(filter);
+      sub.connect(filter);
+      filter.connect(gain);
+      gain.connect(this.sfxGain);
+
+      osc.start();
+      sub.start();
+      osc.stop(this.ctx.currentTime + 0.43);
+      sub.stop(this.ctx.currentTime + 0.43);
+    } catch {}
+  }
+
+  // Cyber-Dragon Guardian: Welcoming Harmonic Chime
+  public playDragonWelcome() {
+    if (this.isMuted) return;
+    this.initCtx();
+    if (!this.ctx || !this.sfxGain) return;
+
+    try {
+      const notes = [523.25, 659.25, 783.99, 1046.5];
+      notes.forEach((freq, idx) => {
+        if (!this.ctx || !this.sfxGain) return;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        const t = this.ctx.currentTime + idx * 0.05;
+
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(freq, t);
+
+        gain.gain.setValueAtTime(0.035, t);
+        gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.35);
+
+        osc.connect(gain);
+        gain.connect(this.sfxGain);
+
+        osc.start(t);
+        osc.stop(t + 0.36);
+      });
+    } catch {}
+  }
+
   public playSlashWhoosh() {
     if (this.isMuted) return;
     this.initCtx();

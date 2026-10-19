@@ -122,15 +122,18 @@ const founderVelocity = (insight, executionSpeed) => {
       <div className="max-w-7xl mx-auto relative z-10">
         <div className="flex flex-col items-center text-center mb-16">
           <div className="inline-flex items-center gap-2 px-3 py-1 mb-4 rounded border border-cyber-cyan/40 bg-cyber-cyan/10 text-cyber-cyan font-mono text-xs tracking-widest uppercase">
-            <span>MULTIDISCIPLINARY COLLISION</span>
+            <span>MULTIDISCIPLINARY COLLISION // EXPANDING HORIZONS</span>
           </div>
-          <h2 className="font-display font-black text-4xl sm:text-6xl text-white tracking-tight uppercase">
-            THE FOUR <span className="text-cyber-cyan text-glow-cyan">WORLDS</span>
+          <h2 className="font-display font-black text-3xl sm:text-5xl lg:text-6xl text-white tracking-tight uppercase max-w-4xl">
+            AI, CYBERSECURITY, CLOUD, WEB3, <br className="hidden sm:inline" />
+            <span className="bg-gradient-to-r from-cyber-cyan via-white to-cyber-red bg-clip-text text-transparent text-glow-cyan">
+              ENTREPRENEURSHIP & BEYOND
+            </span>
           </h2>
-          <p className="mt-4 text-white/60 font-mono text-xs sm:text-sm tracking-widest max-w-xl">
-            NOT SILOED DISCIPLINES — AN UNCOMPROMISING INTERSECTING ECOSYSTEM
+          <p className="mt-4 text-white/80 font-mono text-xs sm:text-sm tracking-widest max-w-2xl leading-relaxed">
+            Explore a growing ecosystem of technologies, innovation, problem-solving, and emerging opportunities. Our journey extends beyond four domains.
           </p>
-          <div className="w-16 h-[2px] bg-gradient-to-r from-cyber-cyan to-cyber-red my-6" />
+          <div className="w-20 h-[2px] bg-gradient-to-r from-cyber-cyan via-white to-cyber-red my-6" />
         </div>
 
         {/* 4 Cards with Concept Art Integration */}
