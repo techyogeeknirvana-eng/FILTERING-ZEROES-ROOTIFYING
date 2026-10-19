@@ -214,6 +214,45 @@ export const SpeakersSection: React.FC = () => {
     },
     {
       id: 'sp-5',
+      domain: 'AI',
+      name: 'ADARSH CHAUHAN',
+      role: 'Gen AI Expert & IBM Ambassador',
+      organization: 'Founder @Events INFO • IBM Ambassador',
+      image: '/assets/speakers/adarsh-chauhan.jpg',
+      imagePosition: 'center top',
+      bio: 'Generative AI Expert, Founder at Events INFO, and official IBM Ambassador. Championing AI-native development, enterprise foundation models, and scaling technical community hackathons across premier engineering institutions.',
+      topics: [
+        'Generative AI Architectures & Foundation Models',
+        'AI-Native Coding & Enterprise Systems (IBM Ambassador)',
+        'Scaling Developer Ecosystems: Founder @Events INFO',
+      ],
+      detailedTopics: [
+        {
+          title: 'Generative AI Architectures & Foundation Models',
+          description:
+            'Deep dive into modern transformer pipelines, multi-modal reasoning, prompt orchestration, and building production-grade GenAI systems.',
+          iconName: 'bot',
+        },
+        {
+          title: 'AI-Native Coding & Enterprise Systems (IBM Ambassador)',
+          description:
+            'Enterprise AI adoption strategies, AI-assisted developer workflows, and the future of intelligent software engineering.',
+          iconName: 'code',
+        },
+        {
+          title: 'Scaling Developer Ecosystems: Founder @Events INFO',
+          description:
+            'Empowering builders nationwide through high-impact hackathons, developer roundtables, and nationwide tech initiatives.',
+          iconName: 'rocket',
+        },
+      ],
+      color: '#00f0ff',
+      hash: '0x6C4F...B129',
+      status: 'DECLASSIFIED // CONFIRMED',
+      isUnlocked: true,
+    },
+    {
+      id: 'sp-6',
       domain: 'CYBER',
       role: 'INFRASTRUCTURE SPECIALIST @ KYNDRYL',
       color: '#ff1f43',
@@ -221,19 +260,11 @@ export const SpeakersSection: React.FC = () => {
       status: 'REVEALING SOON',
     },
     {
-      id: 'sp-6',
+      id: 'sp-7',
       domain: 'CLOUD',
       role: 'GLOBAL INFRASTRUCTURE PRINCIPAL',
       color: '#0070f3',
       hash: '0x88CC...F110',
-      status: 'REVEALING SOON',
-    },
-    {
-      id: 'sp-7',
-      domain: 'CYBER',
-      role: 'DEFENSIVE SEC-OPS DIRECTOR',
-      color: '#ff1f43',
-      hash: '0x4D12...89FA',
       status: 'REVEALING SOON',
     },
     {

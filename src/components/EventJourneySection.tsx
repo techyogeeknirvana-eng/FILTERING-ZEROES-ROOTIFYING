@@ -27,7 +27,7 @@ export const EventJourneySection: React.FC = () => {
       icon: Users,
       summary: 'Powerful speaker sessions · Declassified Keynotes.',
       description:
-        'Founders, kernel developers, industry leaders, and AI architects take the central stage. Featuring Yatin Batra, Monica Sodhi, Azim Siddiqui, and Yash Pratap Singh (AI & Automation Builder, ML Researcher)—alongside global technology visionaries.',
+        'Founders, kernel developers, industry leaders, and AI architects take the central stage. Featuring Yatin Batra, Monica Sodhi, Azim Siddiqui, Yash Pratap Singh, and Adarsh Chauhan (Gen AI Expert & IBM Ambassador)—alongside global technology visionaries.',
       deliverable: 'Keynote Breakdown · Architecture Dissections · Verified Speaker Dossiers',
     },
     {

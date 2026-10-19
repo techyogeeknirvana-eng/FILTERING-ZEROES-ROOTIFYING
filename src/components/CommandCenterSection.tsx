@@ -66,7 +66,7 @@ export const CommandCenterSection: React.FC = () => {
       initialStatus: 'DECLASSIFIED',
       iconType: 'speakers',
       color: '#00f0ff',
-      meta: 'Keynotes: Yatin Batra, Monica Sodhi, Azim Siddiqui & Yash Pratap Singh.',
+      meta: 'Keynotes: Yatin Batra, Monica Sodhi, Azim Siddiqui, Yash Pratap Singh & Adarsh Chauhan.',
     },
     {
       id: 'venue',
@@ -163,7 +163,7 @@ export const CommandCenterSection: React.FC = () => {
       setTerminalLogs((prev) => [
         `> [${timestamp}] AUTHENTICATION DECLASSIFIED: node://speakers`,
         `> ROUTING DIRECTLY TO // THE MINDS (KEYNOTE ARCHITECTS)`,
-        `> CONFIRMED KEYNOTES: YATIN BATRA • MONICA SODHI • AZIM SIDDIQUI • YASH PRATAP SINGH`,
+        `> CONFIRMED KEYNOTES: YATIN BATRA • MONICA SODHI • AZIM SIDDIQUI • YASH PRATAP SINGH • ADARSH CHAUHAN`,
         ...prev.slice(0, 5),
       ]);
       const target = document.getElementById('speakers');
