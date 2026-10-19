@@ -175,27 +175,58 @@ export const SpeakersSection: React.FC = () => {
     },
     {
       id: 'sp-4',
-      domain: 'CYBER',
-      role: 'RING-0 EXPLOIT RESEARCHER',
-      color: '#ff1f43',
-      hash: '0x3F81...A92D',
-      status: 'CLASSIFIED',
+      domain: 'AI',
+      name: 'YASH PRATAP SINGH',
+      role: 'Full-Stack Engineer & AI Builder',
+      organization: 'ML Researcher • Node.js · Java · SQL',
+      image: '/assets/speakers/yash-pratap-singh.png',
+      imagePosition: 'center top',
+      bio: 'Full-Stack Engineer, AI & Automation Builder, and Machine Learning Researcher. Dedicated to engineering high-performance automated systems, full-stack architectures with Node.js, Java, and SQL, and applied ML problem solving.',
+      topics: [
+        'AI & Intelligent Workflow Automation',
+        'Full-Stack Scalability: Node.js · Java · SQL',
+        'Applied ML Research & Product Engineering',
+      ],
+      detailedTopics: [
+        {
+          title: 'AI & Intelligent Workflow Automation',
+          description:
+            'Deploying automated agentic reasoning chains, intelligent workflows, and neural inference pipelines that solve mission-critical operational bottlenecks.',
+          iconName: 'bot',
+        },
+        {
+          title: 'Full-Stack Scalability: Node.js · Java · SQL',
+          description:
+            'High-throughput backend design, resilient microservices, optimized SQL relational schema indexing, and concurrency management.',
+          iconName: 'code',
+        },
+        {
+          title: 'Applied ML Research & Product Engineering',
+          description:
+            'Translating cutting-edge machine learning research into robust, production-ready software features and real-world product value.',
+          iconName: 'layers',
+        },
+      ],
+      color: '#00f0ff',
+      hash: '0x8A2C...F930',
+      status: 'DECLASSIFIED // CONFIRMED',
+      isUnlocked: true,
     },
     {
       id: 'sp-5',
+      domain: 'CYBER',
+      role: 'INFRASTRUCTURE SPECIALIST @ KYNDRYL',
+      color: '#ff1f43',
+      hash: '0x3F81...A92D',
+      status: 'REVEALING SOON',
+    },
+    {
+      id: 'sp-6',
       domain: 'CLOUD',
       role: 'GLOBAL INFRASTRUCTURE PRINCIPAL',
       color: '#0070f3',
       hash: '0x88CC...F110',
       status: 'REVEALING SOON',
-    },
-    {
-      id: 'sp-6',
-      domain: 'AI',
-      role: 'AUTONOMOUS AGENT RESEARCHER',
-      color: '#00f0ff',
-      hash: '0x7E34...C021',
-      status: 'COMING SOON',
     },
     {
       id: 'sp-7',
