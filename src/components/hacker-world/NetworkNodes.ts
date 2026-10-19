@@ -260,6 +260,21 @@ export class NetworkNodesManager {
         targetAnchor: '#sponsors',
         discovered: false,
       },
+      {
+        id: 'comm_multi_atoms',
+        title: 'MULTI ATOMS',
+        code: 'NODE://MULTI_ATOMS_05_VERIFIED',
+        category: 'community',
+        color: '#ff1f43',
+        coords: new THREE.Vector3(-10, 1.8, 27),
+        description: 'Official Media & Networking Partner driving digital broadcast, content acceleration and developer reach.',
+        details: 'Official verified media and networking partner node in the ROOTIFYING network.',
+        status: 'CONNECTED',
+        subLabel: 'MEDIA & NETWORKING PARTNER',
+        partnerImage: '/assets/collaborators/multi-atoms.png',
+        targetAnchor: '#partner',
+        discovered: false,
+      },
     ];
 
     // Build 3D visuals for each node

@@ -172,10 +172,14 @@ export const CommunityPartnerSection: React.FC = () => {
     {
       id: 5,
       label: 'NODE 05',
-      code: 'NETWORK ENCRYPTED',
-      isVerified: false,
+      code: 'VERIFIED CONNECTION',
+      isVerified: true,
+      name: 'MULTI ATOMS',
+      subLabel: 'MEDIA BROADCAST & DEVELOPER NETWORK',
+      categories: ['MEDIA PARTNER', 'NETWORKING PARTNER'],
+      image: '/assets/collaborators/multi-atoms.png',
       coords: 'LAT: 0x5E // LON: 0x3D',
-      status: hoveredNode === 5 ? '[ IDENTITY CLASSIFIED ]' : unknownStatuses[0],
+      status: hoveredNode === 5 ? '[ CONNECTION ACTIVE ]' : 'CONNECTION VERIFIED',
     },
     {
       id: 6,
@@ -183,7 +187,7 @@ export const CommunityPartnerSection: React.FC = () => {
       code: 'NETWORK ENCRYPTED',
       isVerified: false,
       coords: 'LAT: 0x6F // LON: 0x4E',
-      status: hoveredNode === 6 ? '[ IDENTITY CLASSIFIED ]' : unknownStatuses[1],
+      status: hoveredNode === 6 ? '[ IDENTITY CLASSIFIED ]' : unknownStatuses[0],
     },
   ];
 
@@ -199,6 +203,8 @@ export const CommunityPartnerSection: React.FC = () => {
         setActiveMessage('> CONNECTION ACTIVE // NODE://PRAKSHA');
       } else if (node.id === 4) {
         setActiveMessage('> CONNECTION ACTIVE // NODE://ASI_ONE_GHAZIABAD [SPONSOR]');
+      } else if (node.id === 5) {
+        setActiveMessage('> CONNECTION ACTIVE // NODE://MULTI_ATOMS [MEDIA & NETWORKING]');
       }
     } else {
       sound.playHoverClick();
@@ -238,8 +244,8 @@ export const CommunityPartnerSection: React.FC = () => {
           <div>NODES://06</div>
         </div>
         <div className="hidden xl:block absolute top-12 right-8 font-mono text-[9px] text-right text-white/20 tracking-widest leading-relaxed">
-          <div>VERIFIED://04</div>
-          <div>PENDING://02</div>
+          <div>VERIFIED://05</div>
+          <div>PENDING://01</div>
           <div>SIGNAL://CONNECTED</div>
         </div>
       </div>
@@ -254,7 +260,7 @@ export const CommunityPartnerSection: React.FC = () => {
                 {scanStep === 1 && '> SCANNING NETWORK...'}
                 {scanStep === 2 && '> 06 NODES DETECTED // INITIALIZING MAP...'}
                 {scanStep === 3 && '> LOCATING AUTHENTICATED HUBS...'}
-                {scanStep === 4 && '> 04 NODES VERIFIED // DATA PULSE TRANSMITTED'}
+                {scanStep === 4 && '> 05 NODES VERIFIED // DATA PULSE TRANSMITTED'}
               </span>
             </div>
           </div>
@@ -337,9 +343,9 @@ export const CommunityPartnerSection: React.FC = () => {
 
           {/* 5-Node Constellation Grid */}
           <div className="relative z-10 flex flex-col items-center gap-8 sm:gap-10">
-            {/* ROW 1: 04 VERIFIED STRATEGIC COLLABORATORS (ACE CLUB, FORTIXAI SECURITY, PRAKSHA & ASI:ONE GHAZIABAD) */}
-            <div className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
-              {nodes.slice(0, 4).map((node) => {
+            {/* 6-NODE BALANCED NETWORK GRID: 05 VERIFIED COLLABORATORS + 01 CLASSIFIED NODE */}
+            <div className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 max-w-6xl mx-auto">
+              {nodes.slice(0, 5).map((node) => {
                 const isHovered = hoveredNode === node.id;
                 return (
                   <div
@@ -354,7 +360,9 @@ export const CommunityPartnerSection: React.FC = () => {
                           ? 'border-cyber-blue shadow-[0_0_40px_rgba(0,112,243,0.35)] -translate-y-1.5'
                           : node.id === 3
                           ? 'border-amber-400 shadow-[0_0_40px_rgba(250,204,21,0.35)] -translate-y-1.5'
-                          : 'border-yellow-400 shadow-[0_0_40px_rgba(250,204,21,0.35)] -translate-y-1.5'
+                          : node.id === 4
+                          ? 'border-yellow-400 shadow-[0_0_40px_rgba(250,204,21,0.35)] -translate-y-1.5'
+                          : 'border-cyber-red shadow-[0_0_40px_rgba(255,31,67,0.35)] -translate-y-1.5'
                         : 'border-cyber-cyan/50 shadow-[0_0_25px_rgba(0,240,255,0.18)]'
                     }`}
                     data-cursor="access"
@@ -437,18 +445,16 @@ export const CommunityPartnerSection: React.FC = () => {
                   </div>
                 );
               })}
-            </div>
 
-            {/* ROW 2: THE 2 MYSTERIOUS UNKNOWN NODES (05, 06) */}
-            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-2xl mx-auto">
-              {nodes.slice(4).map((node) => {
+              {/* THE MYSTERIOUS UNKNOWN NODE (NODE 06) */}
+              {nodes.slice(5).map((node) => {
                 const isHovered = hoveredNode === node.id;
                 return (
                   <div
                     key={node.id}
                     onMouseEnter={() => handleNodeEnter(node)}
                     onMouseLeave={handleNodeLeave}
-                    className={`relative rounded-2xl p-6 bg-[#06080e]/85 border transition-all duration-300 select-none flex flex-col justify-between min-h-[280px] ${
+                    className={`relative rounded-2xl p-6 bg-[#06080e]/85 border transition-all duration-300 select-none flex flex-col justify-between min-h-[360px] ${
                       isHovered
                         ? 'border-cyber-red shadow-[0_0_30px_rgba(255,31,67,0.3)] bg-[#090b14] -translate-y-1'
                         : 'border-white/10 shadow-lg'
@@ -469,8 +475,8 @@ export const CommunityPartnerSection: React.FC = () => {
                     </div>
 
                     {/* Mystery Symbol: ? COMING SOON */}
-                    <div className="my-auto flex flex-col items-center justify-center text-center py-4">
-                      <div className="relative w-20 h-20 rounded-full border border-white/15 bg-black/60 flex items-center justify-center mb-3">
+                    <div className="my-auto flex flex-col items-center justify-center text-center py-6">
+                      <div className="relative w-24 h-24 rounded-full border border-white/15 bg-black/60 flex items-center justify-center mb-3">
                         <span
                           className={`font-display font-black text-3xl sm:text-4xl text-white/40 transition-all duration-300 ${
                             isHovered
@@ -531,9 +537,9 @@ export const CommunityPartnerSection: React.FC = () => {
           </h3>
 
           <div className="flex flex-wrap items-center justify-center gap-4 text-xs sm:text-sm font-mono my-3">
-            <span className="text-cyber-cyan font-bold">04 CONNECTIONS VERIFIED</span>
+            <span className="text-cyber-cyan font-bold">05 CONNECTIONS VERIFIED</span>
             <span className="text-white/20">|</span>
-            <span className="text-cyber-red font-bold">02 SIGNALS PENDING</span>
+            <span className="text-cyber-red font-bold">01 SIGNAL PENDING</span>
           </div>
 
           <div className="font-mono text-xs sm:text-sm text-white/70 tracking-widest uppercase mt-4 flex items-center justify-center gap-1.5">
