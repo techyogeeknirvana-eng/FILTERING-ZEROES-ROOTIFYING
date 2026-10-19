@@ -21,7 +21,26 @@ interface NodeSlot {
   image?: string;
   coords: string;
   status: string;
+  isPortrait?: boolean;
+  instagramHandle?: string;
+  link?: string;
 }
+
+const InstagramIcon: React.FC<{ className?: string }> = ({ className = 'w-3.5 h-3.5' }) => (
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className={className}
+  >
+    <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
+    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+    <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
+  </svg>
+);
 
 export const CommunityPartnerSection: React.FC = () => {
   const sectionRef = useRef<HTMLElement>(null);
@@ -184,10 +203,25 @@ export const CommunityPartnerSection: React.FC = () => {
     {
       id: 6,
       label: 'NODE 06',
+      code: 'VERIFIED CONNECTION',
+      isVerified: true,
+      name: 'RIZWAN PRATAPGARHI',
+      subLabel: 'INFLUENCER & DIGITAL CREATOR',
+      categories: ['MEDIA PARTNER', 'NETWORKING PARTNER'],
+      image: '/assets/collaborators/rizwan-pratapgarhi.jpg',
+      isPortrait: true,
+      instagramHandle: '@rizwanpratapgarhi',
+      link: 'https://www.instagram.com/rizwanpratapgarhi/',
+      coords: 'LAT: 0x6F // LON: 0x4E',
+      status: hoveredNode === 6 ? '[ CONNECTION ACTIVE ]' : 'CONNECTION VERIFIED',
+    },
+    {
+      id: 7,
+      label: 'NODE 07',
       code: 'NETWORK ENCRYPTED',
       isVerified: false,
-      coords: 'LAT: 0x6F // LON: 0x4E',
-      status: hoveredNode === 6 ? '[ IDENTITY CLASSIFIED ]' : unknownStatuses[0],
+      coords: 'LAT: 0x7A // LON: 0x5F',
+      status: hoveredNode === 7 ? '[ IDENTITY CLASSIFIED ]' : unknownStatuses[0],
     },
   ];
 
@@ -205,6 +239,8 @@ export const CommunityPartnerSection: React.FC = () => {
         setActiveMessage('> CONNECTION ACTIVE // NODE://ASI_ONE_GHAZIABAD [SPONSOR]');
       } else if (node.id === 5) {
         setActiveMessage('> CONNECTION ACTIVE // NODE://MULTI_ATOMS [MEDIA & NETWORKING]');
+      } else if (node.id === 6) {
+        setActiveMessage('> CONNECTION ACTIVE // NODE://RIZWAN_PRATAPGARHI [@rizwanpratapgarhi • INFLUENCER]');
       }
     } else {
       sound.playHoverClick();
@@ -241,10 +277,10 @@ export const CommunityPartnerSection: React.FC = () => {
         <div className="hidden xl:block absolute top-12 left-8 font-mono text-[9px] text-white/20 tracking-widest leading-relaxed">
           <div>NETWORK://ROOTIFYING</div>
           <div>STATUS://ACTIVE</div>
-          <div>NODES://06</div>
+          <div>NODES://07</div>
         </div>
         <div className="hidden xl:block absolute top-12 right-8 font-mono text-[9px] text-right text-white/20 tracking-widest leading-relaxed">
-          <div>VERIFIED://05</div>
+          <div>VERIFIED://06</div>
           <div>PENDING://01</div>
           <div>SIGNAL://CONNECTED</div>
         </div>
@@ -258,9 +294,9 @@ export const CommunityPartnerSection: React.FC = () => {
               <Radio className="w-3.5 h-3.5 animate-pulse text-cyber-cyan" />
               <span>
                 {scanStep === 1 && '> SCANNING NETWORK...'}
-                {scanStep === 2 && '> 06 NODES DETECTED // INITIALIZING MAP...'}
+                {scanStep === 2 && '> 07 NODES DETECTED // INITIALIZING MAP...'}
                 {scanStep === 3 && '> LOCATING AUTHENTICATED HUBS...'}
-                {scanStep === 4 && '> 05 NODES VERIFIED // DATA PULSE TRANSMITTED'}
+                {scanStep === 4 && '> 06 NODES VERIFIED // DATA PULSE TRANSMITTED'}
               </span>
             </div>
           </div>
@@ -343,9 +379,9 @@ export const CommunityPartnerSection: React.FC = () => {
 
           {/* 5-Node Constellation Grid */}
           <div className="relative z-10 flex flex-col items-center gap-8 sm:gap-10">
-            {/* 6-NODE BALANCED NETWORK GRID: 05 VERIFIED COLLABORATORS + 01 CLASSIFIED NODE */}
+            {/* 6-NODE BALANCED NETWORK GRID: 06 VERIFIED COLLABORATORS */}
             <div className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 max-w-6xl mx-auto">
-              {nodes.slice(0, 5).map((node) => {
+              {nodes.filter((n) => n.isVerified).map((node) => {
                 const isHovered = hoveredNode === node.id;
                 return (
                   <div
@@ -362,7 +398,9 @@ export const CommunityPartnerSection: React.FC = () => {
                           ? 'border-amber-400 shadow-[0_0_40px_rgba(250,204,21,0.35)] -translate-y-1.5'
                           : node.id === 4
                           ? 'border-yellow-400 shadow-[0_0_40px_rgba(250,204,21,0.35)] -translate-y-1.5'
-                          : 'border-cyber-red shadow-[0_0_40px_rgba(255,31,67,0.35)] -translate-y-1.5'
+                          : node.id === 5
+                          ? 'border-cyber-red shadow-[0_0_40px_rgba(255,31,67,0.35)] -translate-y-1.5'
+                          : 'border-pink-500 shadow-[0_0_40px_rgba(236,72,153,0.4)] -translate-y-1.5'
                         : 'border-cyber-cyan/50 shadow-[0_0_25px_rgba(0,240,255,0.18)]'
                     }`}
                     data-cursor="access"
@@ -397,11 +435,13 @@ export const CommunityPartnerSection: React.FC = () => {
                             key={idx}
                             className={`inline-flex items-center justify-center gap-1.5 px-3 py-1 rounded-md bg-[#020b14]/90 border transition-all duration-300 backdrop-blur-sm ${
                               isHovered
-                                ? 'border-cyber-cyan shadow-[0_0_16px_rgba(0,240,255,0.3)] text-cyber-cyan'
+                                ? node.id === 6
+                                  ? 'border-pink-500 shadow-[0_0_16px_rgba(236,72,153,0.35)] text-pink-400'
+                                  : 'border-cyber-cyan shadow-[0_0_16px_rgba(0,240,255,0.3)] text-cyber-cyan'
                                 : 'border-cyber-cyan/40 shadow-[0_0_12px_rgba(0,240,255,0.18)] text-cyber-cyan'
                             }`}
                           >
-                            <span className="w-1.5 h-1.5 rounded-full bg-cyber-cyan animate-pulse" />
+                            <span className={`w-1.5 h-1.5 rounded-full ${node.id === 6 ? 'bg-pink-400' : 'bg-cyber-cyan'} animate-pulse`} />
                             <span className="font-mono font-black text-[10px] sm:text-[11px] tracking-wider uppercase whitespace-nowrap">
                               {category}
                             </span>
@@ -410,13 +450,13 @@ export const CommunityPartnerSection: React.FC = () => {
                       </div>
                     )}
 
-                    {/* Collaborator Logo Container - Aspect Ratio Preserved Strictly */}
+                    {/* Collaborator Logo / Portrait Container */}
                     <div className="mb-2 flex flex-col items-center text-center">
-                      <div className={`relative w-36 h-36 sm:w-40 sm:h-40 rounded-xl overflow-hidden border-2 border-cyber-cyan/40 ${node.id === 3 || node.id === 4 ? 'bg-white' : 'bg-[#020408]'} p-3 flex items-center justify-center shadow-[0_0_20px_rgba(0,240,255,0.2)] group-hover:border-cyber-cyan transition-all`}>
+                      <div className={`relative w-36 h-36 sm:w-40 sm:h-40 rounded-xl overflow-hidden border-2 border-cyber-cyan/40 ${node.id === 3 || node.id === 4 ? 'bg-white' : 'bg-[#020408]'} ${node.isPortrait ? 'p-1' : 'p-3'} flex items-center justify-center shadow-[0_0_20px_rgba(0,240,255,0.2)] group-hover:border-cyber-cyan transition-all`}>
                         <img
                           src={node.image}
                           alt={`${node.name} - Strategic Collaborator`}
-                          className="w-full h-full object-contain filter contrast-105 brightness-100 transition-transform duration-300 hover:scale-105"
+                          className={`w-full h-full ${node.isPortrait ? 'object-cover object-top rounded-lg' : 'object-contain'} filter contrast-105 brightness-100 transition-transform duration-300 hover:scale-105`}
                         />
                         {/* Subtle Holographic Scan Sweep on Hover */}
                         {isHovered && (
@@ -430,6 +470,25 @@ export const CommunityPartnerSection: React.FC = () => {
                       <p className="font-mono text-[10px] sm:text-[11px] text-white/70 tracking-widest uppercase mt-1">
                         {node.subLabel}
                       </p>
+
+                      {/* Instagram Profile Link if available */}
+                      {node.link && (
+                        <a
+                          href={node.link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            sound.playAccessGranted();
+                          }}
+                          className="mt-2.5 inline-flex items-center gap-1.5 px-3 py-1 rounded-md bg-gradient-to-r from-pink-500/20 via-purple-500/20 to-pink-500/20 border border-pink-500/50 text-pink-400 hover:text-white hover:border-pink-400 font-mono text-[10px] tracking-wider transition-all shadow-[0_0_12px_rgba(236,72,153,0.25)] hover:shadow-[0_0_20px_rgba(236,72,153,0.5)] cursor-pointer"
+                          title="Open Instagram Profile @rizwanpratapgarhi"
+                        >
+                          <InstagramIcon className="w-3.5 h-3.5" />
+                          <span className="font-bold">{node.instagramHandle || '@rizwanpratapgarhi'}</span>
+                          <ExternalLink className="w-2.5 h-2.5 ml-0.5 opacity-75" />
+                        </a>
+                      )}
                     </div>
 
                     {/* Card Footer Status */}
@@ -445,9 +504,11 @@ export const CommunityPartnerSection: React.FC = () => {
                   </div>
                 );
               })}
+            </div>
 
-              {/* THE MYSTERIOUS UNKNOWN NODE (NODE 06) */}
-              {nodes.slice(5).map((node) => {
+            {/* THE MYSTERIOUS UNKNOWN NODE (NODE 07 - CENTERED BELOW) */}
+            <div className="w-full max-w-sm mx-auto">
+              {nodes.filter((n) => !n.isVerified).map((node) => {
                 const isHovered = hoveredNode === node.id;
                 return (
                   <div
@@ -537,7 +598,7 @@ export const CommunityPartnerSection: React.FC = () => {
           </h3>
 
           <div className="flex flex-wrap items-center justify-center gap-4 text-xs sm:text-sm font-mono my-3">
-            <span className="text-cyber-cyan font-bold">05 CONNECTIONS VERIFIED</span>
+            <span className="text-cyber-cyan font-bold">06 CONNECTIONS VERIFIED</span>
             <span className="text-white/20">|</span>
             <span className="text-cyber-red font-bold">01 SIGNAL PENDING</span>
           </div>

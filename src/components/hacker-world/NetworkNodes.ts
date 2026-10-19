@@ -275,6 +275,21 @@ export class NetworkNodesManager {
         targetAnchor: '#partner',
         discovered: false,
       },
+      {
+        id: 'comm_rizwan_pratapgarhi',
+        title: 'RIZWAN PRATAPGARHI',
+        code: 'NODE://RIZWAN_PRATAPGARHI_06_VERIFIED',
+        category: 'community',
+        color: '#ec4899',
+        coords: new THREE.Vector3(0, 1.8, 30),
+        description: 'Official Media & Networking Partner (@rizwanpratapgarhi) driving creator reach, youth engagement and digital influence.',
+        details: 'Official verified media and networking partner node in the ROOTIFYING network.',
+        status: 'CONNECTED',
+        subLabel: 'MEDIA & NETWORKING PARTNER',
+        partnerImage: '/assets/collaborators/rizwan-pratapgarhi.jpg',
+        targetAnchor: '#partner',
+        discovered: false,
+      },
     ];
 
     // Build 3D visuals for each node
