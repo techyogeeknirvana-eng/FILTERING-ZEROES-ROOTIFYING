@@ -30,6 +30,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onReplayIntro, onOpenTerminal })
     { label: 'WHY ZERO?', href: '#manifesto' },
     { label: 'ACCESS', href: '#access' },
     { label: 'FOUR WORLDS', href: '#domains' },
+    { label: 'THE MINDS', href: '#speakers' },
     { label: 'WHY ROOTIFY', href: '#why-rootify' },
     { label: 'JOURNEY', href: '#experience' },
     { label: 'ROOTIFY FINALE', href: '#rootify' },

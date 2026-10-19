@@ -25,10 +25,10 @@ export const EventJourneySection: React.FC = () => {
       badge: 'KEYNOTE ARSENAL',
       color: '#00f0ff',
       icon: Users,
-      summary: 'Powerful speaker sessions.',
+      summary: 'Powerful speaker sessions · Declassified Keynotes.',
       description:
-        'Founders, kernel developers, security researchers, and AI architects take the central stage. No surface-level motivation—raw frontline technical breakdowns, war stories, zero-day discoveries, and sovereign scaling playbooks.',
-      deliverable: 'Technical Deep Dives · Architecture Dissections',
+        'Founders, kernel developers, security researchers, and AI architects take the central stage. Featuring Yatin Batra (Senior Software Engineer, Valeo Health ME) on Android AI, Agentic AI & Scalable Systems—alongside global technology visionaries.',
+      deliverable: 'Keynote Breakdown · Architecture Dissections · Yatin Batra Dossier',
     },
     {
       step: '03',

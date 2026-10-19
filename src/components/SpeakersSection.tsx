@@ -1,18 +1,64 @@
-﻿import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { sound } from '../utils/audio';
-import { Lock } from 'lucide-react';
+import {
+  Lock,
+  X,
+  Sparkles,
+  Bot,
+  Layers,
+  Smartphone,
+  CheckCircle2,
+  ShieldCheck,
+  ArrowRight,
+} from 'lucide-react';
+
+export interface SpeakerSlot {
+  id: string;
+  domain: string;
+  role: string;
+  name?: string;
+  organization?: string;
+  image?: string;
+  topics?: string[];
+  color: string;
+  hash: string;
+  status: string;
+  isUnlocked?: boolean;
+}
 
 export const SpeakersSection: React.FC = () => {
   const [activeFilter, setActiveFilter] = useState<string>('ALL');
+  const [selectedSpeaker, setSelectedSpeaker] = useState<SpeakerSlot | null>(null);
 
-  const speakerSlots = [
+  // Close modal on Escape
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && selectedSpeaker) {
+        sound.playHoverClick();
+        setSelectedSpeaker(null);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [selectedSpeaker]);
+
+  const speakerSlots: SpeakerSlot[] = [
     {
       id: 'sp-1',
       domain: 'AI',
-      role: 'FOUNDATION MODEL ARCHITECT',
+      name: 'YATIN BATRA',
+      role: 'Senior Software Engineer',
+      organization: 'Valeo Health ME',
+      image: '/assets/speakers/yatin-batra.jpg',
+      topics: [
+        'Android Development & Artificial Intelligence',
+        'Agentic AI & AI-Assisted Engineering',
+        'System Design & Scalable Applications',
+      ],
       color: '#00f0ff',
       hash: '0x9B2A...E47C',
-      status: 'REVEALING SOON',
+      status: 'DECLASSIFIED // CONFIRMED',
+      isUnlocked: true,
     },
     {
       id: 'sp-2',
@@ -79,14 +125,27 @@ export const SpeakersSection: React.FC = () => {
 
   const filters = ['ALL', 'AI', 'CYBER', 'CLOUD', 'ENTREPRENEURSHIP'];
 
+  const handleSpeakerClick = (sp: SpeakerSlot) => {
+    if (sp.isUnlocked) {
+      sound.playAccessGranted();
+      setSelectedSpeaker(sp);
+    } else {
+      sound.playDenied();
+    }
+  };
+
   return (
-    <section id="speakers" className="relative py-28 px-4 sm:px-6 bg-[#040507] overflow-hidden border-t border-cyber-border/50">
+    <section
+      id="speakers"
+      className="relative py-28 px-4 sm:px-6 bg-[#040507] overflow-hidden border-t border-cyber-border/50"
+    >
       <div className="absolute inset-0 scanline-bg opacity-20 pointer-events-none" />
 
       <div className="max-w-7xl mx-auto relative z-10">
         <div className="flex flex-col items-center text-center mb-14">
-          <div className="inline-flex items-center gap-2 px-3 py-1 mb-4 rounded border border-cyber-cyan/40 bg-cyber-cyan/10 text-cyber-cyan font-mono text-xs tracking-widest uppercase">
-            <span>KEYNOTE ARCHITECTS</span>
+          <div className="inline-flex items-center gap-2 px-3 py-1 mb-4 rounded border border-cyber-cyan/40 bg-cyber-cyan/10 text-cyber-cyan font-mono text-xs tracking-widest uppercase shadow-[0_0_15px_rgba(0,240,255,0.2)]">
+            <Sparkles className="w-3.5 h-3.5 text-cyber-cyan animate-pulse" />
+            <span>KEYNOTE ARCHITECTS // LINEUP DECLASSIFIED</span>
           </div>
           <h2 className="font-display font-black text-4xl sm:text-6xl text-white tracking-tight uppercase">
             THE <span className="text-cyber-cyan text-glow-cyan">MINDS</span>
@@ -118,55 +177,297 @@ export const SpeakersSection: React.FC = () => {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {filteredSlots.map((sp) => (
-            <div
-              key={sp.id}
-              className="group relative p-6 rounded-lg border border-cyber-border bg-cyber-surface/40 hover:bg-cyber-surface/80 transition-all duration-300 backdrop-blur-sm overflow-hidden flex flex-col justify-between min-h-[320px]"
-              data-cursor="locked"
-              onClick={() => sound.playDenied()}
-            >
-              <div className="absolute inset-0 bg-gradient-to-b from-transparent via-white/5 to-transparent -translate-y-full group-hover:translate-y-full transition-transform duration-1000 pointer-events-none" />
-
-              <div className="flex items-center justify-between">
-                <span
-                  className="font-mono text-[11px] font-bold px-2 py-0.5 rounded uppercase"
-                  style={{
-                    backgroundColor: `${sp.color}15`,
-                    color: sp.color,
-                    border: `1px solid ${sp.color}40`,
-                  }}
+          {filteredSlots.map((sp) => {
+            if (sp.isUnlocked) {
+              return (
+                <div
+                  key={sp.id}
+                  className="group relative p-6 rounded-xl border-2 border-cyber-cyan/70 bg-gradient-to-b from-[#061021]/95 via-[#030713]/95 to-[#020308]/98 hover:border-cyber-cyan transition-all duration-300 backdrop-blur-md overflow-hidden flex flex-col justify-between min-h-[380px] shadow-[0_0_30px_rgba(0,240,255,0.25)] hover:shadow-[0_0_45px_rgba(0,240,255,0.45)] hover:-translate-y-1 cursor-pointer"
+                  data-cursor="access"
+                  onClick={() => handleSpeakerClick(sp)}
+                  title="Click to view keynote dossier"
                 >
-                  {sp.domain}
-                </span>
-                <span className="font-mono text-[10px] text-white/30">{sp.hash}</span>
-              </div>
+                  {/* Holographic sweep effect */}
+                  <div className="absolute inset-0 bg-gradient-to-b from-transparent via-cyber-cyan/10 to-transparent -translate-y-full group-hover:translate-y-full transition-transform duration-1000 pointer-events-none" />
 
-              <div className="my-6 flex flex-col items-center justify-center py-4">
-                <div className="w-24 h-24 rounded-full border border-dashed border-white/20 flex items-center justify-center bg-cyber-panel/60 group-hover:border-cyber-red/50 transition-colors relative">
-                  <Lock className="w-8 h-8 text-white/40 group-hover:text-cyber-red transition-colors" />
-                  <div className="absolute inset-0 rounded-full border border-white/5 animate-ping opacity-20" />
-                </div>
-                <div className="mt-4 font-display font-bold text-lg text-white tracking-widest uppercase">
-                  COMING SOON
-                </div>
-                <div className="font-mono text-[10px] text-white/50 tracking-widest uppercase mt-1">
-                  {sp.role}
-                </div>
-              </div>
+                  {/* Header: Domain & Declassified Tag */}
+                  <div className="flex items-center justify-between z-10">
+                    <span
+                      className="font-mono text-[11px] font-black px-2.5 py-0.5 rounded uppercase tracking-wider"
+                      style={{
+                        backgroundColor: `${sp.color}20`,
+                        color: sp.color,
+                        border: `1px solid ${sp.color}60`,
+                      }}
+                    >
+                      {sp.domain}
+                    </span>
+                    <span className="inline-flex items-center gap-1.5 font-mono text-[9px] font-black text-brand-green bg-brand-green/15 border border-brand-green/40 px-2 py-0.5 rounded-full shadow-[0_0_12px_rgba(0,255,136,0.3)]">
+                      <span className="w-1.5 h-1.5 rounded-full bg-brand-green animate-ping" />
+                      DECLASSIFIED
+                    </span>
+                  </div>
 
-              <div className="pt-4 border-t border-white/5 flex items-center justify-between font-mono text-[10px]">
-                <span className="text-white/40">[ ENCRYPTION: SHA-256 ]</span>
-                <span
-                  className="font-bold tracking-wider"
-                  style={{ color: sp.color }}
-                >
-                  [{sp.status}]
-                </span>
+                  {/* Center: Photo & Profile */}
+                  <div className="my-4 flex flex-col items-center text-center z-10">
+                    {/* Futuristic Photo Container */}
+                    <div className="relative w-28 h-28 sm:w-32 sm:h-32 rounded-2xl overflow-hidden border-2 border-cyber-cyan p-1 bg-black/80 shadow-[0_0_25px_rgba(0,240,255,0.4)] group-hover:scale-105 transition-transform duration-300">
+                      <img
+                        src={sp.image}
+                        alt={sp.name}
+                        className="w-full h-full object-cover rounded-xl filter contrast-110 brightness-100"
+                      />
+                      {/* Tech Corner Reticles */}
+                      <div className="absolute top-1 left-1 w-2.5 h-2.5 border-t-2 border-l-2 border-white pointer-events-none" />
+                      <div className="absolute top-1 right-1 w-2.5 h-2.5 border-t-2 border-r-2 border-white pointer-events-none" />
+                      <div className="absolute bottom-1 left-1 w-2.5 h-2.5 border-b-2 border-l-2 border-white pointer-events-none" />
+                      <div className="absolute bottom-1 right-1 w-2.5 h-2.5 border-b-2 border-r-2 border-white pointer-events-none" />
+                    </div>
+
+                    {/* Name */}
+                    <h3 className="mt-3.5 font-display font-black text-xl sm:text-2xl text-white tracking-wide uppercase text-glow-cyan">
+                      {sp.name}
+                    </h3>
+
+                    {/* Designation & Organization */}
+                    <div className="mt-1 font-mono text-[11px] sm:text-xs text-cyber-cyan font-bold tracking-wider uppercase">
+                      {sp.role}
+                    </div>
+                    <div className="font-mono text-[10px] text-white/70 font-semibold tracking-widest uppercase">
+                      {sp.organization}
+                    </div>
+
+                    {/* Topics Highlights */}
+                    <div className="mt-3 w-full space-y-1.5 text-left">
+                      {sp.topics?.map((topic, idx) => (
+                        <div
+                          key={idx}
+                          className="flex items-start gap-1.5 font-mono text-[9px] sm:text-[10px] text-white/85 bg-white/5 border border-white/10 rounded-md px-2 py-1 leading-snug group-hover:border-cyber-cyan/30 transition-colors"
+                        >
+                          <span className="text-cyber-cyan font-bold">›</span>
+                          <span className="line-clamp-1">{topic}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Footer telemetry & Dossier prompt */}
+                  <div className="pt-3 border-t border-cyber-cyan/30 flex items-center justify-between font-mono text-[10px] z-10">
+                    <span className="text-white/40">{sp.hash}</span>
+                    <span className="text-cyber-cyan font-bold tracking-wider flex items-center gap-1 group-hover:translate-x-0.5 transition-transform">
+                      VIEW DOSSIER <ArrowRight className="w-3 h-3 text-cyber-cyan" />
+                    </span>
+                  </div>
+                </div>
+              );
+            }
+
+            // Locked Slots
+            return (
+              <div
+                key={sp.id}
+                className="group relative p-6 rounded-lg border border-cyber-border bg-cyber-surface/40 hover:bg-cyber-surface/80 transition-all duration-300 backdrop-blur-sm overflow-hidden flex flex-col justify-between min-h-[320px]"
+                data-cursor="locked"
+                onClick={() => handleSpeakerClick(sp)}
+              >
+                <div className="absolute inset-0 bg-gradient-to-b from-transparent via-white/5 to-transparent -translate-y-full group-hover:translate-y-full transition-transform duration-1000 pointer-events-none" />
+
+                <div className="flex items-center justify-between">
+                  <span
+                    className="font-mono text-[11px] font-bold px-2 py-0.5 rounded uppercase"
+                    style={{
+                      backgroundColor: `${sp.color}15`,
+                      color: sp.color,
+                      border: `1px solid ${sp.color}40`,
+                    }}
+                  >
+                    {sp.domain}
+                  </span>
+                  <span className="font-mono text-[10px] text-white/30">{sp.hash}</span>
+                </div>
+
+                <div className="my-6 flex flex-col items-center justify-center py-4">
+                  <div className="w-24 h-24 rounded-full border border-dashed border-white/20 flex items-center justify-center bg-cyber-panel/60 group-hover:border-cyber-red/50 transition-colors relative">
+                    <Lock className="w-8 h-8 text-white/40 group-hover:text-cyber-red transition-colors" />
+                    <div className="absolute inset-0 rounded-full border border-white/5 animate-ping opacity-20" />
+                  </div>
+                  <div className="mt-4 font-display font-bold text-lg text-white tracking-widest uppercase">
+                    COMING SOON
+                  </div>
+                  <div className="font-mono text-[10px] text-white/50 tracking-widest uppercase mt-1">
+                    {sp.role}
+                  </div>
+                </div>
+
+                <div className="pt-4 border-t border-white/5 flex items-center justify-between font-mono text-[10px]">
+                  <span className="text-white/40">[ ENCRYPTION: SHA-256 ]</span>
+                  <span
+                    className="font-bold tracking-wider"
+                    style={{ color: sp.color }}
+                  >
+                    [{sp.status}]
+                  </span>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
+
+      {/* ===================================================================
+          KEYNOTE SPEAKER DOSSIER MODAL (DECLASSIFIED)
+          =================================================================== */}
+      {selectedSpeaker && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/85 backdrop-blur-md animate-in fade-in duration-200"
+          onClick={() => {
+            sound.playHoverClick();
+            setSelectedSpeaker(null);
+          }}
+        >
+          <div
+            className="relative w-full max-w-2xl rounded-2xl border-2 border-cyber-cyan bg-[#030612]/98 p-6 sm:p-8 shadow-[0_0_60px_rgba(0,240,255,0.4)] text-white overflow-hidden animate-in zoom-in-95 duration-200"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Top Close Button */}
+            <button
+              onClick={() => {
+                sound.playHoverClick();
+                setSelectedSpeaker(null);
+              }}
+              className="absolute top-4 right-4 w-9 h-9 rounded-lg bg-white/10 hover:bg-cyber-red/20 border border-white/20 hover:border-cyber-red text-white/80 hover:text-white flex items-center justify-center transition-all cursor-pointer group"
+              title="Close Dossier [ESC]"
+            >
+              <X className="w-5 h-5 text-white/80 group-hover:text-cyber-red group-hover:rotate-90 transition-transform" />
+            </button>
+
+            {/* Dossier Header Telemetry */}
+            <div className="flex items-center gap-2 pb-3 mb-6 border-b border-cyber-cyan/30 text-[10px] font-mono">
+              <span className="px-2 py-0.5 rounded bg-cyber-cyan text-black font-black uppercase tracking-wider">
+                DOSSIER DECLASSIFIED
+              </span>
+              <span className="text-white/50 tracking-widest uppercase">
+                // NODE: {selectedSpeaker.hash}
+              </span>
+              <span className="ml-auto mr-10 inline-flex items-center gap-1 text-brand-green font-bold">
+                <ShieldCheck className="w-3.5 h-3.5 text-brand-green" />
+                VERIFIED KEYNOTE
+              </span>
+            </div>
+
+            {/* Speaker Bio Grid */}
+            <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6">
+              {/* Left: Speaker Portrait */}
+              <div className="relative w-36 h-36 sm:w-44 sm:h-44 rounded-2xl overflow-hidden border-2 border-cyber-cyan p-1 bg-black/90 shadow-[0_0_35px_rgba(0,240,255,0.5)] shrink-0">
+                <img
+                  src={selectedSpeaker.image}
+                  alt={selectedSpeaker.name}
+                  className="w-full h-full object-cover rounded-xl filter contrast-110"
+                />
+                <div className="absolute top-1 left-1 w-3 h-3 border-t-2 border-l-2 border-white pointer-events-none" />
+                <div className="absolute top-1 right-1 w-3 h-3 border-t-2 border-r-2 border-white pointer-events-none" />
+                <div className="absolute bottom-1 left-1 w-3 h-3 border-b-2 border-l-2 border-white pointer-events-none" />
+                <div className="absolute bottom-1 right-1 w-3 h-3 border-b-2 border-r-2 border-white pointer-events-none" />
+              </div>
+
+              {/* Right: Speaker Credentials */}
+              <div className="flex-1 text-center sm:text-left">
+                <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded border border-cyber-cyan/40 bg-cyber-cyan/15 text-cyber-cyan font-mono text-[10px] font-black uppercase tracking-widest mb-1.5">
+                  <Bot className="w-3.5 h-3.5 text-cyber-cyan" />
+                  <span>{selectedSpeaker.domain} ARCHITECT</span>
+                </div>
+
+                <h3 className="font-display font-black text-2xl sm:text-3xl text-white tracking-wide uppercase text-glow-cyan leading-tight">
+                  {selectedSpeaker.name}
+                </h3>
+
+                <div className="mt-1 font-mono text-sm sm:text-base text-cyber-cyan font-bold tracking-wider uppercase">
+                  {selectedSpeaker.role}
+                </div>
+                <div className="font-mono text-xs sm:text-sm text-white/70 font-semibold tracking-widest uppercase">
+                  {selectedSpeaker.organization}
+                </div>
+
+                <div className="mt-4 p-3 rounded-xl bg-white/5 border border-white/10 font-mono text-xs text-white/80 leading-relaxed">
+                  Leading frontline initiatives in intelligent mobile systems, agentic workflow automation, and fault-tolerant architecture for next-generation digital health platforms.
+                </div>
+              </div>
+            </div>
+
+            {/* Keynote Focus & Session Breakdown */}
+            <div className="mt-6 pt-5 border-t border-white/10">
+              <div className="flex items-center gap-2 mb-3">
+                <CheckCircle2 className="w-4 h-4 text-cyber-cyan" />
+                <h4 className="font-mono text-xs font-black text-cyber-cyan tracking-widest uppercase">
+                  SESSION KEYNOTE TOPICS // DEEP DIVES
+                </h4>
+              </div>
+
+              <div className="space-y-2.5">
+                <div className="p-3 rounded-lg bg-cyber-surface/60 border border-cyber-border/70 flex items-start gap-3">
+                  <Smartphone className="w-5 h-5 text-cyber-cyan shrink-0 mt-0.5" />
+                  <div>
+                    <div className="font-mono text-xs font-bold text-white uppercase tracking-wider">
+                      Android Development & Artificial Intelligence
+                    </div>
+                    <div className="font-mono text-[11px] text-white/60 mt-0.5">
+                      On-device neural model deployment, high-performance edge compute, and seamless intelligent mobile user experiences.
+                    </div>
+                  </div>
+                </div>
+
+                <div className="p-3 rounded-lg bg-cyber-surface/60 border border-cyber-border/70 flex items-start gap-3">
+                  <Bot className="w-5 h-5 text-cyber-red shrink-0 mt-0.5" />
+                  <div>
+                    <div className="font-mono text-xs font-bold text-white uppercase tracking-wider">
+                      Agentic AI & AI-Assisted Engineering
+                    </div>
+                    <div className="font-mono text-[11px] text-white/60 mt-0.5">
+                      Production multi-agent coordination, autonomous reasoning loops, and scaling developer engineering velocity with AI copilots.
+                    </div>
+                  </div>
+                </div>
+
+                <div className="p-3 rounded-lg bg-cyber-surface/60 border border-cyber-border/70 flex items-start gap-3">
+                  <Layers className="w-5 h-5 text-brand-green shrink-0 mt-0.5" />
+                  <div>
+                    <div className="font-mono text-xs font-bold text-white uppercase tracking-wider">
+                      System Design & Scalable Applications
+                    </div>
+                    <div className="font-mono text-[11px] text-white/60 mt-0.5">
+                      Architecting distributed zero-downtime microservices, event-driven pipelines, and robust data integrity at scale.
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Modal Actions */}
+            <div className="mt-6 pt-4 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-3">
+              <div className="font-mono text-[10px] text-white/40">
+                [ STATUS: SESSION ACTIVE • KEYNOTE CONFIRMED ]
+              </div>
+              <div className="flex items-center gap-3 w-full sm:w-auto">
+                <a
+                  href="#access"
+                  onClick={() => {
+                    sound.playButtonConfirm();
+                    setSelectedSpeaker(null);
+                    const el = document.getElementById('access');
+                    if (el) el.scrollIntoView({ behavior: 'smooth' });
+                  }}
+                  className="w-full sm:w-auto px-5 py-2.5 rounded-xl font-mono font-black text-xs uppercase tracking-widest bg-gradient-to-r from-cyber-cyan via-white to-cyber-cyan text-black hover:scale-105 shadow-[0_0_25px_rgba(0,240,255,0.6)] transition-all flex items-center justify-center gap-2"
+                >
+                  <span>CLAIM PASS TO ATTEND</span>
+                  <ArrowRight className="w-4 h-4" />
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 };

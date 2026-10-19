@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { sound } from '../utils/audio';
-import { Lock, Terminal, Radio, Compass, Network, ArrowUpRight } from 'lucide-react';
+import { Lock, Terminal, Radio, Compass, Network, ArrowUpRight, Users } from 'lucide-react';
 
 interface ModuleCard {
   id: string;
   name: string;
   code: string;
-  initialStatus: 'CLASSIFIED' | 'REVEALING SOON' | 'ACCESS PENDING' | 'NETWORK CONNECTED' | 'REGISTRATION OPEN';
+  initialStatus: 'CLASSIFIED' | 'REVEALING SOON' | 'ACCESS PENDING' | 'NETWORK CONNECTED' | 'REGISTRATION OPEN' | 'DECLASSIFIED';
   iconType: string;
   color: string;
   meta: string;
@@ -63,10 +63,10 @@ export const CommandCenterSection: React.FC = () => {
       id: 'speakers',
       name: 'SPEAKERS',
       code: 'VOX_ORATORS',
-      initialStatus: 'REVEALING SOON',
+      initialStatus: 'DECLASSIFIED',
       iconType: 'speakers',
       color: '#00f0ff',
-      meta: 'Multidisciplinary minds addressing uncompromised industry problems.',
+      meta: 'Keynote lineup declassified: Yatin Batra (Valeo Health ME) & more.',
     },
     {
       id: 'venue',
@@ -155,7 +155,25 @@ export const CommandCenterSection: React.FC = () => {
       return;
     }
 
-    // 3. Probe other restricted modules
+    // 3. Direct connection for Speakers -> The Minds section
+    if (mod.id === 'speakers') {
+      sound.playButtonConfirm();
+      sound.playNavWhoosh();
+      const timestamp = new Date().toLocaleTimeString();
+      setTerminalLogs((prev) => [
+        `> [${timestamp}] AUTHENTICATION DECLASSIFIED: node://speakers`,
+        `> ROUTING DIRECTLY TO // THE MINDS (KEYNOTE ARCHITECTS)`,
+        `> CONFIRMED KEYNOTE ARCHITECT: YATIN BATRA • SENIOR SOFTWARE ENGINEER (VALEO HEALTH ME)`,
+        ...prev.slice(0, 5),
+      ]);
+      const target = document.getElementById('speakers');
+      if (target) {
+        target.scrollIntoView({ behavior: 'smooth' });
+      }
+      return;
+    }
+
+    // 4. Probe other restricted modules
     const currentState = cardStates[mod.id] || 'idle';
     if (currentState === 'authenticating') return;
 
@@ -217,7 +235,8 @@ export const CommandCenterSection: React.FC = () => {
             const state = cardStates[mod.id] || 'idle';
             const isCommunities = mod.id === 'communities';
             const isReg = mod.id === 'reg';
-            const isUnlocked = isCommunities || isReg;
+            const isSpeakers = mod.id === 'speakers';
+            const isUnlocked = isCommunities || isReg || isSpeakers;
 
             let statusDisplay = `[ ${mod.initialStatus} ]`;
             let badgeClass = 'text-white/60 border-white/20 bg-white/5';
@@ -227,6 +246,9 @@ export const CommandCenterSection: React.FC = () => {
               badgeClass = 'text-cyber-cyan border-cyber-cyan/60 bg-cyber-cyan/15 animate-pulse';
             } else if (isReg) {
               statusDisplay = '[ REGISTRATION OPEN ]';
+              badgeClass = 'text-cyber-cyan border-cyber-cyan/60 bg-cyber-cyan/15 animate-pulse';
+            } else if (isSpeakers) {
+              statusDisplay = '[ KEYNOTE DECLASSIFIED ]';
               badgeClass = 'text-cyber-cyan border-cyber-cyan/60 bg-cyber-cyan/15 animate-pulse';
             } else if (state === 'authenticating') {
               statusDisplay = '[ AUTHENTICATING... ]';
@@ -262,6 +284,8 @@ export const CommandCenterSection: React.FC = () => {
                     <Network className="w-4 h-4 text-cyber-cyan animate-pulse" />
                   ) : isReg ? (
                     <ArrowUpRight className="w-4 h-4 text-cyber-cyan animate-pulse" />
+                  ) : isSpeakers ? (
+                    <Users className="w-4 h-4 text-cyber-cyan animate-pulse" />
                   ) : (
                     <Lock
                       className={`w-4 h-4 transition-colors ${
@@ -320,6 +344,17 @@ export const CommandCenterSection: React.FC = () => {
                     >
                       <ArrowUpRight className="w-3.5 h-3.5" />
                       <span>OPEN REGISTRATION &rarr;</span>
+                    </button>
+                  ) : isSpeakers ? (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleCardClick(mod);
+                      }}
+                      className="w-full flex items-center justify-center gap-1.5 py-1.5 rounded bg-cyber-cyan text-black font-bold font-mono text-[10px] tracking-wider hover:bg-white transition-all shadow-[0_0_20px_rgba(0,240,255,0.4)] cursor-pointer"
+                    >
+                      <Users className="w-3.5 h-3.5" />
+                      <span>VIEW KEYNOTE MINDS &rarr;</span>
                     </button>
                   ) : (
                     <button
