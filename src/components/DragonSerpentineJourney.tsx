@@ -9,6 +9,7 @@ import {
   Sparkles,
 } from 'lucide-react';
 import { sound } from '../utils/audio';
+import { CyberSerpentineDragonScene } from './CyberSerpentineDragonScene';
 
 interface DragonSerpentineJourneyProps {
   onClose: () => void;
@@ -104,56 +105,12 @@ const CHECKPOINTS: CheckpointNode[] = [
   },
 ];
 
-// Continuous 38-point serpentine spine trajectory from Head through all checkpoints to Tail
-const DRAGON_SPINE_POINTS = [
-  { x: 340, y: 70 },
-  { x: 380, y: 95 },
-  { x: 410, y: 112 }, // Eye
-  { x: 438, y: 158 }, // Mouth
-  { x: 370, y: 185 },
-  { x: 274, y: 194 }, // CP 01
-  { x: 330, y: 205 },
-  { x: 430, y: 175 },
-  { x: 510, y: 130 },
-  { x: 562, y: 108 }, // CP 02
-  { x: 650, y: 115 },
-  { x: 740, y: 140 },
-  { x: 815, y: 175 },
-  { x: 872, y: 202 }, // CP 03
-  { x: 850, y: 235 },
-  { x: 760, y: 248 },
-  { x: 670, y: 252 },
-  { x: 586, y: 254 }, // CP 04
-  { x: 500, y: 275 },
-  { x: 440, y: 310 },
-  { x: 394, y: 354 }, // CP 05
-  { x: 450, y: 370 },
-  { x: 560, y: 375 },
-  { x: 680, y: 372 },
-  { x: 780, y: 375 },
-  { x: 855, y: 380 }, // CP 06
-  { x: 885, y: 420 },
-  { x: 850, y: 460 },
-  { x: 750, y: 480 },
-  { x: 600, y: 485 },
-  { x: 463, y: 482 }, // CP 07
-  { x: 530, y: 498 },
-  { x: 630, y: 525 },
-  { x: 710, y: 538 },
-  { x: 770, y: 538 }, // CP 08
-  { x: 840, y: 545 },
-  { x: 905, y: 520 },
-  { x: 945, y: 460 },
-  { x: 955, y: 390 }, // Tail tip
-];
-
 type DragonMood = 'idle' | 'roaring' | 'celebrating';
 
 export const DragonSerpentineJourney: React.FC<DragonSerpentineJourneyProps> = ({
   onClose,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
   const [dragonMood, setDragonMood] = useState<DragonMood>('idle');
   const [dragonDialogue, setDragonDialogue] = useState<string>(
     'I AM THE CYBER-DRAKE GUARDIAN. SEEK THE UNSEALED SIGNAL.'
@@ -161,11 +118,9 @@ export const DragonSerpentineJourney: React.FC<DragonSerpentineJourneyProps> = (
   const [hoveredCpId, setHoveredCpId] = useState<number | null>(null);
   const [selectedCpId, setSelectedCpId] = useState<number>(1);
   const [shakingCpId, setShakingCpId] = useState<number | null>(null);
-  const [lightningTarget, setLightningTarget] = useState<{ x: number; y: number } | null>(null);
   const [isAudioMuted, setIsAudioMuted] = useState<boolean>(() => sound.getIsMuted());
 
   const moodTimerRef = useRef<number | null>(null);
-  const lightningTimerRef = useRef<number | null>(null);
 
   // Keyboard navigation & body lock
   useEffect(() => {
@@ -186,7 +141,6 @@ export const DragonSerpentineJourney: React.FC<DragonSerpentineJourneyProps> = (
       document.body.style.overflow = prevOverflow;
       window.removeEventListener('keydown', handleKeyDown);
       if (moodTimerRef.current) clearTimeout(moodTimerRef.current);
-      if (lightningTimerRef.current) clearTimeout(lightningTimerRef.current);
     };
   }, [onClose]);
 
@@ -216,13 +170,7 @@ export const DragonSerpentineJourney: React.FC<DragonSerpentineJourneyProps> = (
     setDragonMood('roaring');
     sound.playDragonRoar();
     setShakingCpId(cp.id);
-    setLightningTarget(cp.coords);
     setDragonDialogue('THIS SIGNAL REMAINS SEALED. REVEALING SOON.');
-
-    if (lightningTimerRef.current) clearTimeout(lightningTimerRef.current);
-    lightningTimerRef.current = window.setTimeout(() => {
-      setLightningTarget(null);
-    }, 700);
 
     setTimeout(() => {
       setShakingCpId(null);
@@ -250,211 +198,6 @@ export const DragonSerpentineJourney: React.FC<DragonSerpentineJourneyProps> = (
       containerRef.current.scrollTo({ left: targetScroll, behavior: 'smooth' });
     }
   };
-
-  // =========================================================================
-  // ANIMATED CANVAS LAYER: SERPENTINE ENERGY, DRAGON EYES, ROAR LIGHTNING
-  // =========================================================================
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    let animId: number;
-    let time = 0;
-
-    // Generate floating ambient cyber-embers
-    const emberCount = 35;
-    const embers: Array<{
-      x: number;
-      y: number;
-      vx: number;
-      vy: number;
-      size: number;
-      alpha: number;
-      color: string;
-    }> = [];
-
-    for (let i = 0; i < emberCount; i++) {
-      embers.push({
-        x: Math.random() * 1024,
-        y: Math.random() * 682,
-        vx: (Math.random() - 0.5) * 0.4,
-        vy: -Math.random() * 0.6 - 0.2,
-        size: Math.random() * 2 + 1,
-        alpha: Math.random() * 0.7 + 0.2,
-        color: Math.random() > 0.4 ? '#00f0ff' : '#ff1f43',
-      });
-    }
-
-    // Catmull-Rom interpolation helper for smooth curve
-    const getPointAt = (pts: Array<{ x: number; y: number }>, t: number) => {
-      const p = (pts.length - 1) * t;
-      const intPoint = Math.floor(p);
-      const weight = p - intPoint;
-
-      const p0 = pts[Math.max(0, intPoint - 1)];
-      const p1 = pts[intPoint];
-      const p2 = pts[Math.min(pts.length - 1, intPoint + 1)];
-      const p3 = pts[Math.min(pts.length - 1, intPoint + 2)];
-
-      const t2 = weight * weight;
-      const t3 = t2 * weight;
-
-      const x =
-        0.5 *
-        (2 * p1.x +
-          (-p0.x + p2.x) * weight +
-          (2 * p0.x - 5 * p1.x + 4 * p2.x - p3.x) * t2 +
-          (-p0.x + 3 * p1.x - 3 * p2.x + p3.x) * t3);
-
-      const y =
-        0.5 *
-        (2 * p1.y +
-          (-p0.y + p2.y) * weight +
-          (2 * p0.y - 5 * p1.y + 4 * p2.y - p3.y) * t2 +
-          (-p0.y + 3 * p1.y - 3 * p2.y + p3.y) * t3);
-
-      return { x, y };
-    };
-
-    const render = () => {
-      time += 0.016;
-      ctx.clearRect(0, 0, 1024, 682);
-
-      // 1. Draw glowing serpentine energy flow along the spine
-      const energyPulseCount = 6;
-      for (let i = 0; i < energyPulseCount; i++) {
-        const pulseT = (time * 0.12 + i / energyPulseCount) % 1.0;
-        const pt = getPointAt(DRAGON_SPINE_POINTS, pulseT);
-
-        const isCyan = i % 2 === 0;
-        const gradient = ctx.createRadialGradient(pt.x, pt.y, 0, pt.x, pt.y, 22);
-        gradient.addColorStop(0, isCyan ? 'rgba(0, 240, 255, 0.9)' : 'rgba(255, 31, 67, 0.85)');
-        gradient.addColorStop(0.4, isCyan ? 'rgba(0, 240, 255, 0.4)' : 'rgba(255, 31, 67, 0.35)');
-        gradient.addColorStop(1, 'transparent');
-
-        ctx.fillStyle = gradient;
-        ctx.beginPath();
-        ctx.arc(pt.x, pt.y, 22, 0, Math.PI * 2);
-        ctx.fill();
-
-        // High intensity core spark
-        ctx.fillStyle = '#ffffff';
-        ctx.beginPath();
-        ctx.arc(pt.x, pt.y, 2.5, 0, Math.PI * 2);
-        ctx.fill();
-      }
-
-      // 2. Dragon Eye Glow Animation at (410, 112)
-      const eyeX = 410;
-      const eyeY = 112;
-      const isRoaring = dragonMood === 'roaring';
-      const isCelebrating = dragonMood === 'celebrating';
-
-      const eyeColor = isCelebrating ? '#ffd700' : '#ff1f43';
-      const eyeRadius = isRoaring ? 16 + Math.sin(time * 20) * 4 : 8 + Math.sin(time * 3) * 2;
-
-      const eyeGrad = ctx.createRadialGradient(eyeX, eyeY, 0, eyeX, eyeY, eyeRadius * 2);
-      eyeGrad.addColorStop(0, '#ffffff');
-      eyeGrad.addColorStop(0.3, eyeColor);
-      eyeGrad.addColorStop(1, 'transparent');
-
-      ctx.fillStyle = eyeGrad;
-      ctx.beginPath();
-      ctx.arc(eyeX, eyeY, eyeRadius * 2, 0, Math.PI * 2);
-      ctx.fill();
-
-      // Slit iris
-      ctx.strokeStyle = '#000000';
-      ctx.lineWidth = 1.5;
-      ctx.beginPath();
-      ctx.moveTo(eyeX, eyeY - eyeRadius * 0.7);
-      ctx.lineTo(eyeX, eyeY + eyeRadius * 0.7);
-      ctx.stroke();
-
-      // 3. Dragon Roar Lightning / Plasma Arc to clicked locked checkpoint
-      if (lightningTarget) {
-        const mouthX = 438;
-        const mouthY = 158;
-        const targetX = lightningTarget.x;
-        const targetY = lightningTarget.y;
-
-        ctx.save();
-        ctx.strokeStyle = '#ff1f43';
-        ctx.lineWidth = 3.5;
-        ctx.shadowColor = '#ff1f43';
-        ctx.shadowBlur = 18;
-
-        // Jagged electric beam
-        const segments = 12;
-        ctx.beginPath();
-        ctx.moveTo(mouthX, mouthY);
-
-        for (let s = 1; s < segments; s++) {
-          const segT = s / segments;
-          const baseX = mouthX + (targetX - mouthX) * segT;
-          const baseY = mouthY + (targetY - mouthY) * segT;
-          const jitterX = (Math.random() - 0.5) * 16;
-          const jitterY = (Math.random() - 0.5) * 16;
-          ctx.lineTo(baseX + jitterX, baseY + jitterY);
-        }
-        ctx.lineTo(targetX, targetY);
-        ctx.stroke();
-
-        // White core bolt
-        ctx.strokeStyle = '#ffffff';
-        ctx.lineWidth = 1.5;
-        ctx.stroke();
-
-        // Target shockwave explosion ring
-        const shockRadius = 15 + (Math.sin(time * 25) + 1) * 18;
-        ctx.strokeStyle = 'rgba(255, 31, 67, 0.8)';
-        ctx.lineWidth = 2.5;
-        ctx.beginPath();
-        ctx.arc(targetX, targetY, shockRadius, 0, Math.PI * 2);
-        ctx.stroke();
-
-        ctx.restore();
-      }
-
-      // 4. Portal Ascension Vertical Laser Beam on Island 08
-      const portalX = 700;
-      const portalY = 530;
-      const beamAlpha = 0.55 + Math.sin(time * 4) * 0.25;
-
-      const beamGrad = ctx.createLinearGradient(portalX, portalY, portalX, portalY - 260);
-      beamGrad.addColorStop(0, `rgba(255, 31, 67, ${beamAlpha})`);
-      beamGrad.addColorStop(0.6, `rgba(255, 31, 67, ${beamAlpha * 0.4})`);
-      beamGrad.addColorStop(1, 'transparent');
-
-      ctx.fillStyle = beamGrad;
-      ctx.fillRect(portalX - 2.5, portalY - 260, 5, 260);
-
-      // 5. Update and render ambient floating embers
-      for (const ember of embers) {
-        ember.x += ember.vx;
-        ember.y += ember.vy;
-
-        if (ember.y < 0) {
-          ember.y = 682;
-          ember.x = Math.random() * 1024;
-        }
-
-        ctx.fillStyle = ember.color;
-        ctx.globalAlpha = ember.alpha * (0.6 + Math.sin(time * 3 + ember.x) * 0.4);
-        ctx.beginPath();
-        ctx.arc(ember.x, ember.y, ember.size, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.globalAlpha = 1.0;
-      }
-
-      animId = requestAnimationFrame(render);
-    };
-
-    animId = requestAnimationFrame(render);
-    return () => cancelAnimationFrame(animId);
-  }, [dragonMood, lightningTarget]);
 
   return (
     <div
@@ -579,40 +322,19 @@ export const DragonSerpentineJourney: React.FC<DragonSerpentineJourneyProps> = (
       >
         {/* Aspect Ratio Container (1024 x 682, approx 1.50:1) */}
         <div className="relative min-w-[900px] w-full max-w-[calc(96vh*1.5)] aspect-[1024/682] max-h-[96vh] mx-auto select-none">
-          {/* Base Artwork Image */}
-          <img
-            src="/assets/dragon-serpentine-journey.jpg"
-            alt="FILTERING ZEROES ROOTIFYING Cyber-Dragon Serpentine Journey Map"
-            className="w-full h-full object-contain pointer-events-none select-none block"
-            draggable={false}
+          {/* Real-Time Animated 3D Cyber Serpentine Dragon Scene */}
+          <CyberSerpentineDragonScene
+            dragonMood={dragonMood}
+            targetCheckpointId={selectedCpId}
+            hoveredCheckpointId={hoveredCpId}
+            checkpoints={CHECKPOINTS}
           />
 
-          {/* Animated Canvas Overlay (Dragon energy, roaring lightning, eye flares, mist) */}
-          <canvas
-            ref={canvasRef}
-            width={1024}
-            height={682}
-            className="absolute inset-0 w-full h-full pointer-events-none z-10"
-          />
-
-          {/* Interactive Checkpoint Rings & Spline SVG */}
+          {/* Interactive Checkpoint Rings SVG */}
           <svg
             viewBox="0 0 1024 682"
             className="absolute inset-0 w-full h-full pointer-events-none z-20"
           >
-            {/* Illuminated Spline Segment on Hover */}
-            {hoveredCpId !== null && (
-              <polyline
-                points={DRAGON_SPINE_POINTS.map((p) => `${p.x},${p.y}`).join(' ')}
-                fill="none"
-                stroke="#00f0ff"
-                strokeWidth="3"
-                strokeLinecap="round"
-                strokeDasharray="8 12"
-                className="animate-pulse"
-                filter="drop-shadow(0 0 8px #00f0ff)"
-              />
-            )}
 
             {/* Glowing Rings directly over each checkpoint node on the dragon route */}
             {CHECKPOINTS.map((cp) => {
