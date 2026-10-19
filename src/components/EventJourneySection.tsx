@@ -27,7 +27,7 @@ export const EventJourneySection: React.FC = () => {
       icon: Users,
       summary: 'Powerful speaker sessions · Declassified Keynotes.',
       description:
-        'Founders, kernel developers, industry leaders, and AI architects take the central stage. Featuring Yatin Batra (Valeo Health ME) on Android AI & Scalable Systems and Monica Sodhi (GL Bajaj) on Executive Communication & Soft Skills Leadership—alongside global technology visionaries.',
+        'Founders, kernel developers, industry leaders, and AI architects take the central stage. Featuring Yatin Batra (Valeo Health ME), Monica Sodhi (GL Bajaj), and Azim Siddiqui (thecodingshef.in, Ex: Blinkit & ShareChat)—alongside global technology visionaries.',
       deliverable: 'Keynote Breakdown · Architecture Dissections · Verified Speaker Dossiers',
     },
     {

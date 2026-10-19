@@ -13,12 +13,15 @@ import {
   Mic,
   Users,
   Target,
+  Rocket,
+  Zap,
+  Code,
 } from 'lucide-react';
 
 export interface KeynoteTopicDetail {
   title: string;
   description: string;
-  iconName?: 'bot' | 'mobile' | 'layers' | 'mic' | 'users' | 'target' | 'sparkles';
+  iconName?: 'bot' | 'mobile' | 'layers' | 'mic' | 'users' | 'target' | 'sparkles' | 'rocket' | 'zap' | 'code';
 }
 
 export interface SpeakerSlot {
@@ -132,6 +135,44 @@ export const SpeakersSection: React.FC = () => {
     },
     {
       id: 'sp-3',
+      domain: 'ENTREPRENEURSHIP',
+      name: 'AZIM SIDDIQUI',
+      role: 'Senior Android Engineer & Founder',
+      organization: 'thecodingshef.in • Ex: Blinkit & ShareChat',
+      image: '/assets/speakers/azim-siddiqui.jpg',
+      bio: 'Senior Android Engineer and Founder of thecodingshef.in, with a track record of architecting mission-critical consumer mobile systems at Blinkit and ShareChat. Dedicated to hyper-scale mobile architecture, low-latency client performance, and mentoring developer ecosystems.',
+      topics: [
+        'Hyper-Scale Mobile Architecture & Client Performance',
+        'Bootstrapping Developer Platforms & thecodingshef.in',
+        'High-Concurrency Production Systems (Ex: Blinkit & ShareChat)',
+      ],
+      detailedTopics: [
+        {
+          title: 'Hyper-Scale Mobile Architecture & Client Performance',
+          description:
+            'Architecting zero-latency rendering, minimal memory footprints, offline-first sync pipelines, and high-frame-rate mobile UX for millions of daily active users.',
+          iconName: 'mobile',
+        },
+        {
+          title: 'Bootstrapping Developer Platforms & thecodingshef.in',
+          description:
+            'From first line of code to nationwide impact: building thecodingshef.in, democratizing tech education, and scaling open engineering communities.',
+          iconName: 'rocket',
+        },
+        {
+          title: 'High-Concurrency Production Systems (Ex: Blinkit & ShareChat)',
+          description:
+            'Battle-hardened operational insights from real-time quick commerce logistics at Blinkit and high-throughput multimedia streams at ShareChat.',
+          iconName: 'zap',
+        },
+      ],
+      color: '#00e676',
+      hash: '0x5D3E...91AF',
+      status: 'DECLASSIFIED // CONFIRMED',
+      isUnlocked: true,
+    },
+    {
+      id: 'sp-4',
       domain: 'CYBER',
       role: 'RING-0 EXPLOIT RESEARCHER',
       color: '#ff1f43',
@@ -139,20 +180,12 @@ export const SpeakersSection: React.FC = () => {
       status: 'CLASSIFIED',
     },
     {
-      id: 'sp-4',
+      id: 'sp-5',
       domain: 'CLOUD',
       role: 'GLOBAL INFRASTRUCTURE PRINCIPAL',
       color: '#0070f3',
       hash: '0x88CC...F110',
       status: 'REVEALING SOON',
-    },
-    {
-      id: 'sp-5',
-      domain: 'ENTREPRENEURSHIP',
-      role: 'DEEP-TECH UNICORN FOUNDER',
-      color: '#00e676',
-      hash: '0x1A4D...33B9',
-      status: 'CLASSIFIED',
     },
     {
       id: 'sp-6',
@@ -185,7 +218,7 @@ export const SpeakersSection: React.FC = () => {
       ? speakerSlots
       : speakerSlots.filter((s) => s.domain === activeFilter);
 
-  const filters = ['ALL', 'AI', 'LEADERSHIP & SKILLS', 'CYBER', 'CLOUD', 'ENTREPRENEURSHIP'];
+  const filters = ['ALL', 'AI', 'ENTREPRENEURSHIP', 'LEADERSHIP & SKILLS', 'CYBER', 'CLOUD'];
 
   const handleSpeakerClick = (sp: SpeakerSlot) => {
     if (sp.isUnlocked) {
@@ -210,6 +243,12 @@ export const SpeakersSection: React.FC = () => {
         return <Users className="w-5 h-5 text-cyber-cyan shrink-0 mt-0.5" />;
       case 'target':
         return <Target className="w-5 h-5 text-cyber-red shrink-0 mt-0.5" />;
+      case 'rocket':
+        return <Rocket className="w-5 h-5 text-brand-green shrink-0 mt-0.5" />;
+      case 'zap':
+        return <Zap className="w-5 h-5 text-cyber-yellow shrink-0 mt-0.5" />;
+      case 'code':
+        return <Code className="w-5 h-5 text-cyber-cyan shrink-0 mt-0.5" />;
       default:
         return <Sparkles className="w-5 h-5 text-cyber-cyan shrink-0 mt-0.5" />;
     }
