@@ -245,6 +245,21 @@ export class NetworkNodesManager {
         targetAnchor: '#partner',
         discovered: false,
       },
+      {
+        id: 'comm_asi_one',
+        title: 'ASI:ONE GHAZIABAD',
+        code: 'NODE://ASI_ONE_04_VERIFIED',
+        category: 'community',
+        color: '#eab308',
+        coords: new THREE.Vector3(10, 1.8, 27),
+        description: 'Official Networking Partner & Sponsor driving artificial intelligence, technology and developer empowerment.',
+        details: 'Official verified sponsor and networking partner node in the ROOTIFYING network.',
+        status: 'CONNECTED',
+        subLabel: 'NETWORKING PARTNER & SPONSOR',
+        partnerImage: '/assets/collaborators/asi-one-ghaziabad.png',
+        targetAnchor: '#sponsors',
+        discovered: false,
+      },
     ];
 
     // Build 3D visuals for each node

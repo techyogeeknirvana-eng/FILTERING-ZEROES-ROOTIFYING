@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { sound } from '../utils/audio';
 import { Lock, Send, Check } from 'lucide-react';
 
@@ -33,6 +33,44 @@ export const SponsorsSection: React.FC = () => {
           <div className="w-16 h-[2px] bg-gradient-to-r from-yellow-400 to-cyber-cyan my-6" />
         </div>
 
+        {/* Verified Official Sponsor Showcase */}
+        <div className="mb-14 max-w-xl mx-auto p-6 sm:p-8 rounded-2xl border-2 border-yellow-500/50 bg-[#060810]/95 shadow-[0_0_35px_rgba(234,179,8,0.25)] text-center relative backdrop-blur-xl group hover:border-yellow-400 transition-all">
+          <div className="absolute top-0 left-0 w-3 h-3 border-t-2 border-l-2 border-yellow-400 rounded-tl-lg pointer-events-none" />
+          <div className="absolute top-0 right-0 w-3 h-3 border-t-2 border-r-2 border-cyber-cyan rounded-tr-lg pointer-events-none" />
+          <div className="absolute bottom-0 left-0 w-3 h-3 border-b-2 border-l-2 border-yellow-400 rounded-bl-lg pointer-events-none" />
+          <div className="absolute bottom-0 right-0 w-3 h-3 border-b-2 border-r-2 border-cyber-cyan rounded-br-lg pointer-events-none" />
+
+          {/* Top Badge */}
+          <div className="flex items-center justify-between pb-3 mb-4 border-b border-yellow-500/25 font-mono text-[10px]">
+            <span className="flex items-center gap-1.5 text-yellow-400 font-bold tracking-widest">
+              <span className="w-1.5 h-1.5 rounded-full bg-yellow-400 animate-ping" />
+              OFFICIAL SPONSOR & NETWORKING PATRON
+            </span>
+            <span className="px-2 py-0.5 rounded bg-brand-green/20 text-brand-green border border-brand-green/40 font-bold">
+              [ VERIFIED BACKER ]
+            </span>
+          </div>
+
+          {/* Logo Container */}
+          <div className="w-36 h-36 sm:w-44 sm:h-44 mx-auto rounded-xl overflow-hidden border-2 border-yellow-500/40 bg-white p-3 flex items-center justify-center shadow-[0_0_25px_rgba(234,179,8,0.2)] group-hover:scale-105 transition-transform">
+            <img
+              src="/assets/collaborators/asi-one-ghaziabad.png"
+              alt="ASI:ONE Ghaziabad - Official Sponsor"
+              className="w-full h-full object-contain filter contrast-105 brightness-100"
+            />
+          </div>
+
+          <h3 className="mt-4 font-display font-black text-2xl text-white tracking-wider uppercase">
+            ASI:ONE GHAZIABAD
+          </h3>
+          <p className="font-mono text-xs text-yellow-400/90 font-bold tracking-widest uppercase mt-1">
+            NETWORKING PARTNER & SPONSOR
+          </p>
+          <div className="mt-3 font-mono text-[11px] text-white/60">
+            Driving artificial intelligence innovation, community empowerment & ecosystem growth.
+          </div>
+        </div>
+
         <div className="p-8 sm:p-12 rounded-2xl border border-cyber-border bg-cyber-surface/50 backdrop-blur-xl relative text-center flex flex-col items-center max-w-4xl mx-auto">
           <div className="w-16 h-16 rounded-full border border-white/20 flex items-center justify-center bg-cyber-panel/80 mb-6 relative">
             <Lock className="w-7 h-7 text-yellow-400" />
@@ -40,7 +78,7 @@ export const SponsorsSection: React.FC = () => {
           </div>
 
           <div className="font-display font-black text-3xl sm:text-4xl text-white tracking-widest uppercase mb-2">
-            SPONSORS COMING SOON
+            ADDITIONAL SPONSOR TIERS
           </div>
           <p className="font-mono text-xs sm:text-sm text-white/60 tracking-wider max-w-xl mb-8">
             Underwriter consortium vetting is currently underway. Strategic partners and technology patrons will be unveiled during the Phase 2 broadcast.

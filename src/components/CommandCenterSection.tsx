@@ -145,7 +145,7 @@ export const CommandCenterSection: React.FC = () => {
       setTerminalLogs((prev) => [
         `> [${timestamp}] LINK ESTABLISHED: node://communities`,
         `> ROUTING DIRECTLY TO // THE NETWORK (STRATEGIC COLLABORATORS)`,
-        `> ACTIVE VERIFIED NODES: ACE CLUB • FORTIXAI SECURITY • PRAKSHA`,
+        `> ACTIVE VERIFIED NODES: ACE CLUB • FORTIXAI SECURITY • PRAKSHA • ASI:ONE GHAZIABAD`,
         ...prev.slice(0, 5),
       ]);
       const target = document.getElementById('network') || document.getElementById('partner');

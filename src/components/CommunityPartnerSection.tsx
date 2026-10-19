@@ -160,10 +160,14 @@ export const CommunityPartnerSection: React.FC = () => {
     {
       id: 4,
       label: 'NODE 04',
-      code: 'NETWORK ENCRYPTED',
-      isVerified: false,
+      code: 'VERIFIED CONNECTION',
+      isVerified: true,
+      name: 'ASI:ONE GHAZIABAD',
+      subLabel: 'AI & EMERGING TECH COMMUNITY',
+      categories: ['NETWORKING PARTNER', 'SPONSOR'],
+      image: '/assets/collaborators/asi-one-ghaziabad.png',
       coords: 'LAT: 0x4D // LON: 0x2C',
-      status: hoveredNode === 4 ? '[ IDENTITY CLASSIFIED ]' : unknownStatuses[0],
+      status: hoveredNode === 4 ? '[ CONNECTION ACTIVE ]' : 'CONNECTION VERIFIED',
     },
     {
       id: 5,
@@ -171,7 +175,15 @@ export const CommunityPartnerSection: React.FC = () => {
       code: 'NETWORK ENCRYPTED',
       isVerified: false,
       coords: 'LAT: 0x5E // LON: 0x3D',
-      status: hoveredNode === 5 ? '[ IDENTITY CLASSIFIED ]' : unknownStatuses[1],
+      status: hoveredNode === 5 ? '[ IDENTITY CLASSIFIED ]' : unknownStatuses[0],
+    },
+    {
+      id: 6,
+      label: 'NODE 06',
+      code: 'NETWORK ENCRYPTED',
+      isVerified: false,
+      coords: 'LAT: 0x6F // LON: 0x4E',
+      status: hoveredNode === 6 ? '[ IDENTITY CLASSIFIED ]' : unknownStatuses[1],
     },
   ];
 
@@ -185,6 +197,8 @@ export const CommunityPartnerSection: React.FC = () => {
         setActiveMessage('> CONNECTION ACTIVE // NODE://FORTIXAI_SECURITY');
       } else if (node.id === 3) {
         setActiveMessage('> CONNECTION ACTIVE // NODE://PRAKSHA');
+      } else if (node.id === 4) {
+        setActiveMessage('> CONNECTION ACTIVE // NODE://ASI_ONE_GHAZIABAD [SPONSOR]');
       }
     } else {
       sound.playHoverClick();
@@ -221,10 +235,10 @@ export const CommunityPartnerSection: React.FC = () => {
         <div className="hidden xl:block absolute top-12 left-8 font-mono text-[9px] text-white/20 tracking-widest leading-relaxed">
           <div>NETWORK://ROOTIFYING</div>
           <div>STATUS://ACTIVE</div>
-          <div>NODES://05</div>
+          <div>NODES://06</div>
         </div>
         <div className="hidden xl:block absolute top-12 right-8 font-mono text-[9px] text-right text-white/20 tracking-widest leading-relaxed">
-          <div>VERIFIED://03</div>
+          <div>VERIFIED://04</div>
           <div>PENDING://02</div>
           <div>SIGNAL://CONNECTED</div>
         </div>
@@ -238,9 +252,9 @@ export const CommunityPartnerSection: React.FC = () => {
               <Radio className="w-3.5 h-3.5 animate-pulse text-cyber-cyan" />
               <span>
                 {scanStep === 1 && '> SCANNING NETWORK...'}
-                {scanStep === 2 && '> 05 NODES DETECTED // INITIALIZING MAP...'}
+                {scanStep === 2 && '> 06 NODES DETECTED // INITIALIZING MAP...'}
                 {scanStep === 3 && '> LOCATING AUTHENTICATED HUBS...'}
-                {scanStep === 4 && '> 03 NODES VERIFIED // DATA PULSE TRANSMITTED'}
+                {scanStep === 4 && '> 04 NODES VERIFIED // DATA PULSE TRANSMITTED'}
               </span>
             </div>
           </div>
@@ -323,9 +337,9 @@ export const CommunityPartnerSection: React.FC = () => {
 
           {/* 5-Node Constellation Grid */}
           <div className="relative z-10 flex flex-col items-center gap-8 sm:gap-10">
-            {/* ROW 1: 03 VERIFIED STRATEGIC COLLABORATORS (ACE CLUB, FORTIXAI SECURITY & PRAKSHA) */}
-            <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 max-w-5xl mx-auto">
-              {nodes.slice(0, 3).map((node) => {
+            {/* ROW 1: 04 VERIFIED STRATEGIC COLLABORATORS (ACE CLUB, FORTIXAI SECURITY, PRAKSHA & ASI:ONE GHAZIABAD) */}
+            <div className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
+              {nodes.slice(0, 4).map((node) => {
                 const isHovered = hoveredNode === node.id;
                 return (
                   <div
@@ -338,7 +352,9 @@ export const CommunityPartnerSection: React.FC = () => {
                           ? 'border-cyber-cyan shadow-[0_0_40px_rgba(0,240,255,0.35)] -translate-y-1.5'
                           : node.id === 2
                           ? 'border-cyber-blue shadow-[0_0_40px_rgba(0,112,243,0.35)] -translate-y-1.5'
-                          : 'border-amber-400 shadow-[0_0_40px_rgba(250,204,21,0.35)] -translate-y-1.5'
+                          : node.id === 3
+                          ? 'border-amber-400 shadow-[0_0_40px_rgba(250,204,21,0.35)] -translate-y-1.5'
+                          : 'border-yellow-400 shadow-[0_0_40px_rgba(250,204,21,0.35)] -translate-y-1.5'
                         : 'border-cyber-cyan/50 shadow-[0_0_25px_rgba(0,240,255,0.18)]'
                     }`}
                     data-cursor="access"
@@ -388,7 +404,7 @@ export const CommunityPartnerSection: React.FC = () => {
 
                     {/* Collaborator Logo Container - Aspect Ratio Preserved Strictly */}
                     <div className="mb-2 flex flex-col items-center text-center">
-                      <div className="relative w-36 h-36 sm:w-40 sm:h-40 rounded-xl overflow-hidden border-2 border-cyber-cyan/40 bg-[#020408] p-3 flex items-center justify-center shadow-[0_0_20px_rgba(0,240,255,0.2)] group-hover:border-cyber-cyan transition-all">
+                      <div className={`relative w-36 h-36 sm:w-40 sm:h-40 rounded-xl overflow-hidden border-2 border-cyber-cyan/40 ${node.id === 3 || node.id === 4 ? 'bg-white' : 'bg-[#020408]'} p-3 flex items-center justify-center shadow-[0_0_20px_rgba(0,240,255,0.2)] group-hover:border-cyber-cyan transition-all`}>
                         <img
                           src={node.image}
                           alt={`${node.name} - Strategic Collaborator`}
@@ -423,9 +439,9 @@ export const CommunityPartnerSection: React.FC = () => {
               })}
             </div>
 
-            {/* ROW 2: THE 2 MYSTERIOUS UNKNOWN NODES (04, 05) */}
+            {/* ROW 2: THE 2 MYSTERIOUS UNKNOWN NODES (05, 06) */}
             <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-2xl mx-auto">
-              {nodes.slice(3).map((node) => {
+              {nodes.slice(4).map((node) => {
                 const isHovered = hoveredNode === node.id;
                 return (
                   <div
@@ -515,9 +531,9 @@ export const CommunityPartnerSection: React.FC = () => {
           </h3>
 
           <div className="flex flex-wrap items-center justify-center gap-4 text-xs sm:text-sm font-mono my-3">
-            <span className="text-cyber-cyan font-bold">02 CONNECTIONS VERIFIED</span>
+            <span className="text-cyber-cyan font-bold">04 CONNECTIONS VERIFIED</span>
             <span className="text-white/20">|</span>
-            <span className="text-cyber-red font-bold">03 SIGNALS PENDING</span>
+            <span className="text-cyber-red font-bold">02 SIGNALS PENDING</span>
           </div>
 
           <div className="font-mono text-xs sm:text-sm text-white/70 tracking-widest uppercase mt-4 flex items-center justify-center gap-1.5">
