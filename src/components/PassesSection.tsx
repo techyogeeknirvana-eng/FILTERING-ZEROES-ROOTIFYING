@@ -12,10 +12,14 @@ import {
   Zap,
 } from 'lucide-react';
 import { sound } from '../utils/audio';
+import { RootifyingJourneyModal } from './RootifyingJourneyModal';
 
 export const PassesSection: React.FC = () => {
   const sectionRef = useRef<HTMLElement>(null);
   const cardsRef = useRef<HTMLDivElement>(null);
+
+  // Rootifying Journey Modal State (Triggered by FREE button)
+  const [showJourneyModal, setShowJourneyModal] = useState<boolean>(false);
 
   // Viewport trigger
   const [hasScrolledIn, setHasScrolledIn] = useState<boolean>(false);
@@ -435,7 +439,14 @@ export const PassesSection: React.FC = () => {
               </div>
 
               {/* Price Display */}
-              <div className="p-4 rounded-lg bg-black/40 border border-white/10 mb-6">
+              <div
+                onClick={() => {
+                  sound.playHoverClick();
+                  setShowJourneyModal(true);
+                }}
+                className="p-4 rounded-lg bg-black/40 border border-white/10 hover:border-cyber-cyan/30 cursor-pointer mb-6 transition-colors"
+                title="Click to view ROOTIFYING Journey"
+              >
                 <div className="font-mono text-[10px] text-white/40 uppercase tracking-widest mb-1">
                   CLEARANCE COST
                 </div>
@@ -471,11 +482,11 @@ export const PassesSection: React.FC = () => {
             {/* Locked CTA Button */}
             <div className="pt-4 border-t border-white/10">
               <button
-                disabled
                 onClick={() => {
                   sound.playHoverClick();
+                  setShowJourneyModal(true);
                 }}
-                className="w-full py-4 px-4 rounded-lg font-mono font-bold text-xs tracking-widest uppercase border border-white/20 bg-white/5 text-white/50 cursor-not-allowed flex items-center justify-center gap-2.5 opacity-75 select-none transition-all"
+                className="w-full py-4 px-4 rounded-lg font-mono font-bold text-xs tracking-widest uppercase border border-white/20 bg-white/5 text-white/50 hover:text-white hover:border-cyber-cyan/50 hover:bg-cyber-cyan/10 cursor-pointer flex items-center justify-center gap-2.5 opacity-75 hover:opacity-100 select-none transition-all"
                 title="Free registration opening soon"
               >
                 <Lock className="w-3.5 h-3.5 text-white/40" />
@@ -948,6 +959,14 @@ export const PassesSection: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Rootifying Journey Interface (Triggered strictly by FREE button) */}
+      {showJourneyModal && (
+        <RootifyingJourneyModal
+          isOpen={showJourneyModal}
+          onClose={() => setShowJourneyModal(false)}
+        />
+      )}
     </section>
   );
 };
