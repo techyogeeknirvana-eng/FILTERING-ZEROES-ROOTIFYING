@@ -12,6 +12,7 @@ import {
   VolumeX,
 } from 'lucide-react';
 import { sound } from '../utils/audio';
+import { CyberDragon3DCanvas } from './CyberDragon3DCanvas';
 
 interface RootifyingJourneyModalProps {
   isOpen: boolean;
@@ -34,7 +35,7 @@ const CHECKPOINTS: CheckpointData[] = [
     phaseNumber: '01',
     isUnlocked: true,
     title: 'PHASE 01: THE SIGNAL',
-    statusLabel: 'NOW OPEN',
+    statusLabel: 'THE SIGNAL — OPEN NOW',
     description: 'Your journey begins here. Step into the first signal and build your edge.',
     link: 'https://unstop.com/o/812FQZe?lb=AOfe9oit&utm_medium=Share&utm_source=prabhjot2265&utm_campaign=Workshops',
   },
@@ -170,7 +171,7 @@ export const RootifyingJourneyModal: React.FC<RootifyingJourneyModalProps> = ({
     setDragonMood('roaring');
     setActivePulseTargetId(id);
     setShakingId(id);
-    setDragonDialogue('THIS SIGNAL REMAINS SEALED. ITS TIME WILL COME.');
+    setDragonDialogue('THIS SIGNAL REMAINS SEALED. REVEALING SOON.');
 
     setTimeout(() => setShakingId(null), 600);
 
@@ -310,21 +311,21 @@ export const RootifyingJourneyModal: React.FC<RootifyingJourneyModalProps> = ({
               THE CYBER-DRAGON GUARDIAN HERO STAGE
               ===================================================== */}
           <section className="relative mb-6 text-center">
-            {/* Dragon Avatar SVG & Animations */}
-            <div className="relative inline-block mx-auto">
-              <CyberDragonVisual
-                mood={dragonMood}
-                animReady={animReady}
+            {/* 3D Hardware-Accelerated Cyber-Dragon Guardian */}
+            <div className="relative max-w-xl mx-auto overflow-hidden">
+              <CyberDragon3DCanvas
+                mood={dragonMood === 'emerging' ? 'idle' : dragonMood}
+                targetCheckpointId={activePulseTargetId}
               />
 
-              {/* Dragon Mood Particle Ring */}
+              {/* Dragon Mood Particle Glow */}
               <div
-                className={`absolute inset-0 rounded-full blur-2xl pointer-events-none transition-all duration-500 ${
+                className={`absolute inset-0 rounded-full blur-3xl pointer-events-none transition-all duration-700 ${
                   dragonMood === 'roaring'
-                    ? 'bg-cyber-red/40 scale-125'
+                    ? 'bg-cyber-red/35 scale-125'
                     : dragonMood === 'celebrating'
-                    ? 'bg-amber-400/35 scale-125'
-                    : 'bg-cyber-cyan/20 scale-100'
+                    ? 'bg-amber-400/30 scale-125'
+                    : 'bg-cyber-cyan/15 scale-100'
                 }`}
               />
             </div>
@@ -410,7 +411,7 @@ export const RootifyingJourneyModal: React.FC<RootifyingJourneyModalProps> = ({
                   </span>
                 </div>
                 <span className="px-3 py-1 rounded-full font-mono text-[10px] font-black tracking-widest uppercase bg-brand-green/20 text-brand-green border border-brand-green/50 shadow-[0_0_15px_rgba(0,255,136,0.4)]">
-                  NOW OPEN
+                  THE SIGNAL — OPEN NOW
                 </span>
               </div>
 
@@ -633,146 +634,6 @@ export const RootifyingJourneyModal: React.FC<RootifyingJourneyModalProps> = ({
           }
         }
       `}</style>
-    </div>
-  );
-};
-
-/* =========================================================================
-   CYBER-DRAGON GUARDIAN VISUAL COMPONENT
-   ========================================================================= */
-interface CyberDragonVisualProps {
-  mood: DragonMood;
-  animReady: boolean;
-}
-
-const CyberDragonVisual: React.FC<CyberDragonVisualProps> = ({
-  mood,
-  animReady,
-}) => {
-  const isRoaring = mood === 'roaring';
-  const isCelebrating = mood === 'celebrating';
-
-  const primaryGlowColor = isRoaring ? '#ff1f43' : isCelebrating ? '#ffd700' : '#00f0ff';
-  const eyeColor = isRoaring ? '#ff1f43' : isCelebrating ? '#00f0ff' : '#00f0ff';
-
-  return (
-    <div
-      className={`relative w-48 h-32 sm:w-64 sm:h-40 mx-auto transition-transform duration-500 ${
-        animReady ? 'scale-100 opacity-100' : 'scale-90 opacity-0'
-      } ${!isRoaring ? 'animate-dragon-breathe' : 'scale-110'}`}
-    >
-      <svg
-        viewBox="0 0 320 200"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-        className="w-full h-full filter drop-shadow-[0_0_20px_rgba(0,240,255,0.4)]"
-      >
-        <defs>
-          <linearGradient id="dragonArmor" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#1e293b" />
-            <stop offset="50%" stopColor="#0f172a" />
-            <stop offset="100%" stopColor="#020617" />
-          </linearGradient>
-          <linearGradient id="hornGlow" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor={primaryGlowColor} />
-            <stop offset="100%" stopColor="#ff1f43" />
-          </linearGradient>
-        </defs>
-
-        {/* Biomechanical Left Wing Spikes */}
-        <path
-          d="M 120 120 L 20 60 L 60 110 L 10 100 L 50 140 L 110 135"
-          fill="url(#dragonArmor)"
-          stroke={primaryGlowColor}
-          strokeWidth="1.5"
-          className="transition-all duration-300"
-        />
-
-        {/* Biomechanical Right Wing Spikes */}
-        <path
-          d="M 200 120 L 300 60 L 260 110 L 310 100 L 270 140 L 210 135"
-          fill="url(#dragonArmor)"
-          stroke={primaryGlowColor}
-          strokeWidth="1.5"
-          className="transition-all duration-300"
-        />
-
-        {/* Left Horn */}
-        <path
-          d="M 140 70 C 120 30 80 20 50 25 C 80 45 110 65 130 85 Z"
-          fill="url(#hornGlow)"
-          stroke="#ffffff"
-          strokeWidth="1"
-          opacity={isRoaring ? '1' : '0.85'}
-        />
-
-        {/* Right Horn */}
-        <path
-          d="M 180 70 C 200 30 240 20 270 25 C 240 45 210 65 190 85 Z"
-          fill="url(#hornGlow)"
-          stroke="#ffffff"
-          strokeWidth="1"
-          opacity={isRoaring ? '1' : '0.85'}
-        />
-
-        {/* Upper Crest Spikes */}
-        <polygon points="160,20 152,50 168,50" fill={primaryGlowColor} />
-        <polygon points="145,35 138,60 152,60" fill={primaryGlowColor} opacity="0.8" />
-        <polygon points="175,35 168,60 182,60" fill={primaryGlowColor} opacity="0.8" />
-
-        {/* Armored Dragon Head Contour */}
-        <polygon
-          points="160,45 195,80 180,140 160,175 140,140 125,80"
-          fill="url(#dragonArmor)"
-          stroke={primaryGlowColor}
-          strokeWidth="2"
-        />
-
-        {/* Brow Plates */}
-        <polygon points="160,65 185,85 160,95 135,85" fill="#334155" stroke="#ffffff" strokeWidth="0.5" />
-
-        {/* Fierce Cyber Eyes (Electric Blue in normal/friendly, Laser Crimson in roar) */}
-        <g className="transition-all duration-300">
-          {/* Left Eye */}
-          <polygon
-            points="142,95 154,98 144,103"
-            fill={eyeColor}
-            filter="drop-shadow(0 0 6px currentColor)"
-          />
-          {/* Right Eye */}
-          <polygon
-            points="178,95 166,98 176,103"
-            fill={eyeColor}
-            filter="drop-shadow(0 0 6px currentColor)"
-          />
-
-          {/* Celebratory Sunburst Eye Sparks */}
-          {isCelebrating && (
-            <>
-              <circle cx="148" cy="99" r="6" fill="#ffd700" opacity="0.6" className="animate-ping" />
-              <circle cx="172" cy="99" r="6" fill="#ffd700" opacity="0.6" className="animate-ping" />
-            </>
-          )}
-        </g>
-
-        {/* Snout Armor & Biomechanical Grille */}
-        <polygon points="152,120 168,120 160,145" fill="#0f172a" stroke={primaryGlowColor} strokeWidth="1" />
-        <line x1="154" y1="126" x2="166" y2="126" stroke={primaryGlowColor} strokeWidth="1" />
-        <line x1="156" y1="132" x2="164" y2="132" stroke={primaryGlowColor} strokeWidth="1" />
-
-        {/* Jaw & Mouth Aperture */}
-        {isRoaring ? (
-          <g>
-            {/* Open Roaring Plasma Mouth */}
-            <polygon points="150,150 170,150 160,178" fill="#ff1f43" />
-            <polygon points="154,152 166,152 160,170" fill="#ffffff" />
-            {/* Roar Plasma Ring */}
-            <circle cx="160" cy="165" r="18" stroke="#ff1f43" strokeWidth="2" className="animate-ping" opacity="0.75" />
-          </g>
-        ) : (
-          <path d="M 152 152 L 160 156 L 168 152" stroke={primaryGlowColor} strokeWidth="2" strokeLinecap="round" />
-        )}
-      </svg>
     </div>
   );
 };

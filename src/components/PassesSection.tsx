@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import {
   Shield,
   ShieldCheck,
-  Lock,
   ArrowRight,
   Terminal,
   Activity,
@@ -317,8 +316,9 @@ export const PassesSection: React.FC = () => {
             <div className="text-white/80 font-bold tracking-[0.18em]">
               PRE-REGISTRATION IS OPEN.
             </div>
-            <div className="text-cyber-red text-xs sm:text-sm font-semibold tracking-widest pt-1">
-              FREE REGISTRATION OPENING SOON
+            <div className="text-brand-green text-xs sm:text-sm font-extrabold tracking-widest pt-1 flex items-center justify-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-brand-green animate-ping" />
+              <span>REGISTRATION OPEN NOW</span>
             </div>
           </div>
 
@@ -391,50 +391,48 @@ export const PassesSection: React.FC = () => {
               setHoveredCard(null);
               setInitiateHovered(false);
             }}
-            className={`relative flex flex-col justify-between rounded-xl p-6 sm:p-8 bg-[#06080e]/95 border transition-all duration-300 select-none ${
-              cardsAnimStep < 3 ? 'border-dashed border-white/20 opacity-60' : 'opacity-100'
-            } ${
-              initiateHovered
-                ? 'border-cyber-cyan/60 shadow-[0_0_30px_rgba(0,240,255,0.2)] translate-y-[-4px]'
-                : 'border-white/10 shadow-xl'
+            className={`relative flex flex-col justify-between rounded-xl p-6 sm:p-8 bg-[#050916]/95 border-2 border-cyber-cyan shadow-[0_0_35px_rgba(0,240,255,0.35)] hover:shadow-[0_0_55px_rgba(0,240,255,0.65)] transition-all duration-300 select-none ${
+              initiateHovered ? 'translate-y-[-6px]' : ''
             }`}
-            data-cursor="locked"
+            data-cursor="access"
           >
-            {/* Subtle cyan corner indicators */}
-            <div className="absolute top-0 left-0 w-10 h-10 border-t-2 border-l-2 border-cyber-cyan/40 rounded-tl-xl pointer-events-none" />
-            <div className="absolute bottom-0 right-0 w-10 h-10 border-b-2 border-r-2 border-white/10 rounded-br-xl pointer-events-none" />
+            {/* Glowing cyan corner indicators */}
+            <div className="absolute top-0 left-0 w-10 h-10 border-t-2 border-l-2 border-cyber-cyan rounded-tl-xl pointer-events-none" />
+            <div className="absolute bottom-0 right-0 w-10 h-10 border-b-2 border-r-2 border-white/60 rounded-br-xl pointer-events-none" />
 
-            {/* Subtle scanline on hover */}
+            {/* Subtle animated scanline */}
             <div
               className={`absolute inset-0 scanline-bg rounded-xl pointer-events-none transition-opacity duration-300 ${
-                initiateHovered ? 'opacity-35' : 'opacity-10'
+                initiateHovered ? 'opacity-35' : 'opacity-15'
               }`}
             />
 
             <div>
               {/* Header Telemetry */}
-              <div className="flex items-center justify-between gap-2 pb-4 mb-5 border-b border-white/10">
-                <span className="font-mono text-[10px] text-white/50 tracking-widest uppercase">
+              <div className="flex items-center justify-between gap-2 pb-4 mb-5 border-b border-cyber-cyan/30">
+                <span className="font-mono text-[10px] text-cyber-cyan font-bold tracking-widest uppercase">
                   LEVEL 01 // ENTRY NODE
                 </span>
-                <span className="font-mono text-[10px] px-2 py-0.5 rounded border border-white/20 bg-white/5 text-white/60 font-bold tracking-wider">
-                  [ ACCESS PENDING ]
+                <span className="font-mono text-[10px] px-2.5 py-0.5 rounded border border-brand-green/60 bg-brand-green/20 text-brand-green font-black tracking-wider flex items-center gap-1.5 shadow-[0_0_12px_rgba(0,255,136,0.3)]">
+                  <span className="w-1.5 h-1.5 rounded-full bg-brand-green animate-ping" />
+                  [ ACCESS GRANTED ]
                 </span>
               </div>
 
               {/* Title & Status */}
               <div className="mb-6">
                 <div className="flex items-center gap-2 mb-2">
-                  <span className="w-2 h-2 rounded-full bg-white/40" />
-                  <span className="font-mono text-xs text-cyber-cyan font-bold tracking-widest">
-                    PUBLIC CLEARANCE
+                  <span className="w-2 h-2 rounded-full bg-cyber-cyan animate-pulse" />
+                  <span className="font-mono text-xs text-cyber-cyan font-extrabold tracking-widest">
+                    PUBLIC CLEARANCE ACTIVE
                   </span>
                 </div>
-                <h3 className="font-display font-black text-2xl sm:text-3xl text-white tracking-wider uppercase">
+                <h3 className="font-display font-black text-2xl sm:text-3xl text-white tracking-wider uppercase text-glow-cyan">
                   INITIATE PASS
                 </h3>
-                <div className="mt-2 inline-block font-mono text-[11px] text-cyber-cyan/80 bg-cyber-cyan/10 border border-cyber-cyan/20 px-2.5 py-0.5 rounded">
-                  STATUS: ACCESS PENDING
+                <div className="mt-2 inline-flex items-center gap-1.5 font-mono text-[11px] font-bold text-cyber-cyan bg-cyber-cyan/15 border border-cyber-cyan/40 px-2.5 py-0.5 rounded shadow-[0_0_10px_rgba(0,240,255,0.2)]">
+                  <Sparkles className="w-3 h-3 text-cyber-cyan animate-spin" />
+                  <span>STATUS: ACCESS GRANTED</span>
                 </div>
               </div>
 
@@ -444,29 +442,31 @@ export const PassesSection: React.FC = () => {
                   sound.playHoverClick();
                   setShowJourneyModal(true);
                 }}
-                className="p-4 rounded-lg bg-black/40 border border-white/10 hover:border-cyber-cyan/30 cursor-pointer mb-6 transition-colors"
-                title="Click to view ROOTIFYING Journey"
+                className="p-4 rounded-lg bg-black/60 border border-cyber-cyan/40 hover:border-cyber-cyan cursor-pointer mb-6 transition-all shadow-[0_0_20px_rgba(0,240,255,0.2)] group"
+                title="Click to view ROOTIFYING Journey & Register"
               >
-                <div className="font-mono text-[10px] text-white/40 uppercase tracking-widest mb-1">
-                  CLEARANCE COST
+                <div className="font-mono text-[10px] text-cyber-cyan uppercase tracking-widest mb-1 flex items-center justify-between">
+                  <span>CLEARANCE COST</span>
+                  <span className="text-[9px] px-1.5 py-0.2 rounded bg-brand-green/20 text-brand-green font-bold">OPEN</span>
                 </div>
                 <div className="flex items-baseline gap-2">
-                  <span className="font-display font-black text-4xl sm:text-5xl text-white tracking-tight">
+                  <span className="font-display font-black text-4xl sm:text-5xl text-white group-hover:text-cyber-cyan tracking-tight transition-colors">
                     FREE
                   </span>
-                  <span className="font-mono text-xs text-white/50">/ GENERAL ACCESS</span>
+                  <span className="font-mono text-xs text-white/70">/ GENERAL ACCESS</span>
                 </div>
-                <div className="mt-2 font-mono text-[11px] text-white/60 font-medium">
-                  FREE REGISTRATION OPENING SOON
+                <div className="mt-2 font-mono text-[11px] text-brand-green font-bold flex items-center gap-1.5">
+                  <span className="w-2 h-2 rounded-full bg-brand-green animate-ping" />
+                  <span>REGISTRATION OPEN NOW</span>
                 </div>
               </div>
 
               {/* Benefits Section */}
               <div className="space-y-3 mb-8">
-                <div className="font-mono text-[10px] text-white/40 uppercase tracking-widest pb-1 border-b border-white/5">
+                <div className="font-mono text-[10px] text-cyber-cyan/80 uppercase tracking-widest pb-1 border-b border-cyber-cyan/20">
                   INCLUDED PERKS & ACCESS
                 </div>
-                <ul className="space-y-2.5 font-mono text-xs text-white/80">
+                <ul className="space-y-2.5 font-mono text-xs text-white/90">
                   <li className="flex items-start gap-2.5">
                     <span className="text-cyber-cyan mt-0.5 font-bold">✓</span>
                     <span>Access to Live Sessions</span>
@@ -479,22 +479,23 @@ export const PassesSection: React.FC = () => {
               </div>
             </div>
 
-            {/* Locked CTA Button */}
-            <div className="pt-4 border-t border-white/10">
+            {/* Active Prominent Registration Button */}
+            <div className="pt-4 border-t border-cyber-cyan/30">
               <button
                 onClick={() => {
-                  sound.playHoverClick();
+                  sound.playButtonConfirm();
                   setShowJourneyModal(true);
                 }}
-                className="w-full py-4 px-4 rounded-lg font-mono font-bold text-xs tracking-widest uppercase border border-white/20 bg-white/5 text-white/50 hover:text-white hover:border-cyber-cyan/50 hover:bg-cyber-cyan/10 cursor-pointer flex items-center justify-center gap-2.5 opacity-75 hover:opacity-100 select-none transition-all"
-                title="Free registration opening soon"
+                className="group relative w-full py-4 px-4 rounded-lg font-mono font-black text-xs sm:text-sm tracking-widest uppercase bg-gradient-to-r from-cyber-cyan via-white to-cyber-cyan text-black hover:text-black hover:scale-[1.02] active:scale-95 cursor-pointer flex items-center justify-center gap-2.5 shadow-[0_0_25px_rgba(0,240,255,0.5)] hover:shadow-[0_0_35px_rgba(0,240,255,0.8)] select-none transition-all duration-200"
+                title="Click to open Dragon Journey & Register Free"
+                data-cursor="enter"
               >
-                <Lock className="w-3.5 h-3.5 text-white/40" />
-                <span>FREE REGISTRATION OPENING SOON</span>
+                <Zap className="w-4 h-4 text-black animate-pulse" />
+                <span>REGISTRATION OPEN NOW →</span>
               </button>
-              <div className="mt-2.5 flex items-center justify-between font-mono text-[9px] text-white/40 px-1">
-                <span>AUTHENTICATION: SUSPENDED</span>
-                <span>QUEUE: PRE-LAUNCH</span>
+              <div className="mt-2.5 flex items-center justify-between font-mono text-[9px] text-white/50 px-1">
+                <span className="text-brand-green font-bold">AUTHENTICATION: UNLOCKED</span>
+                <span className="text-cyber-cyan">IMMEDIATE CLEARANCE</span>
               </div>
             </div>
           </div>
