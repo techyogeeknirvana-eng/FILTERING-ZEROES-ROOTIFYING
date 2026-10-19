@@ -10,7 +10,16 @@ import {
   CheckCircle2,
   ShieldCheck,
   ArrowRight,
+  Mic,
+  Users,
+  Target,
 } from 'lucide-react';
+
+export interface KeynoteTopicDetail {
+  title: string;
+  description: string;
+  iconName?: 'bot' | 'mobile' | 'layers' | 'mic' | 'users' | 'target' | 'sparkles';
+}
 
 export interface SpeakerSlot {
   id: string;
@@ -20,6 +29,8 @@ export interface SpeakerSlot {
   organization?: string;
   image?: string;
   topics?: string[];
+  detailedTopics?: KeynoteTopicDetail[];
+  bio?: string;
   color: string;
   hash: string;
   status: string;
@@ -50,10 +61,31 @@ export const SpeakersSection: React.FC = () => {
       role: 'Senior Software Engineer',
       organization: 'Valeo Health ME',
       image: '/assets/speakers/yatin-batra.jpg',
+      bio: 'Leading frontline initiatives in intelligent mobile systems, agentic workflow automation, and fault-tolerant architecture for next-generation digital health platforms.',
       topics: [
         'Android Development & Artificial Intelligence',
         'Agentic AI & AI-Assisted Engineering',
         'System Design & Scalable Applications',
+      ],
+      detailedTopics: [
+        {
+          title: 'Android Development & Artificial Intelligence',
+          description:
+            'On-device neural model deployment, high-performance edge compute, and seamless intelligent mobile user experiences.',
+          iconName: 'mobile',
+        },
+        {
+          title: 'Agentic AI & AI-Assisted Engineering',
+          description:
+            'Production multi-agent coordination, autonomous reasoning loops, and scaling developer engineering velocity with AI copilots.',
+          iconName: 'bot',
+        },
+        {
+          title: 'System Design & Scalable Applications',
+          description:
+            'Architecting distributed zero-downtime microservices, event-driven pipelines, and robust data integrity at scale.',
+          iconName: 'layers',
+        },
       ],
       color: '#00f0ff',
       hash: '0x9B2A...E47C',
@@ -62,6 +94,44 @@ export const SpeakersSection: React.FC = () => {
     },
     {
       id: 'sp-2',
+      domain: 'LEADERSHIP & SKILLS',
+      name: 'MONICA SODHI',
+      role: 'Communication & Soft Skills Trainer',
+      organization: 'GL Bajaj Institute of Technology & Management',
+      image: '/assets/speakers/monica-sodhi.jpg',
+      bio: 'Specialist in executive communication, high-impact technical storytelling, interview mastery, and professional articulation for top-tier engineering talent and emerging industry leaders.',
+      topics: [
+        'Executive Communication & Technical Articulation',
+        'Soft Skills Mastery & Leadership Presence',
+        'Industry Readiness & High-Stakes Pitching',
+      ],
+      detailedTopics: [
+        {
+          title: 'Executive Communication & Technical Articulation',
+          description:
+            'Translating complex algorithms, system architectures, and deep-tech into compelling narratives for stakeholders, executives, and cross-functional teams.',
+          iconName: 'mic',
+        },
+        {
+          title: 'Soft Skills Mastery & Leadership Presence',
+          description:
+            'Mastering high-stakes team dynamics, emotional intelligence, empathetic leadership, and cultivating commanding professional presence in engineering cultures.',
+          iconName: 'users',
+        },
+        {
+          title: 'Industry Readiness & High-Stakes Pitching',
+          description:
+            'Equipping builders for Tier-1 technical interviews, investor pitch decks, venture presentations, and real-time defense of complex technical proposals.',
+          iconName: 'target',
+        },
+      ],
+      color: '#ec4899',
+      hash: '0x7C1D...8E42',
+      status: 'DECLASSIFIED // CONFIRMED',
+      isUnlocked: true,
+    },
+    {
+      id: 'sp-3',
       domain: 'CYBER',
       role: 'RING-0 EXPLOIT RESEARCHER',
       color: '#ff1f43',
@@ -69,7 +139,7 @@ export const SpeakersSection: React.FC = () => {
       status: 'CLASSIFIED',
     },
     {
-      id: 'sp-3',
+      id: 'sp-4',
       domain: 'CLOUD',
       role: 'GLOBAL INFRASTRUCTURE PRINCIPAL',
       color: '#0070f3',
@@ -77,7 +147,7 @@ export const SpeakersSection: React.FC = () => {
       status: 'REVEALING SOON',
     },
     {
-      id: 'sp-4',
+      id: 'sp-5',
       domain: 'ENTREPRENEURSHIP',
       role: 'DEEP-TECH UNICORN FOUNDER',
       color: '#00e676',
@@ -85,7 +155,7 @@ export const SpeakersSection: React.FC = () => {
       status: 'CLASSIFIED',
     },
     {
-      id: 'sp-5',
+      id: 'sp-6',
       domain: 'AI',
       role: 'AUTONOMOUS AGENT RESEARCHER',
       color: '#00f0ff',
@@ -93,7 +163,7 @@ export const SpeakersSection: React.FC = () => {
       status: 'COMING SOON',
     },
     {
-      id: 'sp-6',
+      id: 'sp-7',
       domain: 'CYBER',
       role: 'DEFENSIVE SEC-OPS DIRECTOR',
       color: '#ff1f43',
@@ -101,20 +171,12 @@ export const SpeakersSection: React.FC = () => {
       status: 'REVEALING SOON',
     },
     {
-      id: 'sp-7',
+      id: 'sp-8',
       domain: 'CLOUD',
       role: 'SERVERLESS MESH PIONEER',
       color: '#0070f3',
       hash: '0x22B0...65EF',
       status: 'COMING SOON',
-    },
-    {
-      id: 'sp-8',
-      domain: 'ENTREPRENEURSHIP',
-      role: 'GLOBAL VENTURE PARTNER',
-      color: '#00e676',
-      hash: '0x00A1...DEAD',
-      status: 'CLASSIFIED',
     },
   ];
 
@@ -123,7 +185,7 @@ export const SpeakersSection: React.FC = () => {
       ? speakerSlots
       : speakerSlots.filter((s) => s.domain === activeFilter);
 
-  const filters = ['ALL', 'AI', 'CYBER', 'CLOUD', 'ENTREPRENEURSHIP'];
+  const filters = ['ALL', 'AI', 'LEADERSHIP & SKILLS', 'CYBER', 'CLOUD', 'ENTREPRENEURSHIP'];
 
   const handleSpeakerClick = (sp: SpeakerSlot) => {
     if (sp.isUnlocked) {
@@ -131,6 +193,25 @@ export const SpeakersSection: React.FC = () => {
       setSelectedSpeaker(sp);
     } else {
       sound.playDenied();
+    }
+  };
+
+  const renderTopicIcon = (iconName?: string, accentColor?: string) => {
+    switch (iconName) {
+      case 'mobile':
+        return <Smartphone className="w-5 h-5 text-cyber-cyan shrink-0 mt-0.5" />;
+      case 'bot':
+        return <Bot className="w-5 h-5 text-cyber-red shrink-0 mt-0.5" />;
+      case 'layers':
+        return <Layers className="w-5 h-5 text-brand-green shrink-0 mt-0.5" />;
+      case 'mic':
+        return <Mic className="w-5 h-5 shrink-0 mt-0.5" style={{ color: accentColor || '#ec4899' }} />;
+      case 'users':
+        return <Users className="w-5 h-5 text-cyber-cyan shrink-0 mt-0.5" />;
+      case 'target':
+        return <Target className="w-5 h-5 text-cyber-red shrink-0 mt-0.5" />;
+      default:
+        return <Sparkles className="w-5 h-5 text-cyber-cyan shrink-0 mt-0.5" />;
     }
   };
 
@@ -182,13 +263,24 @@ export const SpeakersSection: React.FC = () => {
               return (
                 <div
                   key={sp.id}
-                  className="group relative p-6 rounded-xl border-2 border-cyber-cyan/70 bg-gradient-to-b from-[#061021]/95 via-[#030713]/95 to-[#020308]/98 hover:border-cyber-cyan transition-all duration-300 backdrop-blur-md overflow-hidden flex flex-col justify-between min-h-[380px] shadow-[0_0_30px_rgba(0,240,255,0.25)] hover:shadow-[0_0_45px_rgba(0,240,255,0.45)] hover:-translate-y-1 cursor-pointer"
+                  className="group relative p-6 rounded-xl border-2 transition-all duration-300 backdrop-blur-md overflow-hidden flex flex-col justify-between min-h-[380px] hover:-translate-y-1 cursor-pointer"
+                  style={{
+                    borderColor: `${sp.color}80`,
+                    boxShadow: `0 0 30px ${sp.color}25`,
+                    background:
+                      'linear-gradient(180deg, rgba(6,16,33,0.95) 0%, rgba(3,7,19,0.95) 60%, rgba(2,3,8,0.98) 100%)',
+                  }}
                   data-cursor="access"
                   onClick={() => handleSpeakerClick(sp)}
                   title="Click to view keynote dossier"
                 >
                   {/* Holographic sweep effect */}
-                  <div className="absolute inset-0 bg-gradient-to-b from-transparent via-cyber-cyan/10 to-transparent -translate-y-full group-hover:translate-y-full transition-transform duration-1000 pointer-events-none" />
+                  <div
+                    className="absolute inset-0 -translate-y-full group-hover:translate-y-full transition-transform duration-1000 pointer-events-none"
+                    style={{
+                      backgroundImage: `linear-gradient(to bottom, transparent, ${sp.color}15, transparent)`,
+                    }}
+                  />
 
                   {/* Header: Domain & Declassified Tag */}
                   <div className="flex items-center justify-between z-10">
@@ -211,7 +303,13 @@ export const SpeakersSection: React.FC = () => {
                   {/* Center: Photo & Profile */}
                   <div className="my-4 flex flex-col items-center text-center z-10">
                     {/* Futuristic Photo Container */}
-                    <div className="relative w-28 h-28 sm:w-32 sm:h-32 rounded-2xl overflow-hidden border-2 border-cyber-cyan p-1 bg-black/80 shadow-[0_0_25px_rgba(0,240,255,0.4)] group-hover:scale-105 transition-transform duration-300">
+                    <div
+                      className="relative w-28 h-28 sm:w-32 sm:h-32 rounded-2xl overflow-hidden border-2 p-1 bg-black/80 group-hover:scale-105 transition-transform duration-300"
+                      style={{
+                        borderColor: sp.color,
+                        boxShadow: `0 0 25px ${sp.color}50`,
+                      }}
+                    >
                       <img
                         src={sp.image}
                         alt={sp.name}
@@ -225,12 +323,18 @@ export const SpeakersSection: React.FC = () => {
                     </div>
 
                     {/* Name */}
-                    <h3 className="mt-3.5 font-display font-black text-xl sm:text-2xl text-white tracking-wide uppercase text-glow-cyan">
+                    <h3
+                      className="mt-3.5 font-display font-black text-xl sm:text-2xl text-white tracking-wide uppercase"
+                      style={{ textShadow: `0 0 20px ${sp.color}80` }}
+                    >
                       {sp.name}
                     </h3>
 
                     {/* Designation & Organization */}
-                    <div className="mt-1 font-mono text-[11px] sm:text-xs text-cyber-cyan font-bold tracking-wider uppercase">
+                    <div
+                      className="mt-1 font-mono text-[11px] sm:text-xs font-bold tracking-wider uppercase"
+                      style={{ color: sp.color }}
+                    >
                       {sp.role}
                     </div>
                     <div className="font-mono text-[10px] text-white/70 font-semibold tracking-widest uppercase">
@@ -242,9 +346,12 @@ export const SpeakersSection: React.FC = () => {
                       {sp.topics?.map((topic, idx) => (
                         <div
                           key={idx}
-                          className="flex items-start gap-1.5 font-mono text-[9px] sm:text-[10px] text-white/85 bg-white/5 border border-white/10 rounded-md px-2 py-1 leading-snug group-hover:border-cyber-cyan/30 transition-colors"
+                          className="flex items-start gap-1.5 font-mono text-[9px] sm:text-[10px] text-white/85 bg-white/5 border border-white/10 rounded-md px-2 py-1 leading-snug transition-colors"
+                          style={{ borderColor: 'rgba(255,255,255,0.1)' }}
                         >
-                          <span className="text-cyber-cyan font-bold">›</span>
+                          <span style={{ color: sp.color }} className="font-bold">
+                            ›
+                          </span>
                           <span className="line-clamp-1">{topic}</span>
                         </div>
                       ))}
@@ -252,10 +359,16 @@ export const SpeakersSection: React.FC = () => {
                   </div>
 
                   {/* Footer telemetry & Dossier prompt */}
-                  <div className="pt-3 border-t border-cyber-cyan/30 flex items-center justify-between font-mono text-[10px] z-10">
+                  <div
+                    className="pt-3 border-t flex items-center justify-between font-mono text-[10px] z-10"
+                    style={{ borderColor: `${sp.color}30` }}
+                  >
                     <span className="text-white/40">{sp.hash}</span>
-                    <span className="text-cyber-cyan font-bold tracking-wider flex items-center gap-1 group-hover:translate-x-0.5 transition-transform">
-                      VIEW DOSSIER <ArrowRight className="w-3 h-3 text-cyber-cyan" />
+                    <span
+                      className="font-bold tracking-wider flex items-center gap-1 group-hover:translate-x-0.5 transition-transform"
+                      style={{ color: sp.color }}
+                    >
+                      VIEW DOSSIER <ArrowRight className="w-3 h-3" style={{ color: sp.color }} />
                     </span>
                   </div>
                 </div>
@@ -328,7 +441,11 @@ export const SpeakersSection: React.FC = () => {
           }}
         >
           <div
-            className="relative w-full max-w-2xl rounded-2xl border-2 border-cyber-cyan bg-[#030612]/98 p-6 sm:p-8 shadow-[0_0_60px_rgba(0,240,255,0.4)] text-white overflow-hidden animate-in zoom-in-95 duration-200"
+            className="relative w-full max-w-2xl rounded-2xl border-2 bg-[#030612]/98 p-6 sm:p-8 text-white overflow-hidden animate-in zoom-in-95 duration-200"
+            style={{
+              borderColor: selectedSpeaker.color,
+              boxShadow: `0 0 60px ${selectedSpeaker.color}40`,
+            }}
             onClick={(e) => e.stopPropagation()}
           >
             {/* Top Close Button */}
@@ -344,8 +461,14 @@ export const SpeakersSection: React.FC = () => {
             </button>
 
             {/* Dossier Header Telemetry */}
-            <div className="flex items-center gap-2 pb-3 mb-6 border-b border-cyber-cyan/30 text-[10px] font-mono">
-              <span className="px-2 py-0.5 rounded bg-cyber-cyan text-black font-black uppercase tracking-wider">
+            <div
+              className="flex items-center gap-2 pb-3 mb-6 border-b text-[10px] font-mono"
+              style={{ borderColor: `${selectedSpeaker.color}30` }}
+            >
+              <span
+                className="px-2 py-0.5 rounded text-black font-black uppercase tracking-wider"
+                style={{ backgroundColor: selectedSpeaker.color }}
+              >
                 DOSSIER DECLASSIFIED
               </span>
               <span className="text-white/50 tracking-widest uppercase">
@@ -360,7 +483,13 @@ export const SpeakersSection: React.FC = () => {
             {/* Speaker Bio Grid */}
             <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6">
               {/* Left: Speaker Portrait */}
-              <div className="relative w-36 h-36 sm:w-44 sm:h-44 rounded-2xl overflow-hidden border-2 border-cyber-cyan p-1 bg-black/90 shadow-[0_0_35px_rgba(0,240,255,0.5)] shrink-0">
+              <div
+                className="relative w-36 h-36 sm:w-44 sm:h-44 rounded-2xl overflow-hidden border-2 p-1 bg-black/90 shrink-0"
+                style={{
+                  borderColor: selectedSpeaker.color,
+                  boxShadow: `0 0 35px ${selectedSpeaker.color}50`,
+                }}
+              >
                 <img
                   src={selectedSpeaker.image}
                   alt={selectedSpeaker.name}
@@ -374,16 +503,29 @@ export const SpeakersSection: React.FC = () => {
 
               {/* Right: Speaker Credentials */}
               <div className="flex-1 text-center sm:text-left">
-                <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded border border-cyber-cyan/40 bg-cyber-cyan/15 text-cyber-cyan font-mono text-[10px] font-black uppercase tracking-widest mb-1.5">
-                  <Bot className="w-3.5 h-3.5 text-cyber-cyan" />
+                <div
+                  className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded border font-mono text-[10px] font-black uppercase tracking-widest mb-1.5"
+                  style={{
+                    borderColor: `${selectedSpeaker.color}60`,
+                    backgroundColor: `${selectedSpeaker.color}20`,
+                    color: selectedSpeaker.color,
+                  }}
+                >
+                  <Sparkles className="w-3.5 h-3.5" style={{ color: selectedSpeaker.color }} />
                   <span>{selectedSpeaker.domain} ARCHITECT</span>
                 </div>
 
-                <h3 className="font-display font-black text-2xl sm:text-3xl text-white tracking-wide uppercase text-glow-cyan leading-tight">
+                <h3
+                  className="font-display font-black text-2xl sm:text-3xl text-white tracking-wide uppercase leading-tight"
+                  style={{ textShadow: `0 0 20px ${selectedSpeaker.color}80` }}
+                >
                   {selectedSpeaker.name}
                 </h3>
 
-                <div className="mt-1 font-mono text-sm sm:text-base text-cyber-cyan font-bold tracking-wider uppercase">
+                <div
+                  className="mt-1 font-mono text-sm sm:text-base font-bold tracking-wider uppercase"
+                  style={{ color: selectedSpeaker.color }}
+                >
                   {selectedSpeaker.role}
                 </div>
                 <div className="font-mono text-xs sm:text-sm text-white/70 font-semibold tracking-widest uppercase">
@@ -391,7 +533,7 @@ export const SpeakersSection: React.FC = () => {
                 </div>
 
                 <div className="mt-4 p-3 rounded-xl bg-white/5 border border-white/10 font-mono text-xs text-white/80 leading-relaxed">
-                  Leading frontline initiatives in intelligent mobile systems, agentic workflow automation, and fault-tolerant architecture for next-generation digital health platforms.
+                  {selectedSpeaker.bio}
                 </div>
               </div>
             </div>
@@ -399,48 +541,46 @@ export const SpeakersSection: React.FC = () => {
             {/* Keynote Focus & Session Breakdown */}
             <div className="mt-6 pt-5 border-t border-white/10">
               <div className="flex items-center gap-2 mb-3">
-                <CheckCircle2 className="w-4 h-4 text-cyber-cyan" />
-                <h4 className="font-mono text-xs font-black text-cyber-cyan tracking-widest uppercase">
+                <CheckCircle2 className="w-4 h-4" style={{ color: selectedSpeaker.color }} />
+                <h4
+                  className="font-mono text-xs font-black tracking-widest uppercase"
+                  style={{ color: selectedSpeaker.color }}
+                >
                   SESSION KEYNOTE TOPICS // DEEP DIVES
                 </h4>
               </div>
 
               <div className="space-y-2.5">
-                <div className="p-3 rounded-lg bg-cyber-surface/60 border border-cyber-border/70 flex items-start gap-3">
-                  <Smartphone className="w-5 h-5 text-cyber-cyan shrink-0 mt-0.5" />
-                  <div>
-                    <div className="font-mono text-xs font-bold text-white uppercase tracking-wider">
-                      Android Development & Artificial Intelligence
+                {selectedSpeaker.detailedTopics && selectedSpeaker.detailedTopics.length > 0 ? (
+                  selectedSpeaker.detailedTopics.map((dt, idx) => (
+                    <div
+                      key={idx}
+                      className="p-3 rounded-lg bg-cyber-surface/60 border border-cyber-border/70 flex items-start gap-3"
+                    >
+                      {renderTopicIcon(dt.iconName, selectedSpeaker.color)}
+                      <div>
+                        <div className="font-mono text-xs font-bold text-white uppercase tracking-wider">
+                          {dt.title}
+                        </div>
+                        <div className="font-mono text-[11px] text-white/60 mt-0.5">
+                          {dt.description}
+                        </div>
+                      </div>
                     </div>
-                    <div className="font-mono text-[11px] text-white/60 mt-0.5">
-                      On-device neural model deployment, high-performance edge compute, and seamless intelligent mobile user experiences.
+                  ))
+                ) : (
+                  selectedSpeaker.topics?.map((topic, idx) => (
+                    <div
+                      key={idx}
+                      className="p-3 rounded-lg bg-cyber-surface/60 border border-cyber-border/70 flex items-start gap-3"
+                    >
+                      <Sparkles className="w-5 h-5 shrink-0 mt-0.5" style={{ color: selectedSpeaker.color }} />
+                      <div className="font-mono text-xs font-bold text-white uppercase tracking-wider">
+                        {topic}
+                      </div>
                     </div>
-                  </div>
-                </div>
-
-                <div className="p-3 rounded-lg bg-cyber-surface/60 border border-cyber-border/70 flex items-start gap-3">
-                  <Bot className="w-5 h-5 text-cyber-red shrink-0 mt-0.5" />
-                  <div>
-                    <div className="font-mono text-xs font-bold text-white uppercase tracking-wider">
-                      Agentic AI & AI-Assisted Engineering
-                    </div>
-                    <div className="font-mono text-[11px] text-white/60 mt-0.5">
-                      Production multi-agent coordination, autonomous reasoning loops, and scaling developer engineering velocity with AI copilots.
-                    </div>
-                  </div>
-                </div>
-
-                <div className="p-3 rounded-lg bg-cyber-surface/60 border border-cyber-border/70 flex items-start gap-3">
-                  <Layers className="w-5 h-5 text-brand-green shrink-0 mt-0.5" />
-                  <div>
-                    <div className="font-mono text-xs font-bold text-white uppercase tracking-wider">
-                      System Design & Scalable Applications
-                    </div>
-                    <div className="font-mono text-[11px] text-white/60 mt-0.5">
-                      Architecting distributed zero-downtime microservices, event-driven pipelines, and robust data integrity at scale.
-                    </div>
-                  </div>
-                </div>
+                  ))
+                )}
               </div>
             </div>
 
@@ -458,7 +598,11 @@ export const SpeakersSection: React.FC = () => {
                     const el = document.getElementById('access');
                     if (el) el.scrollIntoView({ behavior: 'smooth' });
                   }}
-                  className="w-full sm:w-auto px-5 py-2.5 rounded-xl font-mono font-black text-xs uppercase tracking-widest bg-gradient-to-r from-cyber-cyan via-white to-cyber-cyan text-black hover:scale-105 shadow-[0_0_25px_rgba(0,240,255,0.6)] transition-all flex items-center justify-center gap-2"
+                  className="w-full sm:w-auto px-5 py-2.5 rounded-xl font-mono font-black text-xs uppercase tracking-widest text-black hover:scale-105 transition-all flex items-center justify-center gap-2"
+                  style={{
+                    background: `linear-gradient(90deg, ${selectedSpeaker.color}, #ffffff, ${selectedSpeaker.color})`,
+                    boxShadow: `0 0 25px ${selectedSpeaker.color}80`,
+                  }}
                 >
                   <span>CLAIM PASS TO ATTEND</span>
                   <ArrowRight className="w-4 h-4" />

@@ -66,7 +66,7 @@ export const CommandCenterSection: React.FC = () => {
       initialStatus: 'DECLASSIFIED',
       iconType: 'speakers',
       color: '#00f0ff',
-      meta: 'Keynote lineup declassified: Yatin Batra (Valeo Health ME) & more.',
+      meta: 'Keynote lineup declassified: Yatin Batra (Valeo Health ME) & Monica Sodhi (GL Bajaj).',
     },
     {
       id: 'venue',
@@ -163,7 +163,7 @@ export const CommandCenterSection: React.FC = () => {
       setTerminalLogs((prev) => [
         `> [${timestamp}] AUTHENTICATION DECLASSIFIED: node://speakers`,
         `> ROUTING DIRECTLY TO // THE MINDS (KEYNOTE ARCHITECTS)`,
-        `> CONFIRMED KEYNOTE ARCHITECT: YATIN BATRA • SENIOR SOFTWARE ENGINEER (VALEO HEALTH ME)`,
+        `> CONFIRMED KEYNOTES: YATIN BATRA (VALEO HEALTH ME) • MONICA SODHI (GL BAJAJ)`,
         ...prev.slice(0, 5),
       ]);
       const target = document.getElementById('speakers');
