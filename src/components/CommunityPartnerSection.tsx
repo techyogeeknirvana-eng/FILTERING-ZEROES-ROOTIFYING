@@ -17,6 +17,7 @@ interface NodeSlot {
   isVerified: boolean;
   name?: string;
   subLabel?: string;
+  categories?: string[];
   image?: string;
   coords: string;
   status: string;
@@ -127,6 +128,7 @@ export const CommunityPartnerSection: React.FC = () => {
       isVerified: true,
       name: 'ACE CLUB',
       subLabel: 'ARTICULATION • CONFIDENCE • EXPRESSION',
+      categories: ['VENUE PARTNER', 'COLLABORATIVE PARTNER'],
       image: '/assets/collaborators/ace_club.jpg',
       coords: 'LAT: 0x1A // LON: 0xFF',
       status: hoveredNode === 1 ? '[ CONNECTION ACTIVE ]' : 'CONNECTION VERIFIED',
@@ -138,6 +140,7 @@ export const CommunityPartnerSection: React.FC = () => {
       isVerified: true,
       name: 'FORTIXAI SECURITY',
       subLabel: 'OFFENSIVE CYBERSECURITY & THREAT INTEL',
+      categories: ['NETWORKING PARTNER'],
       image: '/assets/collaborators/fortixai-security.png',
       coords: 'LAT: 0x2B // LON: 0x0A',
       status: hoveredNode === 2 ? '[ CONNECTION ACTIVE ]' : 'CONNECTION VERIFIED',
@@ -149,6 +152,7 @@ export const CommunityPartnerSection: React.FC = () => {
       isVerified: true,
       name: 'PRAKSHA',
       subLabel: 'INNOVATION & STUDENT COMMUNITY',
+      categories: ['NETWORKING PARTNER'],
       image: '/assets/collaborators/praksha-logo.png',
       coords: 'LAT: 0x3C // LON: 0x1B',
       status: hoveredNode === 3 ? '[ CONNECTION ACTIVE ]' : 'CONNECTION VERIFIED',
@@ -349,7 +353,7 @@ export const CommunityPartnerSection: React.FC = () => {
                     <div className="absolute inset-0 scanline-bg opacity-20 rounded-2xl pointer-events-none" />
 
                     {/* Card Header Telemetry */}
-                    <div className="flex items-center justify-between pb-3 mb-4 border-b border-cyber-cyan/25 text-[10px] font-mono">
+                    <div className="flex items-center justify-between pb-3 mb-3 border-b border-cyber-cyan/25 text-[10px] font-mono">
                       <div className="flex items-center gap-2">
                         <span className="w-2 h-2 rounded-full bg-brand-green animate-ping" />
                         <span className="text-cyber-cyan font-bold tracking-widest">
@@ -361,8 +365,29 @@ export const CommunityPartnerSection: React.FC = () => {
                       </span>
                     </div>
 
+                    {/* Dedicated Partner Category Label Block */}
+                    {node.categories && node.categories.length > 0 && (
+                      <div className="w-full min-h-[58px] sm:min-h-[62px] mb-3 flex flex-col items-center justify-center gap-1.5">
+                        {node.categories.map((category, idx) => (
+                          <div
+                            key={idx}
+                            className={`inline-flex items-center justify-center gap-1.5 px-3 py-1 rounded-md bg-[#020b14]/90 border transition-all duration-300 backdrop-blur-sm ${
+                              isHovered
+                                ? 'border-cyber-cyan shadow-[0_0_16px_rgba(0,240,255,0.3)] text-cyber-cyan'
+                                : 'border-cyber-cyan/40 shadow-[0_0_12px_rgba(0,240,255,0.18)] text-cyber-cyan'
+                            }`}
+                          >
+                            <span className="w-1.5 h-1.5 rounded-full bg-cyber-cyan animate-pulse" />
+                            <span className="font-mono font-black text-[10px] sm:text-[11px] tracking-wider uppercase whitespace-nowrap">
+                              {category}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
                     {/* Collaborator Logo Container - Aspect Ratio Preserved Strictly */}
-                    <div className="my-2 flex flex-col items-center text-center">
+                    <div className="mb-2 flex flex-col items-center text-center">
                       <div className="relative w-36 h-36 sm:w-40 sm:h-40 rounded-xl overflow-hidden border-2 border-cyber-cyan/40 bg-[#020408] p-3 flex items-center justify-center shadow-[0_0_20px_rgba(0,240,255,0.2)] group-hover:border-cyber-cyan transition-all">
                         <img
                           src={node.image}
