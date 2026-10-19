@@ -62,33 +62,33 @@ export const SpeakersSection: React.FC = () => {
       id: 'sp-1',
       domain: 'AI',
       name: 'YATIN BATRA',
-      role: 'Senior Software Engineer',
-      organization: 'Valeo Health ME',
+      role: 'Software Engineer II',
+      organization: 'Valeo Health ME • Scalable Systems & Agentic AI',
       image: '/assets/speakers/yatin-batra.jpg',
-      bio: 'Leading frontline initiatives in intelligent mobile systems, agentic workflow automation, and fault-tolerant architecture for next-generation digital health platforms.',
+      bio: 'Software Engineer II specializing in Scalable Systems, Mobile Architecture & Agentic AI Development (ADK, A2A, LLM Workflows). Deep production expertise across Kotlin, Flutter, and Java for mission-critical, intelligent digital health platforms.',
       topics: [
-        'Android Development & Artificial Intelligence',
-        'Agentic AI & AI-Assisted Engineering',
-        'System Design & Scalable Applications',
+        'Agentic AI Development (ADK, A2A, LLM Workflows)',
+        'Scalable Systems & Distributed Architectures',
+        'Mobile Architecture (Kotlin · Flutter · Java)',
       ],
       detailedTopics: [
         {
-          title: 'Android Development & Artificial Intelligence',
+          title: 'Agentic AI Development (ADK, A2A, LLM Workflows)',
           description:
-            'On-device neural model deployment, high-performance edge compute, and seamless intelligent mobile user experiences.',
-          iconName: 'mobile',
-        },
-        {
-          title: 'Agentic AI & AI-Assisted Engineering',
-          description:
-            'Production multi-agent coordination, autonomous reasoning loops, and scaling developer engineering velocity with AI copilots.',
+            'Production multi-agent coordination, agent-to-agent (A2A) protocols, Agent Development Kits (ADK), and autonomous LLM reasoning workflows.',
           iconName: 'bot',
         },
         {
-          title: 'System Design & Scalable Applications',
+          title: 'Scalable Systems & Distributed Architectures',
           description:
-            'Architecting distributed zero-downtime microservices, event-driven pipelines, and robust data integrity at scale.',
+            'Architecting distributed zero-downtime microservices, event-driven streaming pipelines, and fault-tolerant data integrity at scale.',
           iconName: 'layers',
+        },
+        {
+          title: 'Mobile Architecture (Kotlin · Flutter · Java)',
+          description:
+            'High-performance native and cross-platform mobile architecture, reactive state management, and modern client-side design patterns.',
+          iconName: 'mobile',
         },
       ],
       color: '#00f0ff',
@@ -139,32 +139,32 @@ export const SpeakersSection: React.FC = () => {
       id: 'sp-3',
       domain: 'ENTREPRENEURSHIP',
       name: 'AZIM SIDDIQUI',
-      role: 'Senior Android Engineer & Founder',
-      organization: 'thecodingshef.in • Ex: Blinkit & ShareChat',
+      role: 'Android Engineer & Tech Speaker',
+      organization: 'Building Thecodingshef • Ex-Blinkit · ShareChat · Nagarro',
       image: '/assets/speakers/azim-siddiqui.jpg',
-      bio: 'Senior Android Engineer and Founder of thecodingshef.in, with a track record of architecting mission-critical consumer mobile systems at Blinkit and ShareChat. Dedicated to hyper-scale mobile architecture, low-latency client performance, and mentoring developer ecosystems.',
+      bio: 'Android Engineer and Tech Speaker building Thecodingshef. Ex-Blinkit, ShareChat, and Nagarro with a track record of architecting hyper-scale consumer mobile systems, low-latency client performance, and mentoring developer communities.',
       topics: [
-        'Hyper-Scale Mobile Architecture & Client Performance',
-        'Bootstrapping Developer Platforms & thecodingshef.in',
-        'High-Concurrency Production Systems (Ex: Blinkit & ShareChat)',
+        'Android Engineering & Mobile Architecture',
+        'Building Thecodingshef & Tech Speaking',
+        'Hyperscale Systems: Ex-Blinkit · ShareChat · Nagarro',
       ],
       detailedTopics: [
         {
-          title: 'Hyper-Scale Mobile Architecture & Client Performance',
+          title: 'Android Engineering & Mobile Architecture',
           description:
-            'Architecting zero-latency rendering, minimal memory footprints, offline-first sync pipelines, and high-frame-rate mobile UX for millions of daily active users.',
+            'Architecting zero-latency rendering, minimal memory footprints, offline-first sync pipelines, and high-frame-rate mobile UX for millions of users.',
           iconName: 'mobile',
         },
         {
-          title: 'Bootstrapping Developer Platforms & thecodingshef.in',
+          title: 'Building Thecodingshef & Tech Speaking',
           description:
-            'From first line of code to nationwide impact: building thecodingshef.in, democratizing tech education, and scaling open engineering communities.',
+            'From first line of code to nationwide developer impact: bootstrapping Thecodingshef, technical keynote delivery, and community mentorship.',
           iconName: 'rocket',
         },
         {
-          title: 'High-Concurrency Production Systems (Ex: Blinkit & ShareChat)',
+          title: 'Hyperscale Systems: Ex-Blinkit · ShareChat · Nagarro',
           description:
-            'Battle-hardened operational insights from real-time quick commerce logistics at Blinkit and high-throughput multimedia streams at ShareChat.',
+            'Battle-hardened operational insights across instant commerce (Blinkit), viral social feeds (ShareChat), and enterprise systems (Nagarro).',
           iconName: 'zap',
         },
       ],
