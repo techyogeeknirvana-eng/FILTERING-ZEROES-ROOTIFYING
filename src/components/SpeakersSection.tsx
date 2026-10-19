@@ -254,10 +254,41 @@ export const SpeakersSection: React.FC = () => {
     {
       id: 'sp-6',
       domain: 'CYBER',
-      role: 'INFRASTRUCTURE SPECIALIST @ KYNDRYL',
+      name: 'ADITYA SINGH',
+      role: 'Infrastructure Specialist & Cyber Security',
+      organization: 'Kyndryl • Top 5% TryHackMe',
+      image: '/assets/speakers/aditya-singh.jpg',
+      imagePosition: 'center top',
+      bio: 'Infrastructure Specialist at Kyndryl and Cybersecurity Researcher ranked in the Top 5% globally on TryHackMe. Specializing in enterprise infrastructure defense, attack-surface hardening, and mission-critical hybrid cloud security.',
+      topics: [
+        'Enterprise Infrastructure & Hybrid Cloud Security',
+        'Offensive Exploitation & Threat Surface Hardening',
+        'Global CTF & Defensive Operations (Top 5% TryHackMe)',
+      ],
+      detailedTopics: [
+        {
+          title: 'Enterprise Infrastructure & Hybrid Cloud Security',
+          description:
+            'Hardening enterprise IT environments, incident containment, network zoning, and managing fault-tolerant infrastructure at Kyndryl.',
+          iconName: 'target',
+        },
+        {
+          title: 'Offensive Exploitation & Threat Surface Hardening',
+          description:
+            'Red-team attack vectors, vulnerability scanning, privilege escalation mitigation, and zero-trust security postures.',
+          iconName: 'zap',
+        },
+        {
+          title: 'Global CTF & Defensive Operations (Top 5% TryHackMe)',
+          description:
+            'Hands-on penetration testing methodologies, rapid vulnerability identification, and practical cyber warfare defense.',
+          iconName: 'code',
+        },
+      ],
       color: '#ff1f43',
       hash: '0x3F81...A92D',
-      status: 'REVEALING SOON',
+      status: 'DECLASSIFIED // CONFIRMED',
+      isUnlocked: true,
     },
     {
       id: 'sp-7',
