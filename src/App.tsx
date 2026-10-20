@@ -8,7 +8,7 @@ import { PhilosophySection } from './components/PhilosophySection';
 import { FourDomainsSection } from './components/FourDomainsSection';
 import { WhyRootifySection } from './components/WhyRootifySection';
 import { EventJourneySection } from './components/EventJourneySection';
-import { SpeakersSection } from './components/SpeakersSection';
+import { RootifyNetworkSection } from './components/RootifyNetworkSection';
 import { RootifyFinaleSection } from './components/RootifyFinaleSection';
 import { TimelineSection } from './components/TimelineSection';
 import { CommandCenterSection } from './components/CommandCenterSection';
@@ -65,7 +65,7 @@ export function App() {
         <FourDomainsSection />
         <WhyRootifySection />
         <EventJourneySection />
-        <SpeakersSection />
+        <RootifyNetworkSection />
         <RootifyFinaleSection />
         <TimelineSection />
         <CommandCenterSection />
